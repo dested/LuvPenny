@@ -1,13 +1,9 @@
 {
-  "name": "nest-typescript-starter",
+  "name": "luv-penny-server",
   "version": "1.0.0",
-  "description": "Nest TypeScript starter repository",
-  "license": "MIT",
+  "description": "",
   "scripts": {
-    "start": "node index.js",
-    "start:watch": "nodemon",
-    "prestart:prod": "tsc",
-    "start:prod": "node dist/server.js"
+    "start": "node ./bin/server"
   },
   "dependencies": {
     "@nestjs/common": "^4.0.0",

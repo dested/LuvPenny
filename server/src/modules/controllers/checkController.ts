@@ -2,10 +2,10 @@ import {Controller, Get} from '@nestjs/common';
 import {Member} from "../../../../common/http";
 
 
-@Controller('member')
-export class MemberController {
+@Controller('check')
+export class CheckController {
     @Get()
-    sayHi(): Member {
-        return {name:"Mike",id:'123'}
+    check(): boolean {
+        return true
     }
 }

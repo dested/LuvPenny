@@ -9,7 +9,7 @@
     "strict": true,
     "noImplicitAny": false,
     "allowJs": true,
-    "outDir": "./dist"
+    "outDir": "./bin"
   },
   "include": [
     "src/**/*"
