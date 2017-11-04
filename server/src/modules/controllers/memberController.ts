@@ -6,6 +6,6 @@ import {Member} from "../../../../common/http";
 export class MemberController {
     @Get()
     sayHi(): Member {
-        return {name:"Mike",id:'123'}
+        return {name:"Mike",id:'3123'}
     }
 }

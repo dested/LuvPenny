@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "node ./bin/server"
+    "start": "node ./bin/server",
+    "start:watch": "nodemon"
   },
   "dependencies": {
     "@nestjs/common": "^4.0.0",

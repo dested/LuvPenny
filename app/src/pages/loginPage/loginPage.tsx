@@ -7,7 +7,8 @@ import {
 import {Navigation} from "../../utils/navigationUtils";
 import {MemberDataService} from "../../dataServices/memberDataService";
 import {Member} from "../../../../common/http";
-import style from './style'
+import styles from './styles'
+import LinearGradient from "react-native-linear-gradient";
 
 @Navigation({
     title: "Login"
@@ -35,15 +36,23 @@ export class LoginPage extends Component<{}, { member: Member|null }> {
 
     render() {
         return (
-            <View style={style.container}>
-                <Text style={style.welcome}>
+
+            <View style={styles.container}>
+                <LinearGradient colors={['#4c669f', '#3b5998', '#192f6a']} style={styles.linearGradient}>
+                    <Text style={styles.buttonText}>
+                        Sign in with Facebook
+                    </Text>
+                </LinearGradient>
+
+
+                <Text style={styles.welcome}>
                     Welcome to React Native!
                 </Text>
-                <Text style={style.instructions}>
+                <Text style={styles.instructions}>
                     To get started, edit App.js
                     {this.state.member?this.state.member.name:"No member"}
                 </Text>
-                <Text style={style.instructions}>
+                <Text style={styles.instructions}>
                     {Platform.select({
                         ios: 'Press Cmd+R to reload,\n' +
                         'Cmd+D or shake for dev menu',
