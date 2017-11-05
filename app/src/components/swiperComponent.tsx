@@ -21,7 +21,7 @@ interface State {
 
 export class SwiperComponent extends Component<Props, State> {
 
-    static defaultProps:Props = {
+    static defaultProps: Props = {
         index: 0,
         threshold: 25,
         onPageChange: (index) => {
@@ -39,7 +39,7 @@ export class SwiperComponent extends Component<Props, State> {
             scrollValue: new Animated.Value(props.index),
             viewWidth: Dimensions.get('window').width,
         };
-        this.state.scrollValue.addListener((s)=>{
+        this.state.scrollValue.addListener((s) => {
             this.props.onAnimation(s.value);
         })
     }
@@ -97,7 +97,7 @@ export class SwiperComponent extends Component<Props, State> {
             index: pageNumber
         });
 
-        Animated.timing(this.state.scrollValue, {toValue: pageNumber,duration:200}).start();
+        Animated.timing(this.state.scrollValue, {toValue: pageNumber, duration: 200, useNativeDriver: true}).start();
 
         this.props.onPageChange(pageNumber);
     }

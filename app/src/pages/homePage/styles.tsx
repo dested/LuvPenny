@@ -19,12 +19,10 @@ export let homeStyles = StyleSheet.create({
     bottomLeftIcon:{
         position:'absolute',
         bottom:10,
-        left:10,
     },
     bottomRightIcon:{
         position:'absolute',
         bottom:10,
-        right:10,
     }
 });
 
@@ -40,20 +38,26 @@ export let calendarScreenStyles = StyleSheet.create({
     body: {
         flex: 1,
         alignItems: 'stretch',
-        backgroundColor: 'purple',
+        backgroundColor: '#faf8e0',
+
+        borderRightColor: '#bbb',
+        borderRightWidth: StyleSheet.hairlineWidth
     },
 });
 export let homeScreenStyles = StyleSheet.create({
     body: {
         flex: 1,
         alignItems: 'stretch',
-        backgroundColor: 'pink',
+        backgroundColor: '#faf8e0',
     },
 });
 export let plusScreenStyles = StyleSheet.create({
     body: {
         flex: 1,
         alignItems: 'stretch',
-        backgroundColor: 'blue',
+        backgroundColor: '#faf8e0',
+
+        borderLeftColor: '#bbb',
+        borderLeftWidth: StyleSheet.hairlineWidth
     },
 });
