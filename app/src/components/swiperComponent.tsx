@@ -1,9 +1,9 @@
-import React, {Component} from 'react';
+import React, {Component, ReactChild} from 'react';
 import {
     Animated,
     Dimensions,
     PanResponder, PanResponderInstance,
-    View,
+    View, ViewProperties,
 } from 'react-native';
 
 interface Props {
@@ -11,6 +11,7 @@ interface Props {
     threshold?: number,
     onPageChange?: (index: number) => void
     onAnimation?: (index: number) => void
+    children?: ReactChild[]
 }
 
 interface State {
@@ -57,7 +58,7 @@ export class SwiperComponent extends Component<Props, State> {
                 newIndex = newIndex - 1;
             }
 
-            this.goToPage(newIndex);
+            this.gotoPage(newIndex);
         };
 
         this._panResponder = PanResponder.create({
@@ -90,14 +91,16 @@ export class SwiperComponent extends Component<Props, State> {
         });
     }
 
-    goToPage(pageNumber: number) {
+    gotoPage(pageNumber: number) {
         // Don't scroll outside the bounds of the screens
         pageNumber = Math.max(0, Math.min(pageNumber, this.props.children.length - 1));
         this.setState({
             index: pageNumber
         });
 
-        Animated.timing(this.state.scrollValue, {toValue: pageNumber, duration: 200, useNativeDriver: true}).start();
+        Animated
+            .timing(this.state.scrollValue, {toValue: pageNumber, duration: 200, useNativeDriver: true})
+            .start();
 
         this.props.onPageChange(pageNumber);
     }
@@ -111,7 +114,7 @@ export class SwiperComponent extends Component<Props, State> {
     }
 
     render() {
-        const scenes = React.Children.map(this.props.children, child => {
+        const scenes = React.Children.map(this.props.children, (child: any) => {
             return React.cloneElement(child, {style: [child.props.style, {flex: 1}]});
         });
 
