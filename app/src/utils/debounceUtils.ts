@@ -1,0 +1,37 @@
+export class DebounceUtils {
+
+    private static debounceCallbacks: { [key: string]: { timeout: number, callback: () => void } } = {};
+    static debounce(key: string, ms: number, callback: () => void): any {
+        if (DebounceUtils.debounceCallbacks[key]) {
+            //                console.log(key + ' debounce stopped');
+            clearTimeout(DebounceUtils.debounceCallbacks[key].timeout);
+        }
+
+        DebounceUtils.debounceCallbacks[key] = {
+            callback: callback,
+            timeout: setTimeout(() => {
+                //                console.log(key + ' debounce called');
+                callback();
+                delete DebounceUtils.debounceCallbacks[key];
+            }, ms)
+        };
+    }
+
+
+    private static reboundCallbacks: { [key: string]: { timeout: number, callback: () => void } } = {};
+    static rebound(key: string, ms: number, callback: () => void): any {
+        if (DebounceUtils.reboundCallbacks[key]) {
+            DebounceUtils.reboundCallbacks[key].callback=callback;
+            return;
+        }
+
+        DebounceUtils.reboundCallbacks[key] = {
+            callback: callback,
+            timeout: setTimeout(() => {
+                callback();
+                delete DebounceUtils.reboundCallbacks[key];
+            }, ms)
+        };
+    }
+
+}

@@ -3,7 +3,7 @@ import {
     Button, Image,
     Platform, ScrollView,
     Text,
-    View, StyleSheet, TouchableHighlight, Dimensions
+    View, StyleSheet, TouchableHighlight, Dimensions, Animated
 } from 'react-native';
 import {hideHeader, Navigation} from "../../utils/navigationUtils";
 import {MemberDataService} from "../../dataServices/memberDataService";
@@ -13,6 +13,7 @@ import LinearGradient from "react-native-linear-gradient";
 import {TabNavigator, NavigationTransitionProps, NavigationAction, NavigationState, NavigationScreenProp} from "react-navigation";
 import {Assets} from "../../assets";
 import {SwiperComponent} from "../../components/swiperComponent";
+import {DebounceUtils} from "../../utils/debounceUtils";
 
 export interface Relationship {
     name: string;
@@ -57,8 +58,8 @@ let RelationshipHeaderComponent: React.SFC<{ relationship: Relationship }> = (pr
 
 interface HomePageState {
     relationships: Relationship[],
-    bottomLeftIconOpacity: number,
-    bottomRightIconOpacity: number
+    bottomLeftIconOpacity: Animated.Value,
+    bottomRightIconOpacity: Animated.Value
 }
 
 @Navigation({
@@ -75,8 +76,8 @@ export class HomePage extends Component<{}, HomePageState> {
     constructor() {
         super();
         this.state = {
-            bottomLeftIconOpacity: 1,
-            bottomRightIconOpacity: 1,
+            bottomLeftIconOpacity: new Animated.Value(1),
+            bottomRightIconOpacity: new Animated.Value(1),
             relationships: [{
                 name: 'Mike',
                 icon: '',
@@ -130,6 +131,16 @@ export class HomePage extends Component<{}, HomePageState> {
     }
 
     render() {
+        const bottomLeftIconOpacity = this.state.bottomLeftIconOpacity.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, 1],
+        });
+
+        const bottomRightIconOpacity = this.state.bottomRightIconOpacity.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, 1],
+        });
+
         return (
             <View style={homeStyles.body}>
                 <View style={homeStyles.personHeader}>
@@ -163,18 +174,21 @@ export class HomePage extends Component<{}, HomePageState> {
                 </SwiperComponent>
 
 
-                <TouchableHighlight
-                    style={[homeStyles.bottomLeftIcon, {opacity: this.state.bottomLeftIconOpacity}]}
-                    onPress={() => this.swiper.goToPage(0)}
+                <Animated.View
+                    style={[homeStyles.bottomLeftIcon, {opacity: bottomLeftIconOpacity}]}
                 >
-                    <Image style={{width: 32, height: 32}} source={Assets.icons.calendar}/>
-                </TouchableHighlight>
-                <TouchableHighlight
-                    style={[homeStyles.bottomRightIcon, {opacity: this.state.bottomRightIconOpacity}]}
-                    onPress={() => this.swiper.goToPage(2)}
+                    <TouchableHighlight onPress={() => this.swiper.goToPage(0)}>
+                        <Image style={{width: 32, height: 32}} source={Assets.icons.calendar}/>
+                    </TouchableHighlight>
+                </Animated.View>
+                <Animated.View
+                    style={[homeStyles.bottomRightIcon, {opacity: bottomRightIconOpacity}]}
+
                 >
-                    <Image style={{width: 32, height: 32}} source={Assets.icons.star}/>
-                </TouchableHighlight>
+                    <TouchableHighlight onPress={() => this.swiper.goToPage(2)}>
+                        <Image style={{width: 32, height: 32}} source={Assets.icons.star}/>
+                    </TouchableHighlight>
+                </Animated.View>
             </View>
         );
     }
@@ -182,12 +196,12 @@ export class HomePage extends Component<{}, HomePageState> {
 
     private animationIndex(index: number) {
         if (index < 1) {
-            this.setState({bottomLeftIconOpacity: index});
-            this.setState({bottomRightIconOpacity: 1});
+            this.state.bottomLeftIconOpacity.setValue(index);
+            this.state.bottomRightIconOpacity.setValue(1);
         }
         if (index > 1) {
-            this.setState({bottomRightIconOpacity: 1 - (index - 1)});
-            this.setState({bottomLeftIconOpacity: 1});
+            this.state.bottomRightIconOpacity.setValue(1 - (index - 1));
+            this.state.bottomLeftIconOpacity.setValue(1);
         }
     }
 }
