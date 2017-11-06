@@ -1,18 +1,15 @@
 import React, {Component} from "react";
-import {Animated, Dimensions, Image, ScrollView, TouchableWithoutFeedback, View} from "react-native";
+import {Animated, Dimensions, Image, ScrollView, Text, TouchableHighlight, View} from "react-native";
 import {Assets} from "../../../../assets";
 import {Relationship} from "../../../../models/member";
-import {relationshipStyles, styles} from "./styles";
+import {styles} from "./styles";
+import {RelationshipHeaderComponent} from "./components/relationshipHeader/relationshipHeaderComponent";
 
-let RelationshipHeaderComponent: React.SFC<{ relationship: Relationship }> = (props) => {
-    return (
-        <View style={[relationshipStyles.body, {backgroundColor: props.relationship.color}]}>
-        </View>
-    )
-};
 
 interface Props {
     relationships: Relationship[],
+    selectedRelationship: Relationship,
+    onSelect: (r: Relationship) => void;
 }
 
 interface State {
@@ -22,8 +19,7 @@ export class PersonHeader extends Component<Props, State> {
 
     constructor() {
         super();
-        this.state = {
-        };
+        this.state = {};
     }
 
     render() {
@@ -37,7 +33,9 @@ export class PersonHeader extends Component<Props, State> {
                         this.props.relationships.map((r, i) => (
                             <RelationshipHeaderComponent
                                 key={i}
+                                selected={this.props.selectedRelationship === r}
                                 relationship={r}
+                                onSelect={() => this.props.onSelect(r)}
                             />
                         ))
                     }
@@ -45,6 +43,8 @@ export class PersonHeader extends Component<Props, State> {
             </View>
         );
     }
+
+
 }
 
 

@@ -1,5 +1,6 @@
 export interface Relationship {
+    id: string;
     name: string;
-    icon: string;
+    avatar: string;
     color: string
 }

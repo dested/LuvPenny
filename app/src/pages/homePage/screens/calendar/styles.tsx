@@ -6,9 +6,18 @@ export let styles = StyleSheet.create({
     body: {
         flex: 1,
         alignItems: 'stretch',
-        backgroundColor: '#faf8e0',
-
-        borderRightColor: '#bbb',
-        borderRightWidth: StyleSheet.hairlineWidth
+        backgroundColor: '#e0cbce',
     },
+    calendar: {
+        height:250,
+        margin:4,
+        borderRadius:15,
+        backgroundColor: '#fafac4',
+    },
+    card: {
+        height:80,
+        margin:4,
+        borderRadius:15,
+        backgroundColor: '#FAE4E7',
+    }
 });

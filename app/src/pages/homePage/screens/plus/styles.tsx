@@ -6,9 +6,12 @@ export let styles = StyleSheet.create({
     body: {
         flex: 1,
         alignItems: 'stretch',
-        backgroundColor: '#faf8e0',
-
-        borderLeftColor: '#bbb',
-        borderLeftWidth: StyleSheet.hairlineWidth
+        backgroundColor: '#8ed0a7'
     },
+    card: {
+        height:160,
+        margin:8,
+        borderRadius:5,
+        backgroundColor: '#ACFACA',
+    }
 });

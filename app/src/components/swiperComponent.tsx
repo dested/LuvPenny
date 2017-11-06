@@ -1,8 +1,8 @@
 import React, {Component, ReactChild} from 'react';
 import {
     Animated,
-    Dimensions,
-    PanResponder, PanResponderInstance,
+    Dimensions, GestureResponderEvent, LayoutChangeEvent,
+    PanResponder, PanResponderGestureState, PanResponderInstance,
     View, ViewProperties,
 } from 'react-native';
 
@@ -46,7 +46,7 @@ export class SwiperComponent extends Component<Props, State> {
     }
 
     componentWillMount() {
-        const release = (e: any, gestureState: any) => {
+        const release = (e: GestureResponderEvent, gestureState: PanResponderGestureState) => {
             const relativeGestureDistance = gestureState.dx / this.state.viewWidth;
             const {vx} = gestureState;
 
@@ -105,7 +105,7 @@ export class SwiperComponent extends Component<Props, State> {
         this.props.onPageChange(pageNumber);
     }
 
-    handleLayout(event: any) {
+    handleLayout(event: LayoutChangeEvent) {
         const {width} = event.nativeEvent.layout;
 
         if (width) {

@@ -164,6 +164,13 @@ export class IconAnimator extends Component<Props, State> {
     }
 
     animationIndex(index: number) {
+        if (index === 1) {
+            this.state.bottomLeftIconOpacity.setValue(1);
+            this.state.bottomRightIconOpacity.setValue(1);
+            this.state.bottomLeftIconPosition.setValue(0);
+            this.state.bottomRightIconPosition.setValue(1);
+
+        }
         if (index < 1) {
             this.state.bottomLeftIconPosition.setValue(1 - index);
             this.state.bottomRightIconPosition.setValue(1 + (1 - index));

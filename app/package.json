@@ -4,6 +4,7 @@
 	"private": true,
 	"scripts": {
 		"start": "node node_modules/react-native/local-cli/cli.js start",
+		"deploy:android": "cd android && gradlew assembleRelease && adb install -r ./app/build/outputs/apk/app-debug.apk && cd ..",
 		"test": "jest"
 	},
 	"dependencies": {

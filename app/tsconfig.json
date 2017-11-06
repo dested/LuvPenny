@@ -10,7 +10,13 @@
     "moduleResolution": "node",
     "strictNullChecks": false,
     "jsx": "react-native",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "."/*,
+    "paths": {
+      "utils*//*": [
+        "src/utils*//*"
+      ]
+    }*/
   },
   "types": [
     "react",
