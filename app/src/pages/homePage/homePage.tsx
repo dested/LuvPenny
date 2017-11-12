@@ -1,9 +1,6 @@
 import React, {Component} from 'react';
 import {
-    Button, Image,
-    Platform, ScrollView,
-    Text,
-    View, StyleSheet, TouchableWithoutFeedback, Dimensions, Animated
+    View
 } from 'react-native';
 import {hideHeader, Navigation} from "../../utils/navigationUtils";
 import {SwiperComponent} from "../../components/swiperComponent";
@@ -16,17 +13,21 @@ import {Relationship} from "../../models/member";
 import {styles} from "./styles";
 
 
-interface HomePageState {
+interface State {
     currentPage: number;
     relationships: Relationship[];
     selectedRelationship: Relationship;
     refreshing: boolean;
 }
 
+interface Props {
+
+}
+
 @Navigation({
     ...hideHeader
 })
-export class HomePage extends Component<{}, HomePageState> {
+export class HomePage extends Component<Props, State> {
     private swiper: SwiperComponent;
     private iconAnimator: IconAnimator;
 
@@ -99,6 +100,13 @@ export class HomePage extends Component<{}, HomePageState> {
         }, Math.random() * 5000);
     }
 
+    shouldComponentUpdate(nextProps: Props, nextState: State) {
+        if (nextState.currentPage != this.state.currentPage) {
+            return false;
+        }
+        return true;
+    }
+
     render() {
         return (
             <View style={styles.body}>
@@ -109,9 +117,12 @@ export class HomePage extends Component<{}, HomePageState> {
                 />
                 <SwiperComponent
                     ref={r => this.swiper = r}
-                    index={1}
-                    onAnimation={(index) => this.animationIndex(index)}
-                    onPageChange={(index) => this.setState({currentPage: index})}
+                    startPage={1}
+                    onAnimation={(page) => this.animationIndex(page)}
+                    onPageChange={(page) => {
+                        this.setState({currentPage: page});
+                        this.iconAnimator.setPage(page)
+                    }}
                 >
                     <CalendarScreen refreshing={this.state.refreshing} onRefresh={this.onRefresh.bind(this)}/>
                     <HomeScreen refreshing={this.state.refreshing} onRefresh={this.onRefresh.bind(this)}/>
@@ -119,7 +130,6 @@ export class HomePage extends Component<{}, HomePageState> {
                 </SwiperComponent>
                 <IconAnimator
                     ref={r => this.iconAnimator = r}
-                    currentPage={this.state.currentPage}
                     gotoPage={(page) => this.swiper.gotoPage(page)}
                 />
             </View>

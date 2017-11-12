@@ -7,27 +7,24 @@ import {
 } from 'react-native';
 
 interface Props {
-    index?: number,
-    threshold?: number,
-    onPageChange?: (index: number) => void
-    onAnimation?: (index: number) => void
+    startPage: number,
+    onPageChange?: (page: number) => void
+    onAnimation?: (page: number) => void
     children?: ReactChild[]
 }
 
 interface State {
-    index: number,
+    page: number,
     scrollValue: Animated.Value,
     viewWidth: number
 }
 
 export class SwiperComponent extends Component<Props, State> {
 
-    static defaultProps: Props = {
-        index: 0,
-        threshold: 25,
-        onPageChange: (index) => {
+    static defaultProps: Partial<Props> = {
+        onPageChange: (page) => {
         },
-        onAnimation: (index) => {
+        onAnimation: (page) => {
         },
     };
     private _panResponder: PanResponderInstance;
@@ -36,34 +33,39 @@ export class SwiperComponent extends Component<Props, State> {
         super(props);
 
         this.state = {
-            index: props.index,
-            scrollValue: new Animated.Value(props.index),
+            page: props.startPage,
+            scrollValue: new Animated.Value(props.startPage),
             viewWidth: Dimensions.get('window').width,
         };
         this.state.scrollValue.addListener((s) => {
             this.props.onAnimation(s.value);
-        })
+        });
     }
 
+    componentDidMount(){
+        setTimeout(()=>{
+            this.props.onPageChange(this.props.startPage);
+        })
+    }
     componentWillMount() {
         const release = (e: GestureResponderEvent, gestureState: PanResponderGestureState) => {
             const relativeGestureDistance = gestureState.dx / this.state.viewWidth;
             const {vx} = gestureState;
 
-            let newIndex = this.state.index;
+            let newPage = this.state.page;
 
             if (relativeGestureDistance < -0.5 || (relativeGestureDistance < 0 && vx <= -0.5)) {
-                newIndex = newIndex + 1;
+                newPage = newPage + 1;
             } else if (relativeGestureDistance > 0.5 || (relativeGestureDistance > 0 && vx >= 0.5)) {
-                newIndex = newIndex - 1;
+                newPage = newPage - 1;
             }
 
-            this.gotoPage(newIndex);
+            this.gotoPage(newPage);
         };
 
         this._panResponder = PanResponder.create({
             onMoveShouldSetPanResponder: (e, gestureState) => {
-                const {threshold} = this.props;
+                const threshold = 25;
 
                 // Claim responder if it's a horizontal pan
                 if (Math.abs(gestureState.dx) > Math.abs(gestureState.dy)) {
@@ -84,7 +86,7 @@ export class SwiperComponent extends Component<Props, State> {
             // Dragging, move the view with the touch
             onPanResponderMove: (e, gestureState) => {
                 let dx = gestureState.dx;
-                let offsetX = -dx / this.state.viewWidth + this.state.index;
+                let offsetX = -dx / this.state.viewWidth + this.state.page;
                 if (offsetX < 0 || offsetX > this.props.children.length - 1) return;
                 this.state.scrollValue.setValue(offsetX);
             }
@@ -99,7 +101,7 @@ export class SwiperComponent extends Component<Props, State> {
         // Don't scroll outside the bounds of the screens
         pageNumber = Math.max(0, Math.min(pageNumber, this.props.children.length - 1));
         this.setState({
-            index: pageNumber
+            page: pageNumber
         });
 
         Animated

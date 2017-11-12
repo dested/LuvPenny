@@ -4,14 +4,13 @@ import {Assets} from "../../../../assets";
 import {styles} from "./styles";
 
 interface Props {
-    currentPage: number,
     gotoPage: (page: number) => void
 }
 
 interface State {
     bottomLeftIconOpacity: Animated.Value,
     bottomRightIconOpacity: Animated.Value
-
+    currentPage: number,
     bottomLeftIconPosition: Animated.Value
     bottomRightIconPosition: Animated.Value
 }
@@ -26,11 +25,19 @@ export class IconAnimator extends Component<Props, State> {
 
             bottomLeftIconOpacity: new Animated.Value(1),
             bottomRightIconOpacity: new Animated.Value(1),
+            currentPage: 1
         };
     }
 
-    render() {
+    setPage(page: number) {
+        this.setState({currentPage: page});
+    }
 
+    shouldComponentUpdate() {
+        return false;
+    }
+
+    render() {
         const bottomLeftIconPosition = this.state.bottomLeftIconPosition.interpolate({
             inputRange: [-1, 0, 1],
             outputRange: [-32 - 10, 10, Dimensions.get("screen").width - 32 - 10],
@@ -142,7 +149,7 @@ export class IconAnimator extends Component<Props, State> {
     }
 
     private leftIconTap() {
-        switch (this.props.currentPage) {
+        switch (this.state.currentPage) {
             case 0:
                 this.props.gotoPage(1);
                 break;
@@ -153,7 +160,7 @@ export class IconAnimator extends Component<Props, State> {
     }
 
     private rightIconTap() {
-        switch (this.props.currentPage) {
+        switch (this.state.currentPage) {
             case 1:
                 this.props.gotoPage(2);
                 break;
@@ -187,4 +194,5 @@ export class IconAnimator extends Component<Props, State> {
             this.state.bottomRightIconOpacity.setValue(1);
         }
     }
+
 }
