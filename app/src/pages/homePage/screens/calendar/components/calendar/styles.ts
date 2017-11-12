@@ -2,10 +2,8 @@ import {StyleSheet} from "react-native";
 import {CommonStyles} from "../../../../../../utils/commonStyles";
 
 
-let dayHeight = 50;
 export let styles = StyleSheet.create({
-    body: {
-        height: dayHeight * 5,
+    calendarBody: {
     },
     week: {
         flex: 1,
@@ -51,5 +49,12 @@ export let styles = StyleSheet.create({
         flex:1,
         alignItems: 'center',
         justifyContent: 'center'
-    }
+    },
+
+    flexPadding: {
+        flex: 1,
+    },
+    imageSize: {
+        width:32,height:32,
+    },
 });

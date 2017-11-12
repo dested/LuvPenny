@@ -2,6 +2,7 @@ import React from "react";
 import moment, {Moment} from "moment";
 import {Image, Text, TouchableOpacity, View} from "react-native";
 import {styles} from "./styles";
+import {Assets} from "../../../../../../assets";
 
 interface Props {
     month: number;
@@ -58,11 +59,11 @@ export let CalendarComponent: React.SFC<Props> = (props) => {
     return (
         <View>
             <View style={styles.calendarHeader}>
-                <View style={{flex: 1}}>
+                <View style={styles.flexPadding}>
 
                 </View>
                 <TouchableOpacity onPress={() => props.updateCalendar(props.month === 1 ? 12 : props.month - 1, props.month === 1 ? props.year - 1 : props.year)} style={styles.calendarHeaderLeft}>
-                    <Text>&lt;</Text>
+                    <Image style={styles.imageSize} source={Assets.icons.left}/>
                 </TouchableOpacity>
                 <View style={styles.monthHeader}>
                     <Text style={styles.monthHeaderText}>
@@ -70,24 +71,24 @@ export let CalendarComponent: React.SFC<Props> = (props) => {
                     </Text>
                 </View>
                 <TouchableOpacity onPress={() => props.updateCalendar(props.month === 12 ? 1 : props.month + 1, props.month === 12 ? props.year + 1 : props.year)} style={styles.calendarHeaderRight}>
-                    <Text>&gt;</Text>
+                    <Image style={styles.imageSize} source={Assets.icons.right}/>
                 </TouchableOpacity>
-                <View style={{flex: 1}}>
+                <View style={styles.flexPadding}>
 
                 </View>
             </View>
-            <View style={styles.body}>
+            <View style={[styles.calendarBody,{height:50*calendarDays.length}]}>
                 {calendarDays.map((week, k) => (
                     <View key={k} style={styles.week}>
                         {week.map(day => {
                             let dayNumber = getDayNumber(month, day);
                             return (
-                                <View key={day} style={styles.day}>
+                                <TouchableOpacity key={day} style={styles.day}>
                                     <View style={[styles.dayCircle,
                                         dayNumber === '' ? {backgroundColor: 'grey'} : {}]}>
                                         <Text style={styles.dayText}>{dayNumber}</Text>
                                     </View>
-                                </View>
+                                </TouchableOpacity>
                             );
                         })}
                     </View>

@@ -20,6 +20,7 @@ interface HomePageState {
     currentPage: number;
     relationships: Relationship[];
     selectedRelationship: Relationship;
+    refreshing: boolean;
 }
 
 @Navigation({
@@ -86,8 +87,16 @@ export class HomePage extends Component<{}, HomePageState> {
         this.state = {
             currentPage: 1,
             relationships: relationships,
-            selectedRelationship: relationships[0]
+            selectedRelationship: relationships[0],
+            refreshing: false
         };
+    }
+
+    private onRefresh() {
+        this.setState({refreshing: true});
+        setTimeout(() => {
+            this.setState({refreshing: false});
+        }, Math.random() * 5000);
     }
 
     render() {
@@ -104,9 +113,9 @@ export class HomePage extends Component<{}, HomePageState> {
                     onAnimation={(index) => this.animationIndex(index)}
                     onPageChange={(index) => this.setState({currentPage: index})}
                 >
-                    <CalendarScreen/>
-                    <HomeScreen/>
-                    <PlusScreen/>
+                    <CalendarScreen refreshing={this.state.refreshing} onRefresh={this.onRefresh.bind(this)}/>
+                    <HomeScreen refreshing={this.state.refreshing} onRefresh={this.onRefresh.bind(this)}/>
+                    <PlusScreen refreshing={this.state.refreshing} onRefresh={this.onRefresh.bind(this)}/>
                 </SwiperComponent>
                 <IconAnimator
                     ref={r => this.iconAnimator = r}

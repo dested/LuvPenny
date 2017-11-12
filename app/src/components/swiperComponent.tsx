@@ -91,6 +91,10 @@ export class SwiperComponent extends Component<Props, State> {
         });
     }
 
+    shouldComponentUpdate(nextProps: Props, nextState: State) {
+        return false;
+    }
+
     gotoPage(pageNumber: number) {
         // Don't scroll outside the bounds of the screens
         pageNumber = Math.max(0, Math.min(pageNumber, this.props.children.length - 1));
@@ -127,7 +131,6 @@ export class SwiperComponent extends Component<Props, State> {
             flex: 1,
             flexDirection: 'row',
         };
-
         return (
             <View onLayout={this.handleLayout.bind(this)} style={{flex: 1, overflow: 'hidden'}}>
                 <Animated.View
