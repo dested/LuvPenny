@@ -72,7 +72,7 @@ export class HomePage extends Component<Props, State> {
         this.setState({refreshing: true});
         setTimeout(() => {
             this.setState({refreshing: false});
-        }, Math.random() * 5000);
+        }, Math.random()*3000);
     }
 
     shouldComponentUpdate(nextProps: Props, nextState: State) {

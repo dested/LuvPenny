@@ -21,12 +21,7 @@ interface State {
 
 export class SwiperComponent extends Component<Props, State> {
 
-    static defaultProps: Partial<Props> = {
-        onPageChange: (page) => {
-        },
-        onAnimation: (page) => {
-        },
-    };
+
     private _panResponder: PanResponderInstance;
 
     constructor(props: Props) {
@@ -42,11 +37,12 @@ export class SwiperComponent extends Component<Props, State> {
         });
     }
 
-    componentDidMount(){
-        setTimeout(()=>{
+    componentDidMount() {
+        setTimeout(() => {
             this.props.onPageChange(this.props.startPage);
         })
     }
+
     componentWillMount() {
         const release = (e: GestureResponderEvent, gestureState: PanResponderGestureState) => {
             const relativeGestureDistance = gestureState.dx / this.state.viewWidth;
@@ -94,7 +90,36 @@ export class SwiperComponent extends Component<Props, State> {
     }
 
     shouldComponentUpdate(nextProps: Props, nextState: State) {
-        return false;
+        if (nextState.page !== this.state.page)
+            return false;
+        if (this.shallowEqualObjects(this.props, nextProps)) {
+            return false;
+        }
+        console.log(nextProps, this.props);
+        return true;
+    }
+
+    shallowEqualObjects(objA: any, objB: any) {
+        if (objA === objB) {
+            return true;
+        }
+
+        const aKeys = Object.keys(objA);
+        const bKeys = Object.keys(objB);
+        const len = aKeys.length;
+
+        if (bKeys.length !== len) {
+            return false;
+        }
+
+        for (let i = 0; i < len; i++) {
+            const key = aKeys[i];
+            if (objA[key] !== objB[key]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     gotoPage(pageNumber: number) {
@@ -120,6 +145,7 @@ export class SwiperComponent extends Component<Props, State> {
     }
 
     render() {
+        console.log('rendewr')
         const scenes = React.Children.map(this.props.children, (child: any) => {
             return React.cloneElement(child, {style: [child.props.style, {flex: 1}]});
         });

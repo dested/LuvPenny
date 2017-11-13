@@ -5,6 +5,7 @@ import {styles} from "./styles";
 import {CalendarComponent} from "./components/calendar/calendarComponent";
 import {BottomScrollViewPadding} from "../../components/bottomScrollViewPadding";
 import {ScrollViewFader} from "../../components/scrollViewFader";
+import {MainScrollView} from "../../components/mainScrollView/mainScrollView";
 
 interface State {
     month: number;
@@ -13,28 +14,22 @@ interface State {
 
 interface Props {
     refreshing: boolean;
-    onRefresh: ()=>void;
+    onRefresh: () => void;
 }
 
 export class CalendarScreen extends React.Component<Props, State> {
-    private svf: ScrollViewFader;
-
     constructor() {
         super();
-        this.state = {month: 11, year: 2017 };
+        this.state = {month: 11, year: 2017};
     }
 
     render() {
         return (
             <View style={styles.body}>
-                <ScrollView
-                    onScroll={(r) => this.svf.handleScroll(r)}
-                    refreshControl={
-                    <RefreshControl
-                        refreshing={this.props.refreshing}
-                        onRefresh={() => this.props.onRefresh()}
-                    />
-                }>
+                <MainScrollView
+                    refreshing={this.props.refreshing}
+                    onRefresh={() => this.props.onRefresh()}
+                >
                     <View style={styles.calendarCard}>
                         <CalendarComponent month={this.state.month} year={this.state.year} updateCalendar={(m, y) => this.setState({month: m, year: y})}/>
                     </View>
@@ -43,9 +38,7 @@ export class CalendarScreen extends React.Component<Props, State> {
                             <View key={i} style={styles.card}/>
                         ))
                     }
-                    <BottomScrollViewPadding/>
-                </ScrollView>
-                <ScrollViewFader ref={(svf => this.svf = svf)}/>
+                </MainScrollView>
             </View>
         );
     }
