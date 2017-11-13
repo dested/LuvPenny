@@ -11,9 +11,11 @@ export let styles = StyleSheet.create({
         backgroundColor:'#ffffff'
     },
     image: {
-        borderRadius: 25,
-        height: 50,
-        width: 50,
+
+    },
+    imageBody: {
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     text: {
         paddingTop: 5,

@@ -9,6 +9,8 @@ interface Props {
     scrollPosition: Animated.Value;
     onSelect: () => void;
 }
+let animatedTwo = new Animated.Value(2);
+let animatedFour = new Animated.Value(4);
 
 export let RelationshipHeaderComponent: React.SFC<Props> = (props) => {
     let size = props.scrollPosition.interpolate({
@@ -24,7 +26,21 @@ export let RelationshipHeaderComponent: React.SFC<Props> = (props) => {
         outputRange: [28, 28, 20, 28, 28],
     });
 
-    let animatedTwo = new Animated.Value(2);
+
+    let paddedSize = Animated.add(size,animatedFour);
+    let imageBodyStyles = {
+        marginTop: marginTop,
+        width: paddedSize,
+        height: paddedSize,
+        borderRadius: Animated.divide(paddedSize, animatedTwo),
+        backgroundColor: props.relationship.color
+    };
+
+    let imageStyles = {
+        width: size,
+        height: size,
+        borderRadius: Animated.divide(size, animatedTwo)
+    };
 
     return (
         <TouchableOpacity
@@ -32,10 +48,10 @@ export let RelationshipHeaderComponent: React.SFC<Props> = (props) => {
             onPress={() => props.onSelect()}
         >
             <View style={styles.body}>
-                <Animated.View style={[styles.image, {marginTop: marginTop, width: size, height: size, borderRadius: Animated.divide(size, animatedTwo), backgroundColor: props.relationship.color}]}>
+                <Animated.View style={[styles.imageBody, imageBodyStyles]}>
                     <Animated.Image
-                        source={{uri: props.relationship.avatar}}
-                        style={[styles.image, {width: size, height: size, borderRadius: Animated.divide(size, animatedTwo)}]}
+                        source={props.relationship.avatar.length?{uri: props.relationship.avatar}:props.relationship.avatar}
+                        style={[styles.image, imageStyles]}
                     />
                 </Animated.View>
                 <Animated.Text style={[styles.text, {opacity: opacity}]}>
