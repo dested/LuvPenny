@@ -1,5 +1,16 @@
 import React, {Component} from "react";
-import {Animated, Dimensions, Image, NativeScrollEvent, NativeSyntheticEvent, ScrollView, ScrollViewStatic, Text, TouchableHighlight, View} from "react-native";
+import {
+    Animated,
+    Dimensions,
+    Image,
+    NativeScrollEvent,
+    NativeSyntheticEvent,
+    ScrollView,
+    ScrollViewStatic,
+    Text,
+    TouchableHighlight,
+    View
+} from "react-native";
 import {Assets} from "../../../../assets";
 import {Relationship} from "../../../../models/member";
 import {styles} from "./styles";
@@ -26,6 +37,9 @@ export class PersonHeader extends Component<Props, State> {
         this.state = {
             scrollPosition: new Animated.Value(0)
         };
+        this.state.scrollPosition.addListener((r) => {
+            this.scrollPosition = Math.abs(r.value);
+        })
     }
 
     private snapDragPosition() {
@@ -35,10 +49,6 @@ export class PersonHeader extends Component<Props, State> {
         }, 300);
     }
 
-    private handleScroll(r: NativeSyntheticEvent<NativeScrollEvent>) {
-        this.scrollPosition = Math.abs(r.nativeEvent.contentOffset.x);
-        this.state.scrollPosition.setValue(r.nativeEvent.contentOffset.x / 90);
-    }
 
     private selectPerson(r: Relationship) {
         this.scrollToIndex(this.props.relationships.indexOf(r) + 1);
@@ -59,19 +69,29 @@ export class PersonHeader extends Component<Props, State> {
 
 
     render() {
+        let animatedDivision = Animated.divide(this.state.scrollPosition, new Animated.Value(90));
         return (
             <View style={styles.personHeader}>
                 <ScrollView
                     ref={(r) => this.scrollView = r as any}
-                    onScroll={(r) => this.handleScroll(r)}
+                    scrollEventThrottle={16}
+                    onScroll={Animated.event(
+                        [{
+                            nativeEvent: {
+                                contentOffset: {
+                                    x: this.state.scrollPosition
+                                }
+                            }
+                        }]
+                    )}
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
                     onScrollEndDrag={() => this.snapDragPosition()}
                 >
-                    <View style={styles.leftPadding}></View>
+                    <View style={styles.leftPadding}/>
                     <RelationshipHeaderComponent
                         index={0}
-                        scrollPosition={this.state.scrollPosition}
+                        scrollPosition={animatedDivision}
                         relationship={{name: 'Everyone', id: '', color: '#FFFFFF', avatar: Assets.icons.home}}
                         onSelect={() => this.selectEveryone()}
                     />
@@ -80,21 +100,21 @@ export class PersonHeader extends Component<Props, State> {
                             <RelationshipHeaderComponent
                                 key={i}
                                 index={i + 1}
-                                scrollPosition={this.state.scrollPosition}
+                                scrollPosition={animatedDivision}
                                 relationship={r}
                                 onSelect={() => this.selectPerson(r)}
                             />
                         ))
                     }
-                    <View style={styles.rightPadding}></View>
+                    <View style={styles.rightPadding}/>
                     <RelationshipHeaderComponent
                         index={this.props.relationships.length + 1}
-                        scrollPosition={this.state.scrollPosition}
+                        scrollPosition={animatedDivision}
                         relationship={{name: ' ', id: '', color: '#FFFFFF', avatar: Assets.icons.add_user}}
                         onSelect={() => this.addNew()}
                     />
                 </ScrollView>
-                <View style={styles.highlight} pointerEvents={"none"}></View>
+                <View style={styles.highlight} pointerEvents={"none"}/>
             </View>
         );
     }

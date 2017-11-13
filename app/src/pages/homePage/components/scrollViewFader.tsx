@@ -2,29 +2,25 @@ import React from "react";
 import {Animated, NativeScrollEvent, NativeSyntheticEvent, View} from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 
-interface State {
+interface Props {
     scrollPosition: Animated.Value;
 }
 
-export class ScrollViewFader extends React.Component<{}, State> {
+export class ScrollViewFader extends React.Component<Props> {
 
-    constructor(props: {}, context: any) {
+    constructor(props: Props, context: any) {
         super(props, context);
         this.state = {
-            scrollPosition: new Animated.Value(0)
         };
     }
 
-    handleScroll(r: NativeSyntheticEvent<NativeScrollEvent>) {
-        this.state.scrollPosition.setValue(r.nativeEvent.contentOffset.y);
-    }
 
     shouldComponentUpdate() {
         return false;
     }
 
     render() {
-        const fadeMove = this.state.scrollPosition.interpolate({
+        const fadeMove = this.props.scrollPosition.interpolate({
             inputRange: [0, 100, 10000],
             outputRange: [-101, 0, 0]
         });

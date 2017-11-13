@@ -18,8 +18,6 @@ interface Props {
 const Aux = (props: any) => props.children;
 
 export class MainScrollView extends React.Component<Props, State> {
-    private svf: ScrollViewFader;
-
     constructor(props: Props, context: any) {
         super(props, context);
         this.state = {
@@ -31,7 +29,16 @@ export class MainScrollView extends React.Component<Props, State> {
         return (
             <Aux>
                 <ScrollView
-                    onScroll={(r) => this.svf.handleScroll(r)}
+                    scrollEventThrottle={16}
+                    onScroll={Animated.event(
+                        [{
+                            nativeEvent: {
+                                contentOffset: {
+                                    y: this.state.scrollPosition
+                                }
+                            }
+                        }]
+                    )}
                     refreshControl={
                         <RefreshControl
                             refreshing={this.props.refreshing}
@@ -41,7 +48,7 @@ export class MainScrollView extends React.Component<Props, State> {
                     {this.props.children}
                     <BottomScrollViewPadding/>
                 </ScrollView>
-                <ScrollViewFader ref={(svf => this.svf = svf)}/>
+                <ScrollViewFader scrollPosition={this.state.scrollPosition}/>
             </Aux>
         )
     }

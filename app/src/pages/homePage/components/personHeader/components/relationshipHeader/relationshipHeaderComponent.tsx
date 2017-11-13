@@ -6,7 +6,7 @@ import {styles} from "./styles";
 interface Props {
     relationship: Relationship;
     index: number;
-    scrollPosition: Animated.Value;
+    scrollPosition: Animated.AnimatedInterpolation;
     onSelect: () => void;
 }
 let animatedTwo = new Animated.Value(2);
