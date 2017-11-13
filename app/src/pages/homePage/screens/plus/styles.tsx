@@ -1,17 +1,18 @@
 import {
     StyleSheet
 } from 'react-native';
+import {CommonStyles} from "../../../../utils/commonStyles";
 
 export let styles = StyleSheet.create({
     body: {
         flex: 1,
         alignItems: 'stretch',
-        backgroundColor: '#8ed0a7'
+        ...CommonStyles.pageBackgroundColor,
+        borderLeftWidth:StyleSheet.hairlineWidth
     },
     card: {
-        height:160,
-        margin:8,
-        borderRadius:5,
-        backgroundColor: '#ACFACA',
+        height: 160,
+        ...CommonStyles.card,
+        borderColor: '#ACFACA',
     }
 });

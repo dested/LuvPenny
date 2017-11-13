@@ -3,8 +3,7 @@ import {CommonStyles} from "../../../../../../utils/commonStyles";
 
 
 export let styles = StyleSheet.create({
-    calendarBody: {
-    },
+    calendarBody: {},
     week: {
         flex: 1,
         flexDirection: 'row',
@@ -12,7 +11,10 @@ export let styles = StyleSheet.create({
     day: {
         // borderWidth: StyleSheet.hairlineWidth,
         flex: 1,
-        justifyContent: 'center'
+        justifyContent: 'center',
+        backgroundColor: '#e5e5e5',
+        borderRadius: 5,
+        margin: 2
     },
     dayCircle: {
         alignSelf: 'center',
@@ -21,7 +23,7 @@ export let styles = StyleSheet.create({
         borderRadius: 10,
         width: 20,
         height: 20,
-        backgroundColor: 'white'
+        backgroundColor: '#FFFFFF'
     },
     dayText: {
         fontSize: 10,
@@ -41,12 +43,12 @@ export let styles = StyleSheet.create({
         fontSize: 15
     },
     calendarHeaderLeft: {
-        flex:1,
+        flex: 1,
         alignItems: 'center',
         justifyContent: 'center'
     },
     calendarHeaderRight: {
-        flex:1,
+        flex: 1,
         alignItems: 'center',
         justifyContent: 'center'
     },
@@ -55,6 +57,6 @@ export let styles = StyleSheet.create({
         flex: 1,
     },
     imageSize: {
-        width:32,height:32,
+        width: 32, height: 32,
     },
 });

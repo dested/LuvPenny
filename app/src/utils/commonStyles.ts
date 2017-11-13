@@ -1,6 +1,11 @@
 import {Platform, StyleSheet} from 'react-native'
 
 export let CommonStyles = {
+    card:{
+        margin:10,
+        borderRadius:10,
+        borderWidth:3,
+    },
     centerContent: StyleSheet.create({
         centerContent: {
             flex: 1,
