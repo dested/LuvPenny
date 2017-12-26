@@ -1,9 +1,9 @@
-import React, {ReactChild} from "react";
-import {Animated, NativeScrollEvent, NativeSyntheticEvent, RefreshControl, ScrollView, View} from "react-native";
-import LinearGradient from "react-native-linear-gradient";
-import {styles} from "../../screens/calendar/styles";
-import {BottomScrollViewPadding} from "../bottomScrollViewPadding";
-import {ScrollViewFader} from "../scrollViewFader";
+import React, {ReactChild} from 'react';
+import {Animated, NativeScrollEvent, NativeSyntheticEvent, RefreshControl, ScrollView, View} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import {styles} from '../../screens/calendar/styles';
+import {BottomScrollViewPadding} from '../bottomScrollViewPadding';
+import {ScrollViewFader} from '../scrollViewFader';
 
 interface State {
     scrollPosition: Animated.Value;
@@ -21,7 +21,7 @@ export class MainScrollView extends React.Component<Props, State> {
     constructor(props: Props, context: any) {
         super(props, context);
         this.state = {
-            scrollPosition: new Animated.Value(0),
+            scrollPosition: new Animated.Value(0)
         };
     }
 
@@ -30,26 +30,24 @@ export class MainScrollView extends React.Component<Props, State> {
             <Aux>
                 <ScrollView
                     scrollEventThrottle={16}
-                    onScroll={Animated.event(
-                        [{
+                    onScroll={Animated.event([
+                        {
                             nativeEvent: {
                                 contentOffset: {
                                     y: this.state.scrollPosition
                                 }
                             }
-                        }]
-                    )}
+                        }
+                    ])}
                     refreshControl={
-                        <RefreshControl
-                            refreshing={this.props.refreshing}
-                            onRefresh={() => this.props.onRefresh()}
-                        />
-                    }>
+                        <RefreshControl refreshing={this.props.refreshing} onRefresh={() => this.props.onRefresh()} />
+                    }
+                >
                     {this.props.children}
-                    <BottomScrollViewPadding/>
+                    <BottomScrollViewPadding />
                 </ScrollView>
-                <ScrollViewFader scrollPosition={this.state.scrollPosition}/>
+                <ScrollViewFader scrollPosition={this.state.scrollPosition} />
             </Aux>
-        )
+        );
     }
 }

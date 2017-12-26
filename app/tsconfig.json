@@ -4,6 +4,7 @@
     "noEmit": true,
     "noEmitOnError": false,
     "experimentalDecorators": true,
+    "allowUnreachableCode": true,
     "strict": true,
     "target": "es2015",
     "module": "es2015",
@@ -11,12 +12,9 @@
     "strictNullChecks": false,
     "jsx": "react-native",
     "allowSyntheticDefaultImports": true,
-    "baseUrl": "."/*,
-    "paths": {
-      "utils*//*": [
-        "src/utils*//*"
-      ]
-    }*/
+    "baseUrl": ".",
+    "skipLibCheck": true,
+    "allowJs": true
   },
   "types": [
     "react",
@@ -26,7 +24,6 @@
   "exclude": [
     "android",
     "ios",
-    "build",
     "node_modules"
   ]
 }

@@ -1,22 +1,21 @@
-import React, {Component} from "react";
-import {Animated, Dimensions, Image, TouchableWithoutFeedback, View} from "react-native";
-import {Assets} from "../../../../assets";
-import {styles} from "./styles";
+import React, {Component} from 'react';
+import {Animated, Dimensions, Image, TouchableWithoutFeedback, View} from 'react-native';
+import {Assets} from '../../../../assets';
+import {styles} from './styles';
 
 interface Props {
-    gotoPage: (page: number) => void
+    gotoPage: (page: number) => void;
 }
 
 interface State {
-    bottomLeftIconOpacity: Animated.Value,
-    bottomRightIconOpacity: Animated.Value
-    currentPage: number,
-    bottomLeftIconPosition: Animated.Value
-    bottomRightIconPosition: Animated.Value
+    bottomLeftIconOpacity: Animated.Value;
+    bottomRightIconOpacity: Animated.Value;
+    currentPage: number;
+    bottomLeftIconPosition: Animated.Value;
+    bottomRightIconPosition: Animated.Value;
 }
 
 export class IconAnimator extends Component<Props, State> {
-
     constructor() {
         super();
         this.state = {
@@ -40,108 +39,105 @@ export class IconAnimator extends Component<Props, State> {
     render() {
         const bottomLeftIconPosition = this.state.bottomLeftIconPosition.interpolate({
             inputRange: [-1, 0, 1],
-            outputRange: [-32 - 10, 10, Dimensions.get("screen").width - 32 - 10],
+            outputRange: [-32 - 10, 10, Dimensions.get('screen').width - 32 - 10]
         });
 
         const bottomRightIconPosition = this.state.bottomRightIconPosition.interpolate({
             inputRange: [0, 1, 2],
-            outputRange: [10, Dimensions.get("screen").width - 32 - 10, Dimensions.get("screen").width],
+            outputRange: [10, Dimensions.get('screen').width - 32 - 10, Dimensions.get('screen').width]
         });
 
         const bottomLeftIconOpacity = this.state.bottomRightIconOpacity.interpolate({
             inputRange: [0, 1],
-            outputRange: [0, 1],
+            outputRange: [0, 1]
         });
 
         const bottomRightIconOpacity = this.state.bottomLeftIconOpacity.interpolate({
             inputRange: [0, 1],
-            outputRange: [0, 1],
+            outputRange: [0, 1]
         });
-
 
         const bottomLeftIconOpacityInverted = this.state.bottomRightIconOpacity.interpolate({
             inputRange: [0, 1],
-            outputRange: [1, 0],
+            outputRange: [1, 0]
         });
 
         const bottomRightIconOpacityInverted = this.state.bottomLeftIconOpacity.interpolate({
             inputRange: [0, 1],
-            outputRange: [1, 0],
+            outputRange: [1, 0]
         });
 
         return (
             <View>
                 <Animated.View
-                    style={
-                        [
-                            styles.bottomLeftIcon,
-                            {
-                                opacity: bottomLeftIconOpacity,
-                                transform: [{
+                    style={[
+                        styles.bottomLeftIcon,
+                        {
+                            opacity: bottomLeftIconOpacity,
+                            transform: [
+                                {
                                     translateX: bottomLeftIconPosition
-                                }]
-                            }
-                        ]
-                    }
+                                }
+                            ]
+                        }
+                    ]}
                 >
                     <TouchableWithoutFeedback onPress={() => this.leftIconTap()}>
-                        <Image style={{width: 32, height: 32}} source={Assets.icons.calendar}/>
+                        <Image style={{width: 32, height: 32}} source={Assets.icons.calendar} />
                     </TouchableWithoutFeedback>
                 </Animated.View>
 
                 <Animated.View
-                    style={
-                        [
-                            styles.bottomLeftIcon,
-                            {
-                                opacity: bottomLeftIconOpacityInverted,
-                                transform: [{
+                    style={[
+                        styles.bottomLeftIcon,
+                        {
+                            opacity: bottomLeftIconOpacityInverted,
+                            transform: [
+                                {
                                     translateX: bottomLeftIconPosition
-                                }]
-                            }
-                        ]
-                    }
+                                }
+                            ]
+                        }
+                    ]}
                 >
                     <TouchableWithoutFeedback onPress={() => this.leftIconTap()}>
-                        <Image style={{width: 32, height: 32}} source={Assets.icons.home}/>
+                        <Image style={{width: 32, height: 32}} source={Assets.icons.home} />
                     </TouchableWithoutFeedback>
                 </Animated.View>
 
-
                 <Animated.View
-                    style={
-                        [
-                            styles.bottomRightIcon,
-                            {
-                                opacity: bottomRightIconOpacity,
-                                transform: [{
+                    style={[
+                        styles.bottomRightIcon,
+                        {
+                            opacity: bottomRightIconOpacity,
+                            transform: [
+                                {
                                     translateX: bottomRightIconPosition
-                                }]
-                            }
-                        ]
-                    }
+                                }
+                            ]
+                        }
+                    ]}
                 >
                     <TouchableWithoutFeedback onPress={() => this.rightIconTap()}>
-                        <Image style={{width: 32, height: 32}} source={Assets.icons.star}/>
+                        <Image style={{width: 32, height: 32}} source={Assets.icons.star} />
                     </TouchableWithoutFeedback>
                 </Animated.View>
 
-
                 <Animated.View
-                    style={
-                        [
-                            styles.bottomRightIcon,
-                            {
-                                opacity: bottomRightIconOpacityInverted,
-                                transform: [{
+                    style={[
+                        styles.bottomRightIcon,
+                        {
+                            opacity: bottomRightIconOpacityInverted,
+                            transform: [
+                                {
                                     translateX: bottomRightIconPosition
-                                }]
-                            }
-                        ]
-                    }
+                                }
+                            ]
+                        }
+                    ]}
                 >
                     <TouchableWithoutFeedback onPress={() => this.rightIconTap()}>
-                        <Image style={{width: 32, height: 32}} source={Assets.icons.home}/>
+                        <Image style={{width: 32, height: 32}} source={Assets.icons.home} />
                     </TouchableWithoutFeedback>
                 </Animated.View>
             </View>
@@ -176,12 +172,10 @@ export class IconAnimator extends Component<Props, State> {
             this.state.bottomRightIconOpacity.setValue(1);
             this.state.bottomLeftIconPosition.setValue(0);
             this.state.bottomRightIconPosition.setValue(1);
-
         }
         if (index < 1) {
             this.state.bottomLeftIconPosition.setValue(1 - index);
             this.state.bottomRightIconPosition.setValue(1 + (1 - index));
-
 
             this.state.bottomRightIconOpacity.setValue(index);
             this.state.bottomLeftIconOpacity.setValue(1);
@@ -194,5 +188,4 @@ export class IconAnimator extends Component<Props, State> {
             this.state.bottomRightIconOpacity.setValue(1);
         }
     }
-
 }

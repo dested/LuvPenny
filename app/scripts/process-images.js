@@ -1,13 +1,23 @@
 let glob = require("glob");
 let fs = require("fs");
+const prettier = require("prettier");
+var readJson = (path, cb) => {
+    fs.readFile(require.resolve(path), (err, data) => {
+        if (err)
+            cb(err)
+        else
+            cb( JSON.parse(data))
+    })
+}
 
 // options is optional
-glob("./assets/**/*", {}, (er, files) => {
+glob("assets/**/*", {}, (er, files) => {
+
     let pieces = [];
     for (let i = 0; i < files.length; i++) {
         let file = files[i];
         if (!file.endsWith('.png')) continue;
-        let piece = [file, ...file.replace('.png', '').replace(/ /g,'_').replace('./assets/', '').split('/')];
+        let piece = [file, ...file.replace('.png', '').replace('assets/', '').split('/')];
         pieces.push(piece);
     }
 
@@ -18,7 +28,7 @@ glob("./assets/**/*", {}, (er, files) => {
         for (let i = 1; i < piece.length; i++) {
             let item = piece[i];
             if (i === piece.length - 1) {
-                curPiece[item] = `require('.${piece[0]}')`;
+                curPiece[item] = `require('../${piece[0]}')`;
             }
             else {
                 if (!curPiece[item]) {
@@ -30,12 +40,15 @@ glob("./assets/**/*", {}, (er, files) => {
     }
 
 
-    let result = JSON.stringify(assets, null, '\t').replace(/"require\('(.*)'\)"/g, (_, value) => {
+    let result = JSON.stringify(assets, null, '    ').replace(/"require\('(.*)'\)"/g, (_, value) => {
         return "require('" + value + "')"
     });
 
-    fs.writeFileSync("./src/assets.ts", `export const Assets = ${result};`);
-    console.log(`Updated assets.ts with ${pieces.length} images.`)
+    readJson('../.prettierrc',(p)=>{
+        let prettyResult = prettier.format("export const Assets = " + result,p);
+        fs.writeFileSync("src/assets.ts", prettyResult);
+        console.log(`Updated assets.ts with ${pieces.length} images.`)
+    })
 });
 
 

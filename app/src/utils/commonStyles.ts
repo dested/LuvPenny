@@ -1,10 +1,29 @@
-import {Platform, StyleSheet} from 'react-native'
+import {Platform, StyleSheet, ViewStyle} from 'react-native';
+
+
+export let cardStyles = (cardElevation: number): ViewStyle => (
+    {
+        borderRadius: 10,
+        margin: 10,
+        ...Platform.select({
+            android: {
+                elevation: cardElevation
+            } as ViewStyle,
+            ios: {
+                shadowOffset: {
+                    width: 0,
+                    height: cardElevation
+                },
+                shadowRadius: cardElevation,
+                shadowOpacity: 0.24
+            } as ViewStyle
+        })
+    }
+);
 
 export let CommonStyles = {
-    card:{
-        margin:10,
-        borderRadius:10,
-        borderWidth:3,
+    card: {
+        ...cardStyles(2)
     },
     centerContent: StyleSheet.create({
         centerContent: {
@@ -17,18 +36,18 @@ export let CommonStyles = {
         color: '#223843'
     },
     pageBackgroundColor: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#FFFFFF'
     },
     thinFont: {
         fontFamily: Platform.select({
             ios: () => 'HelveticaNeue-Thin',
-            android: () => 'sans-serif-thin',
+            android: () => 'sans-serif-thin'
         })()
     },
     thickFont: {
         fontFamily: Platform.select({
             ios: () => 'HelveticaNeue-Thin',
-            android: () => 'sans-serif-condensed',
+            android: () => 'sans-serif-condensed'
         })()
     }
     //https://github.com/react-native-training/react-native-fonts

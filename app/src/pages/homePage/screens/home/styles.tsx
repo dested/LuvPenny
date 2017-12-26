@@ -1,8 +1,5 @@
-import {
-    StyleSheet
-} from 'react-native';
-import {CommonStyles} from "../../../../utils/commonStyles";
-
+import {StyleSheet} from 'react-native';
+import {CommonStyles} from '../../../../utils/commonStyles';
 
 export let styles = StyleSheet.create({
     body: {
@@ -13,11 +10,11 @@ export let styles = StyleSheet.create({
     card: {
         height: 140,
         ...CommonStyles.card,
-        borderColor: '#dde27c',
+        borderColor: '#dde27c'
     },
     topCard: {
         height: 340,
         ...CommonStyles.card,
-        borderColor: '#9ce243',
-    },
+        borderColor: '#9ce243'
+    }
 });

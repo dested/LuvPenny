@@ -1,27 +1,30 @@
 import React, {Component, ReactChild} from 'react';
 import {
     Animated,
-    Dimensions, GestureResponderEvent, LayoutChangeEvent,
-    PanResponder, PanResponderGestureState, PanResponderInstance,
-    View, ViewProperties,
+    Dimensions,
+    GestureResponderEvent,
+    LayoutChangeEvent,
+    PanResponder,
+    PanResponderGestureState,
+    PanResponderInstance,
+    View,
+    ViewProperties
 } from 'react-native';
 
 interface Props {
-    startPage: number,
-    onPageChange?: (page: number) => void
-    onAnimation?: (page: number) => void
-    children?: ReactChild[]
+    startPage: number;
+    onPageChange?: (page: number) => void;
+    onAnimation?: (page: number) => void;
+    children?: ReactChild[];
 }
 
 interface State {
-    page: number,
-    scrollValue: Animated.Value,
-    viewWidth: number
+    page: number;
+    scrollValue: Animated.Value;
+    viewWidth: number;
 }
 
 export class SwiperComponent extends Component<Props, State> {
-
-
     private _panResponder: PanResponderInstance;
 
     constructor(props: Props) {
@@ -30,9 +33,9 @@ export class SwiperComponent extends Component<Props, State> {
         this.state = {
             page: props.startPage,
             scrollValue: new Animated.Value(props.startPage),
-            viewWidth: Dimensions.get('window').width,
+            viewWidth: Dimensions.get('window').width
         };
-        this.state.scrollValue.addListener((s) => {
+        this.state.scrollValue.addListener(s => {
             this.props.onAnimation(s.value);
         });
     }
@@ -40,7 +43,7 @@ export class SwiperComponent extends Component<Props, State> {
     componentDidMount() {
         setTimeout(() => {
             this.props.onPageChange(this.props.startPage);
-        })
+        });
     }
 
     componentWillMount() {
@@ -78,7 +81,6 @@ export class SwiperComponent extends Component<Props, State> {
             onPanResponderRelease: release,
             onPanResponderTerminate: release,
 
-
             // Dragging, move the view with the touch
             onPanResponderMove: (e, gestureState) => {
                 let dx = gestureState.dx;
@@ -90,35 +92,11 @@ export class SwiperComponent extends Component<Props, State> {
     }
 
     shouldComponentUpdate(nextProps: Props, nextState: State) {
-        if (nextState.page !== this.state.page)
+        if (nextState.page !== this.state.page) return false;
+        /*        if (this.shallowEqualObjects(this.props, nextProps)) {
             return false;
-        if (this.shallowEqualObjects(this.props, nextProps)) {
-            return false;
-        }
+        }*/
         console.log(nextProps, this.props);
-        return true;
-    }
-
-    shallowEqualObjects(objA: any, objB: any) {
-        if (objA === objB) {
-            return true;
-        }
-
-        const aKeys = Object.keys(objA);
-        const bKeys = Object.keys(objB);
-        const len = aKeys.length;
-
-        if (bKeys.length !== len) {
-            return false;
-        }
-
-        for (let i = 0; i < len; i++) {
-            const key = aKeys[i];
-            if (objA[key] !== objB[key]) {
-                return false;
-            }
-        }
-
         return true;
     }
 
@@ -129,9 +107,7 @@ export class SwiperComponent extends Component<Props, State> {
             page: pageNumber
         });
 
-        Animated
-            .timing(this.state.scrollValue, {toValue: pageNumber, duration: 200, useNativeDriver: true})
-            .start();
+        Animated.timing(this.state.scrollValue, {toValue: pageNumber, duration: 200, useNativeDriver: true}).start();
 
         this.props.onPageChange(pageNumber);
     }
@@ -145,19 +121,20 @@ export class SwiperComponent extends Component<Props, State> {
     }
 
     render() {
-        console.log('rendewr')
+        console.log('rendewr');
         const scenes = React.Children.map(this.props.children, (child: any) => {
             return React.cloneElement(child, {style: [child.props.style, {flex: 1}]});
         });
 
         const translateX = this.state.scrollValue.interpolate({
-            inputRange: [0, 1], outputRange: [0, -this.state.viewWidth]
+            inputRange: [0, 1],
+            outputRange: [0, -this.state.viewWidth]
         });
 
         const sceneContainerStyle = {
             width: this.state.viewWidth * this.props.children.length,
             flex: 1,
-            flexDirection: 'row',
+            flexDirection: 'row'
         };
         return (
             <View onLayout={this.handleLayout.bind(this)} style={{flex: 1, overflow: 'hidden'}}>

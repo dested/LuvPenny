@@ -1,7 +1,7 @@
-import React from "react";
-import {Relationship} from "../../../../../../models/member";
-import {Image, Animated, Text, TouchableOpacity, View, Dimensions} from "react-native";
-import {styles} from "./styles";
+import React from 'react';
+import {Relationship} from '../../../../../../models/member';
+import {Image, Animated, Text, TouchableOpacity, View, Dimensions} from 'react-native';
+import {styles} from './styles';
 
 interface Props {
     relationship: Relationship;
@@ -12,22 +12,21 @@ interface Props {
 let animatedTwo = new Animated.Value(2);
 let animatedFour = new Animated.Value(4);
 
-export let RelationshipHeaderComponent: React.SFC<Props> = (props) => {
+export let RelationshipHeaderComponent: React.SFC<Props> = props => {
     let size = props.scrollPosition.interpolate({
         inputRange: [-100, props.index - 1.5, props.index, props.index + 1.5, 10000],
-        outputRange: [34, 34, 64, 34, 34],
+        outputRange: [34, 34, 64, 34, 34]
     });
     let opacity = props.scrollPosition.interpolate({
         inputRange: [-100, props.index - 1, props.index, props.index + 1, 10000],
-        outputRange: [1, 1, 0, 1, 1],
+        outputRange: [1, 1, 0, 1, 1]
     });
     let marginTop = props.scrollPosition.interpolate({
         inputRange: [-100, props.index - 1.5, props.index, props.index + 1.5, 10000],
-        outputRange: [28, 28, 20, 28, 28],
+        outputRange: [28, 28, 20, 28, 28]
     });
 
-
-    let paddedSize = Animated.add(size,animatedFour);
+    let paddedSize = Animated.add(size, animatedFour);
     let imageBodyStyles = {
         marginTop: marginTop,
         width: paddedSize,
@@ -43,21 +42,20 @@ export let RelationshipHeaderComponent: React.SFC<Props> = (props) => {
     };
 
     return (
-        <TouchableOpacity
-            style={styles.body}
-            onPress={() => props.onSelect()}
-        >
+        <TouchableOpacity style={styles.body} onPress={() => props.onSelect()}>
             <View style={styles.body}>
                 <Animated.View style={[styles.imageBody, imageBodyStyles]}>
                     <Animated.Image
-                        source={props.relationship.avatar.length?{uri: props.relationship.avatar}:props.relationship.avatar}
+                        source={
+                            props.relationship.avatar.length
+                                ? {uri: props.relationship.avatar}
+                                : props.relationship.avatar
+                        }
                         style={[styles.image, imageStyles]}
                     />
                 </Animated.View>
-                <Animated.Text style={[styles.text, {opacity: opacity}]}>
-                    {props.relationship.name}
-                </Animated.Text>
+                <Animated.Text style={[styles.text, {opacity: opacity}]}>{props.relationship.name}</Animated.Text>
             </View>
         </TouchableOpacity>
-    )
+    );
 };

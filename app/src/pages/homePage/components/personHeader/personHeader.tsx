@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, {Component} from 'react';
 import {
     Animated,
     Dimensions,
@@ -10,23 +10,21 @@ import {
     Text,
     TouchableHighlight,
     View
-} from "react-native";
-import {Assets} from "../../../../assets";
-import {Relationship} from "../../../../models/member";
-import {styles} from "./styles";
-import {RelationshipHeaderComponent} from "./components/relationshipHeader/relationshipHeaderComponent";
-
+} from 'react-native';
+import {Assets} from '../../../../assets';
+import {Relationship} from '../../../../models/member';
+import {styles} from './styles';
+import {RelationshipHeaderComponent} from './components/relationshipHeader/relationshipHeaderComponent';
 
 interface Props {
-    relationships: Relationship[],
-    selectedRelationship: Relationship,
+    relationships: Relationship[];
+    selectedRelationship: Relationship;
     onSelect: (r: Relationship) => void;
 }
 
 interface State {
     scrollPosition: Animated.Value;
 }
-
 
 export class PersonHeader extends Component<Props, State> {
     private scrollView: ScrollView;
@@ -37,9 +35,9 @@ export class PersonHeader extends Component<Props, State> {
         this.state = {
             scrollPosition: new Animated.Value(0)
         };
-        this.state.scrollPosition.addListener((r) => {
+        this.state.scrollPosition.addListener(r => {
             this.scrollPosition = Math.abs(r.value);
-        })
+        });
     }
 
     private snapDragPosition() {
@@ -48,7 +46,6 @@ export class PersonHeader extends Component<Props, State> {
             this.scrollView.scrollTo({x: position * 90, animated: true});
         }, 300);
     }
-
 
     private selectPerson(r: Relationship) {
         this.scrollToIndex(this.props.relationships.indexOf(r) + 1);
@@ -67,46 +64,43 @@ export class PersonHeader extends Component<Props, State> {
         this.scrollToIndex(0);
     }
 
-
     render() {
         let animatedDivision = Animated.divide(this.state.scrollPosition, new Animated.Value(90));
         return (
             <View style={styles.personHeader}>
                 <ScrollView
-                    ref={(r) => this.scrollView = r as any}
+                    ref={r => (this.scrollView = r as any)}
                     scrollEventThrottle={16}
-                    onScroll={Animated.event(
-                        [{
+                    onScroll={Animated.event([
+                        {
                             nativeEvent: {
                                 contentOffset: {
                                     x: this.state.scrollPosition
                                 }
                             }
-                        }]
-                    )}
+                        }
+                    ])}
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
                     onScrollEndDrag={() => this.snapDragPosition()}
                 >
-                    <View style={styles.leftPadding}/>
+                    <View style={styles.leftPadding} />
                     <RelationshipHeaderComponent
                         index={0}
                         scrollPosition={animatedDivision}
                         relationship={{name: 'Everyone', id: '', color: '#FFFFFF', avatar: Assets.icons.home}}
                         onSelect={() => this.selectEveryone()}
                     />
-                    {
-                        this.props.relationships.map((r, i) => (
-                            <RelationshipHeaderComponent
-                                key={i}
-                                index={i + 1}
-                                scrollPosition={animatedDivision}
-                                relationship={r}
-                                onSelect={() => this.selectPerson(r)}
-                            />
-                        ))
-                    }
-                    <View style={styles.rightPadding}/>
+                    {this.props.relationships.map((r, i) => (
+                        <RelationshipHeaderComponent
+                            key={i}
+                            index={i + 1}
+                            scrollPosition={animatedDivision}
+                            relationship={r}
+                            onSelect={() => this.selectPerson(r)}
+                        />
+                    ))}
+                    <View style={styles.rightPadding} />
                     <RelationshipHeaderComponent
                         index={this.props.relationships.length + 1}
                         scrollPosition={animatedDivision}
@@ -114,9 +108,8 @@ export class PersonHeader extends Component<Props, State> {
                         onSelect={() => this.addNew()}
                     />
                 </ScrollView>
-                <View style={styles.highlight} pointerEvents={"none"}/>
+                <View style={styles.highlight} pointerEvents={'none'} />
             </View>
         );
     }
-
 }

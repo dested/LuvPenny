@@ -1,4 +1,4 @@
-import {AsyncStorage} from "react-native";
+import {AsyncStorage} from 'react-native';
 
 export class StorageService {
     public static async getValue(key: string) {
@@ -17,11 +17,10 @@ export class StorageService {
         await AsyncStorage.removeItem(key);
     }
 
-
     public static async get_jwt() {
         return await StorageService.getValue('jwt');
     }
     public static async set_jwt(value: string) {
-        await StorageService.setValue("jwt", value);
+        await StorageService.setValue('jwt', value);
     }
 }

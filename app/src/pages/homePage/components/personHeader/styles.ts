@@ -1,6 +1,6 @@
-import {Dimensions, StyleSheet} from "react-native";
+import {Dimensions, StyleSheet} from 'react-native';
 
-export let halfScreen = Dimensions.get("screen").width / 2 - 45;
+export let halfScreen = Dimensions.get('screen').width / 2 - 45;
 export let styles = StyleSheet.create({
     personHeader: {
         height: 90,
@@ -24,8 +24,6 @@ export let styles = StyleSheet.create({
         top: 0,
         bottom: 0,
         position: 'absolute',
-        opacity: .7,
-
+        opacity: 0.7
     }
 });
-

@@ -1,12 +1,11 @@
-import {StyleSheet} from "react-native";
-import {CommonStyles} from "../../../../../../utils/commonStyles";
-
+import {StyleSheet} from 'react-native';
+import {CommonStyles} from '../../../../../../utils/commonStyles';
 
 export let styles = StyleSheet.create({
     calendarBody: {},
     week: {
         flex: 1,
-        flexDirection: 'row',
+        flexDirection: 'row'
     },
     day: {
         // borderWidth: StyleSheet.hairlineWidth,
@@ -26,7 +25,7 @@ export let styles = StyleSheet.create({
         backgroundColor: '#FFFFFF'
     },
     dayText: {
-        fontSize: 10,
+        fontSize: 10
     },
 
     calendarHeader: {
@@ -54,9 +53,10 @@ export let styles = StyleSheet.create({
     },
 
     flexPadding: {
-        flex: 1,
+        flex: 1
     },
     imageSize: {
-        width: 32, height: 32,
-    },
+        width: 32,
+        height: 32
+    }
 });

@@ -1,11 +1,11 @@
-import moment, {Moment} from "moment";
-import React from "react";
+import moment, {Moment} from 'moment';
+import React from 'react';
 import {RefreshControl, ScrollView, View} from 'react-native';
-import {styles} from "./styles";
-import {CalendarComponent} from "./components/calendar/calendarComponent";
-import {BottomScrollViewPadding} from "../../components/bottomScrollViewPadding";
-import {ScrollViewFader} from "../../components/scrollViewFader";
-import {MainScrollView} from "../../components/mainScrollView/mainScrollView";
+import {styles} from './styles';
+import {CalendarComponent} from './components/calendar/calendarComponent';
+import {BottomScrollViewPadding} from '../../components/bottomScrollViewPadding';
+import {ScrollViewFader} from '../../components/scrollViewFader';
+import {MainScrollView} from '../../components/mainScrollView/mainScrollView';
 
 interface State {
     month: number;
@@ -26,21 +26,17 @@ export class CalendarScreen extends React.Component<Props, State> {
     render() {
         return (
             <View style={styles.body}>
-                <MainScrollView
-                    refreshing={this.props.refreshing}
-                    onRefresh={() => this.props.onRefresh()}
-                >
+                <MainScrollView refreshing={this.props.refreshing} onRefresh={() => this.props.onRefresh()}>
                     <View style={styles.calendarCard}>
-                        <CalendarComponent month={this.state.month} year={this.state.year} updateCalendar={(m, y) => this.setState({month: m, year: y})}/>
+                        <CalendarComponent
+                            month={this.state.month}
+                            year={this.state.year}
+                            updateCalendar={(m, y) => this.setState({month: m, year: y})}
+                        />
                     </View>
-                    {
-                        [1, 2, 3, 4].map((k, i) => (
-                            <View key={i} style={styles.card}/>
-                        ))
-                    }
+                    {[1, 2, 3, 4].map((k, i) => <View key={i} style={styles.card} />)}
                 </MainScrollView>
             </View>
         );
     }
-
 }
