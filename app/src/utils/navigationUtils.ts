@@ -1,4 +1,4 @@
-import {NavigationRouteConfig} from 'react-navigation';
+import {NavigationRouteConfig, NavigationStackScreenOptions} from 'react-navigation';
 
 export let hideHeader = {
     headerMode: 'none',
@@ -8,7 +8,6 @@ export let hideHeader = {
     }
 } as NavigationRouteConfig<any>;
 
-import {NavigationStackScreenOptions} from 'react-navigation';
 export function Navigation(options: NavigationStackScreenOptions) {
     return (target: any) => {
         target.navigationOptions = options;

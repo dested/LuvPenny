@@ -16,9 +16,8 @@ export let styles = StyleSheet.create({
     },
     calendarCard: {
         margin: 10,
-        padding:10,
-        ...CommonStyles.card,
-
+        padding: 10,
+        ...CommonStyles.card
     },
     card: {
         height: 80,

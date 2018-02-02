@@ -18,8 +18,9 @@ interface Props {
 }
 
 export class CalendarScreen extends React.Component<Props, State> {
-    constructor() {
-        super();
+    constructor(props: Props) {
+        super(props);
+
         this.state = {month: 11, year: 2017};
     }
 

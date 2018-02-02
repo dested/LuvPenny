@@ -26,8 +26,8 @@ export class HomePage extends Component<Props, State> {
     private swiper: SwiperComponent;
     private iconAnimator: IconAnimator;
 
-    constructor() {
-        super();
+    constructor(props: Props) {
+        super(props);
         let relationships = [
             {
                 id: 'd49ab34a-f4a1-4665-b670-4fffec53cda5',

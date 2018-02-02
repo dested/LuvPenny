@@ -16,8 +16,8 @@ interface State {
 }
 
 export class IconAnimator extends Component<Props, State> {
-    constructor() {
-        super();
+    constructor(props: Props) {
+        super(props);
         this.state = {
             bottomLeftIconPosition: new Animated.Value(0),
             bottomRightIconPosition: new Animated.Value(1),
