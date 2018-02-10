@@ -1,7 +1,7 @@
 import React from 'react';
 import {Relationship} from '../../../../../../models/member';
-import {Image, Animated, Text, TouchableOpacity, View, Dimensions} from 'react-native';
-import {styles} from './styles';
+import {Animated, TouchableOpacity, View, StyleSheet} from 'react-native';
+import {CommonStyles} from '../../../../../../utils/commonStyles';
 
 interface Props {
     relationship: Relationship;
@@ -59,3 +59,23 @@ export let RelationshipHeaderComponent: React.SFC<Props> = props => {
         </TouchableOpacity>
     );
 };
+
+let styles = StyleSheet.create({
+    body: {
+        height: 90,
+        width: 90,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#ffffff'
+    },
+    image: {},
+    imageBody: {
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    text: {
+        paddingTop: 5,
+        fontSize: 10,
+        ...CommonStyles.thickFont
+    }
+});

@@ -1,11 +1,10 @@
-import moment, {Moment} from 'moment';
 import React from 'react';
-import {RefreshControl, ScrollView, View} from 'react-native';
-import {styles} from './styles';
+import {StyleSheet, View} from 'react-native';
 import {CalendarComponent} from './components/calendar/calendarComponent';
-import {BottomScrollViewPadding} from '../../components/bottomScrollViewPadding';
-import {ScrollViewFader} from '../../components/scrollViewFader';
 import {MainScrollView} from '../../components/mainScrollView/mainScrollView';
+import {Container} from '../../../../components/container';
+import {Card} from '../../../../components/card';
+import {CommonStyles} from '../../../../utils/commonStyles';
 
 interface State {
     month: number;
@@ -28,16 +27,47 @@ export class CalendarScreen extends React.Component<Props, State> {
         return (
             <View style={styles.body}>
                 <MainScrollView refreshing={this.props.refreshing} onRefresh={() => this.props.onRefresh()}>
-                    <View style={styles.calendarCard}>
-                        <CalendarComponent
-                            month={this.state.month}
-                            year={this.state.year}
-                            updateCalendar={(m, y) => this.setState({month: m, year: y})}
-                        />
-                    </View>
-                    {[1, 2, 3, 4].map((k, i) => <View key={i} style={styles.card} />)}
+                    <Container>
+                        <Card>
+                            <CalendarComponent
+                                month={this.state.month}
+                                year={this.state.year}
+                                updateCalendar={(m, y) => this.setState({month: m, year: y})}
+                            />
+                        </Card>
+                    </Container>
+                    {[1, 2, 3, 4].map((k, i) => (
+                        <Container key={i}>
+                            <Card style={styles.card}>
+                            </Card>
+                        </Container>
+                    ))}
                 </MainScrollView>
             </View>
         );
     }
 }
+
+
+let styles = StyleSheet.create({
+    body: {
+        flex: 1,
+        alignItems: 'stretch',
+        ...CommonStyles.pageBackgroundColor,
+        borderRightWidth: StyleSheet.hairlineWidth
+    },
+    calendar: {
+        height: 250,
+        margin: 4,
+        borderRadius: 15,
+        backgroundColor: '#fafac4'
+    },
+    calendarCard: {
+        margin: 10,
+        padding: 10,
+    },
+    card: {
+        height: 80,
+        borderColor: '#e3cfd1'
+    }
+});

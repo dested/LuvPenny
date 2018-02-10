@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {hideHeader, Navigation} from '../../utils/navigationUtils';
 import {SwiperComponent} from '../../components/swiperComponent';
 import {CalendarScreen} from './screens/calendar/calendarScreen';
@@ -8,7 +8,6 @@ import {PlusScreen} from './screens/plus/plusScreen';
 import {IconAnimator} from './components/iconAnimator/iconAnimator';
 import {PersonHeader} from './components/personHeader/personHeader';
 import {Relationship} from '../../models/member';
-import {styles} from './styles';
 
 interface State {
     currentPage: number;
@@ -17,7 +16,8 @@ interface State {
     refreshing: boolean;
 }
 
-interface Props {}
+interface Props {
+}
 
 @Navigation({
     ...hideHeader
@@ -130,11 +130,11 @@ export class HomePage extends Component<Props, State> {
                         this.iconAnimator.setPage(page);
                     }}
                 >
-                    <CalendarScreen refreshing={this.state.refreshing} onRefresh={this.onRefresh.bind(this)} />
-                    <HomeScreen refreshing={this.state.refreshing} onRefresh={this.onRefresh.bind(this)} />
-                    <PlusScreen refreshing={this.state.refreshing} onRefresh={this.onRefresh.bind(this)} />
+                    <CalendarScreen refreshing={this.state.refreshing} onRefresh={this.onRefresh.bind(this)}/>
+                    <HomeScreen refreshing={this.state.refreshing} onRefresh={this.onRefresh.bind(this)}/>
+                    <PlusScreen refreshing={this.state.refreshing} onRefresh={this.onRefresh.bind(this)}/>
                 </SwiperComponent>
-                <IconAnimator ref={r => (this.iconAnimator = r)} gotoPage={page => this.swiper.gotoPage(page)} />
+                <IconAnimator ref={r => (this.iconAnimator = r)} gotoPage={page => this.swiper.gotoPage(page)}/>
             </View>
         );
     }
@@ -147,3 +147,14 @@ export class HomePage extends Component<Props, State> {
         this.setState({selectedRelationship: relationship});
     }
 }
+
+let styles = StyleSheet.create({
+    body: {
+        flex: 1,
+        alignItems: 'stretch',
+        backgroundColor: '#F5FCFF'
+    },
+    homeBody: {
+        flex: 1
+    }
+});

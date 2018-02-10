@@ -1,16 +1,17 @@
 import React from 'react';
-import {styles} from './styles';
-import {BottomScrollViewPadding} from '../../components/bottomScrollViewPadding';
-import {RefreshControl, ScrollView, View} from 'react-native';
-import {ScrollViewFader} from '../../components/scrollViewFader';
+import {StyleSheet, View} from 'react-native';
 import {MainScrollView} from '../../components/mainScrollView/mainScrollView';
+import {CommonStyles} from '../../../../utils/commonStyles';
+import {Container} from '../../../../components/container';
+import {Card} from '../../../../components/card';
 
 interface Props {
     refreshing: boolean;
     onRefresh: () => void;
 }
 
-interface State {}
+interface State {
+}
 
 export class HomeScreen extends React.Component<Props, State> {
     constructor(props: Props, context: any) {
@@ -22,10 +23,35 @@ export class HomeScreen extends React.Component<Props, State> {
         return (
             <View style={styles.body}>
                 <MainScrollView refreshing={this.props.refreshing} onRefresh={() => this.props.onRefresh()}>
-                    <View style={styles.topCard} />
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((k, i) => <View key={i} style={styles.card} />)}
+                    <Container>
+                        <Card style={styles.topCard}>
+                        </Card>
+                    </Container>
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((k, i) => (
+                        <Container key={i}>
+                            <Card style={styles.card}>
+                            </Card>
+                        </Container>
+                    ))}
                 </MainScrollView>
             </View>
         );
     }
 }
+
+
+ let styles = StyleSheet.create({
+    body: {
+        flex: 1,
+        alignItems: 'stretch',
+        ...CommonStyles.pageBackgroundColor
+    },
+    card: {
+        height: 140,
+        borderColor: '#dde27c'
+    },
+    topCard: {
+        height: 340,
+        borderColor: '#9ce243'
+    }
+});

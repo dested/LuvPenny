@@ -2,18 +2,13 @@ import React, {Component} from 'react';
 import {
     Animated,
     Dimensions,
-    Image,
-    NativeScrollEvent,
     NativeSyntheticEvent,
     ScrollView,
-    ScrollViewStatic,
-    Text,
-    TouchableHighlight,
+    ScrollViewStatic, StyleSheet,
     View
 } from 'react-native';
 import {Assets} from '../../../../assets';
 import {Relationship} from '../../../../models/member';
-import {styles} from './styles';
 import {RelationshipHeaderComponent} from './components/relationshipHeader/relationshipHeaderComponent';
 
 interface Props {
@@ -113,3 +108,32 @@ export class PersonHeader extends Component<Props, State> {
         );
     }
 }
+
+
+let halfScreen = Dimensions.get('screen').width / 2 - 45;
+let styles = StyleSheet.create({
+    personHeader: {
+        height: 90,
+        flexDirection: 'row',
+        backgroundColor: 'white'
+    },
+    leftPadding: {
+        width: halfScreen
+    },
+    rightPadding: {
+        width: halfScreen - 90
+    },
+    highlight: {
+        marginLeft: halfScreen + 5,
+        marginTop: 5,
+        width: 80,
+        height: 80,
+        borderWidth: 2,
+        borderColor: '#7df0e2',
+        borderRadius: 45,
+        top: 0,
+        bottom: 0,
+        position: 'absolute',
+        opacity: 0.7
+    }
+});
