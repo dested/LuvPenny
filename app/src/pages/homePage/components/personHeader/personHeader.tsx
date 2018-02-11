@@ -29,10 +29,13 @@ export class PersonHeader extends Component<Props, State> {
     }
 
     private snapDragPosition() {
-        setTimeout(() => {
-            let position = Math.round(this.scrollPosition / 90);
-            this.scrollView.scrollTo({x: position * 90, animated: true});
-        }, 300);
+        setTimeout(
+            () => {
+                let position = Math.round(this.scrollPosition / 90);
+                this.scrollView.scrollTo({x: position * 90, animated: true});
+            },
+            300
+        );
     }
 
     private selectPerson(r: Relationship) {
@@ -72,7 +75,7 @@ export class PersonHeader extends Component<Props, State> {
                     showsHorizontalScrollIndicator={false}
                     onScrollEndDrag={() => this.snapDragPosition()}
                 >
-                    <View style={styles.leftPadding} />
+                    <View style={styles.leftPadding}/>
                     <RelationshipHeaderComponent
                         index={0}
                         scrollPosition={animatedDivision}
@@ -93,7 +96,7 @@ export class PersonHeader extends Component<Props, State> {
                             onSelect={() => this.selectPerson(r)}
                         />
                     ))}
-                    <View style={styles.rightPadding} />
+                    <View style={styles.rightPadding}/>
                     <RelationshipHeaderComponent
                         index={this.props.relationships.length + 1}
                         scrollPosition={animatedDivision}
@@ -106,7 +109,7 @@ export class PersonHeader extends Component<Props, State> {
                         onSelect={() => this.addNew()}
                     />
                 </ScrollView>
-                <View style={styles.highlight} pointerEvents={'none'} />
+                <View style={styles.highlight} pointerEvents={'none'}/>
             </View>
         );
     }

@@ -1,7 +1,5 @@
-import React, {ReactChild} from 'react';
-import {Animated, NativeScrollEvent, NativeSyntheticEvent, RefreshControl, ScrollView, View} from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
-import {styles} from '../../screens/calendar/styles';
+import React from 'react';
+import {Animated, NativeSyntheticEvent, RefreshControl, ScrollView} from 'react-native';
 import {BottomScrollViewPadding} from '../bottomScrollViewPadding';
 import {ScrollViewFader} from '../scrollViewFader';
 
@@ -39,14 +37,14 @@ export class MainScrollView extends React.Component<Props, State> {
                             }
                         }
                     ])}
-                    refreshControl={
-                        <RefreshControl refreshing={this.props.refreshing} onRefresh={() => this.props.onRefresh()} />
-                    }
+                    refreshControl={(
+                        <RefreshControl refreshing={this.props.refreshing} onRefresh={() => this.props.onRefresh()}/>
+                    )}
                 >
                     {this.props.children}
-                    <BottomScrollViewPadding />
+                    <BottomScrollViewPadding/>
                 </ScrollView>
-                <ScrollViewFader scrollPosition={this.state.scrollPosition} />
+                <ScrollViewFader scrollPosition={this.state.scrollPosition}/>
             </Aux>
         );
     }

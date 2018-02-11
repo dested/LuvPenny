@@ -26,5 +26,5 @@ export let CommonStyles = {
             android: () => 'sans-serif-condensed'
         })()
     }
-    //https://github.com/react-native-training/react-native-fonts
+    // https://github.com/react-native-training/react-native-fonts
 };

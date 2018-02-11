@@ -1,5 +1,5 @@
 import React from 'react';
-import {Animated, NativeScrollEvent, NativeSyntheticEvent, View} from 'react-native';
+import {Animated, NativeSyntheticEvent, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 interface Props {
