@@ -1,12 +1,5 @@
 import React, {Component} from 'react';
-import {
-    Animated,
-    Dimensions,
-    NativeSyntheticEvent,
-    ScrollView,
-    ScrollViewStatic, StyleSheet,
-    View
-} from 'react-native';
+import {Animated, Dimensions, NativeSyntheticEvent, ScrollView, ScrollViewStatic, StyleSheet, View} from 'react-native';
 import {Assets} from '../../../../assets';
 import {Relationship} from '../../../../models/member';
 import {RelationshipHeaderComponent} from './components/relationshipHeader/relationshipHeaderComponent';
@@ -79,7 +72,7 @@ export class PersonHeader extends Component<Props, State> {
                     showsHorizontalScrollIndicator={false}
                     onScrollEndDrag={() => this.snapDragPosition()}
                 >
-                    <View style={styles.leftPadding}/>
+                    <View style={styles.leftPadding} />
                     <RelationshipHeaderComponent
                         index={0}
                         scrollPosition={animatedDivision}
@@ -95,7 +88,7 @@ export class PersonHeader extends Component<Props, State> {
                             onSelect={() => this.selectPerson(r)}
                         />
                     ))}
-                    <View style={styles.rightPadding}/>
+                    <View style={styles.rightPadding} />
                     <RelationshipHeaderComponent
                         index={this.props.relationships.length + 1}
                         scrollPosition={animatedDivision}
@@ -103,12 +96,11 @@ export class PersonHeader extends Component<Props, State> {
                         onSelect={() => this.addNew()}
                     />
                 </ScrollView>
-                <View style={styles.highlight} pointerEvents={'none'}/>
+                <View style={styles.highlight} pointerEvents={'none'} />
             </View>
         );
     }
 }
-
 
 let halfScreen = Dimensions.get('screen').width / 2 - 45;
 let styles = StyleSheet.create({

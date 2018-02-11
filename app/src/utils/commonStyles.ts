@@ -1,7 +1,5 @@
 import {PixelRatio, Platform, StyleSheet, ViewStyle} from 'react-native';
 
-
-
 export let CommonStyles = {
     centerContent: StyleSheet.create({
         centerContent: {

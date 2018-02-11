@@ -17,8 +17,7 @@ export class PlusScreen extends React.Component<Props> {
                 <MainScrollView refreshing={this.props.refreshing} onRefresh={() => this.props.onRefresh()}>
                     {[1, 2, 3, 4].map((k, i) => (
                         <Container key={i}>
-                            <Card style={styles.card}>
-                            </Card>
+                            <Card style={styles.card} />
                         </Container>
                     ))}
                 </MainScrollView>

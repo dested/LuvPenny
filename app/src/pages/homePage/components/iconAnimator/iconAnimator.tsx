@@ -82,7 +82,7 @@ export class IconAnimator extends Component<Props, State> {
                     ]}
                 >
                     <TouchableWithoutFeedback onPress={() => this.leftIconTap()}>
-                        <Image style={{width: 32, height: 32}} source={Assets.icons.calendar}/>
+                        <Image style={{width: 32, height: 32}} source={Assets.icons.calendar} />
                     </TouchableWithoutFeedback>
                 </Animated.View>
 
@@ -100,7 +100,7 @@ export class IconAnimator extends Component<Props, State> {
                     ]}
                 >
                     <TouchableWithoutFeedback onPress={() => this.leftIconTap()}>
-                        <Image style={{width: 32, height: 32}} source={Assets.icons.home}/>
+                        <Image style={{width: 32, height: 32}} source={Assets.icons.home} />
                     </TouchableWithoutFeedback>
                 </Animated.View>
 
@@ -118,7 +118,7 @@ export class IconAnimator extends Component<Props, State> {
                     ]}
                 >
                     <TouchableWithoutFeedback onPress={() => this.rightIconTap()}>
-                        <Image style={{width: 32, height: 32}} source={Assets.icons.star}/>
+                        <Image style={{width: 32, height: 32}} source={Assets.icons.star} />
                     </TouchableWithoutFeedback>
                 </Animated.View>
 
@@ -136,7 +136,7 @@ export class IconAnimator extends Component<Props, State> {
                     ]}
                 >
                     <TouchableWithoutFeedback onPress={() => this.rightIconTap()}>
-                        <Image style={{width: 32, height: 32}} source={Assets.icons.home}/>
+                        <Image style={{width: 32, height: 32}} source={Assets.icons.home} />
                     </TouchableWithoutFeedback>
                 </Animated.View>
             </View>
@@ -188,7 +188,6 @@ export class IconAnimator extends Component<Props, State> {
         }
     }
 }
-
 
 let styles = StyleSheet.create({
     bottomLeftIcon: {

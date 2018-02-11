@@ -106,8 +106,7 @@ export let CalendarComponent: React.SFC<Props> = props => {
     );
 };
 
-
- let styles = StyleSheet.create({
+let styles = StyleSheet.create({
     calendarBody: {},
     week: {
         flex: 1,

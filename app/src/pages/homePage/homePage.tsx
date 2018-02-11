@@ -16,8 +16,7 @@ interface State {
     refreshing: boolean;
 }
 
-interface Props {
-}
+interface Props {}
 
 @Navigation({
     ...hideHeader
@@ -130,11 +129,11 @@ export class HomePage extends Component<Props, State> {
                         this.iconAnimator.setPage(page);
                     }}
                 >
-                    <CalendarScreen refreshing={this.state.refreshing} onRefresh={this.onRefresh.bind(this)}/>
-                    <HomeScreen refreshing={this.state.refreshing} onRefresh={this.onRefresh.bind(this)}/>
-                    <PlusScreen refreshing={this.state.refreshing} onRefresh={this.onRefresh.bind(this)}/>
+                    <CalendarScreen refreshing={this.state.refreshing} onRefresh={this.onRefresh.bind(this)} />
+                    <HomeScreen refreshing={this.state.refreshing} onRefresh={this.onRefresh.bind(this)} />
+                    <PlusScreen refreshing={this.state.refreshing} onRefresh={this.onRefresh.bind(this)} />
                 </SwiperComponent>
-                <IconAnimator ref={r => (this.iconAnimator = r)} gotoPage={page => this.swiper.gotoPage(page)}/>
+                <IconAnimator ref={r => (this.iconAnimator = r)} gotoPage={page => this.swiper.gotoPage(page)} />
             </View>
         );
     }

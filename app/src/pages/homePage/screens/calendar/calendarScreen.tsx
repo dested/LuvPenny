@@ -38,8 +38,7 @@ export class CalendarScreen extends React.Component<Props, State> {
                     </Container>
                     {[1, 2, 3, 4].map((k, i) => (
                         <Container key={i}>
-                            <Card style={styles.card}>
-                            </Card>
+                            <Card style={styles.card} />
                         </Container>
                     ))}
                 </MainScrollView>
@@ -47,7 +46,6 @@ export class CalendarScreen extends React.Component<Props, State> {
         );
     }
 }
-
 
 let styles = StyleSheet.create({
     body: {
@@ -64,7 +62,7 @@ let styles = StyleSheet.create({
     },
     calendarCard: {
         margin: 10,
-        padding: 10,
+        padding: 10
     },
     card: {
         height: 80,
