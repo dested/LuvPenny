@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Animated, Dimensions, NativeSyntheticEvent, ScrollView, ScrollViewStatic, StyleSheet, View} from 'react-native';
-import {Assets} from '../../../../assets';
-import {Relationship} from '../../../../models/member';
+import {Assets} from 'src/assets';
+import {Relationship} from 'src/models/member';
 import {RelationshipHeaderComponent} from './components/relationshipHeader/relationshipHeaderComponent';
 
 interface Props {

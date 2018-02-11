@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "removeComments": false,
     "noEmit": true,
     "noEmitOnError": false,
     "experimentalDecorators": true,
@@ -12,9 +11,8 @@
     "strictNullChecks": false,
     "jsx": "react-native",
     "allowSyntheticDefaultImports": true,
-    "baseUrl": ".",
-    "skipLibCheck": true,
-    "allowJs": true
+    "baseUrl": "./",
+    "skipLibCheck": true
   },
   "types": [
     "react",

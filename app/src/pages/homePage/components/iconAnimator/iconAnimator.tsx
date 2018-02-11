@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Animated, Dimensions, Image, StyleSheet, TouchableWithoutFeedback, View} from 'react-native';
-import {Assets} from '../../../../assets';
+import {Assets} from 'src/assets';
 
 interface Props {
     gotoPage: (page: number) => void;

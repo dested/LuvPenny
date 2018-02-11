@@ -10,8 +10,7 @@
     "test": "npx jest",
     "tsc": "npx tsc",
     "lint": "npx tslint -p tsconfig.json",
-    "images": "node scripts/process-images",
-    "translate": "node scripts/process-translate"
+    "images": "node scripts/process-images"
   },
   "dependencies": {
     "glob": "^7.1.2",

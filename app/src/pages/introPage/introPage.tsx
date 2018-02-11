@@ -1,9 +1,9 @@
 import React from 'react';
 import {Animated, Platform, StyleSheet, Text, TextInput, View} from 'react-native';
-import {hideHeader, Navigation} from '../../utils/navigationUtils';
-import {Assets} from '../../assets';
-import FullPanComponent from '../../components/fullPanComponent';
-import {Utils} from '../../utils/utils';
+import {hideHeader, Navigation} from 'src/utils/navigationUtils';
+import FullPanComponent from 'src/components/fullPanComponent';
+import {Utils} from 'src/utils/utils';
+import {Assets} from 'src/assets';
 
 interface State {
     stars: {animationX: Animated.Animated; animationY: Animated.Animated}[];

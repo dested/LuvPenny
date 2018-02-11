@@ -1,7 +1,7 @@
 import React from 'react';
-import {Relationship} from '../../../../../../models/member';
+import {Relationship} from 'src/models/member';
 import {Animated, TouchableOpacity, View, StyleSheet} from 'react-native';
-import {CommonStyles} from '../../../../../../utils/commonStyles';
+import {CommonStyles} from 'src/utils/commonStyles';
 
 interface Props {
     relationship: Relationship;

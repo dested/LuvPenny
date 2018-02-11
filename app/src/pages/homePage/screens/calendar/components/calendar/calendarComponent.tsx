@@ -1,7 +1,7 @@
 import React from 'react';
 import moment, {Moment} from 'moment';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {Assets} from '../../../../../../assets';
+import {Assets} from 'src/assets';
 
 interface Props {
     month: number;

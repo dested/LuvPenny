@@ -1,9 +1,9 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {MainScrollView} from '../../components/mainScrollView/mainScrollView';
-import {CommonStyles} from '../../../../utils/commonStyles';
-import {Container} from '../../../../components/container';
-import {Card} from '../../../../components/card';
+import {CommonStyles} from 'src/utils/commonStyles';
+import {Container} from 'src/components/container';
+import {Card} from 'src/components/card';
 
 interface Props {
     refreshing: boolean;

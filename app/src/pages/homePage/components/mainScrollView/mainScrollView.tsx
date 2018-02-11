@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import {Animated, NativeSyntheticEvent, RefreshControl, ScrollView} from 'react-native';
 import {BottomScrollViewPadding} from '../bottomScrollViewPadding';
 import {ScrollViewFader} from '../scrollViewFader';
@@ -13,7 +13,6 @@ interface Props {
     refreshing: boolean;
 }
 
-const Aux = (props: any) => props.children;
 
 export class MainScrollView extends React.Component<Props, State> {
     constructor(props: Props, context: any) {
@@ -25,7 +24,7 @@ export class MainScrollView extends React.Component<Props, State> {
 
     render() {
         return (
-            <Aux>
+            <Fragment>
                 <ScrollView
                     scrollEventThrottle={16}
                     onScroll={Animated.event([
@@ -45,7 +44,7 @@ export class MainScrollView extends React.Component<Props, State> {
                     <BottomScrollViewPadding />
                 </ScrollView>
                 <ScrollViewFader scrollPosition={this.state.scrollPosition} />
-            </Aux>
+            </Fragment>
         );
     }
 }

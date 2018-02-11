@@ -7,7 +7,7 @@ import {HomeScreen} from './screens/home/homeScreen';
 import {PlusScreen} from './screens/plus/plusScreen';
 import {IconAnimator} from './components/iconAnimator/iconAnimator';
 import {PersonHeader} from './components/personHeader/personHeader';
-import {Relationship} from '../../models/member';
+import {Relationship} from 'src/models/member';
 
 interface State {
     currentPage: number;
