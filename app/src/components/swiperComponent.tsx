@@ -107,7 +107,11 @@ export class SwiperComponent extends Component<Props, State> {
             page: pageNumber
         });
 
-        Animated.timing(this.state.scrollValue, {toValue: pageNumber, duration: 200, useNativeDriver: true}).start();
+        Animated.timing(this.state.scrollValue, {
+            toValue: pageNumber,
+            duration: 200,
+            useNativeDriver: true
+        }).start();
 
         this.props.onPageChange(pageNumber);
     }

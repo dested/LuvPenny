@@ -76,7 +76,12 @@ export class PersonHeader extends Component<Props, State> {
                     <RelationshipHeaderComponent
                         index={0}
                         scrollPosition={animatedDivision}
-                        relationship={{name: 'Everyone', id: '', color: '#FFFFFF', avatar: Assets.icons.home}}
+                        relationship={{
+                            name: 'Everyone',
+                            id: '',
+                            color: '#FFFFFF',
+                            avatar: Assets.icons.home
+                        }}
                         onSelect={() => this.selectEveryone()}
                     />
                     {this.props.relationships.map((r, i) => (
@@ -92,7 +97,12 @@ export class PersonHeader extends Component<Props, State> {
                     <RelationshipHeaderComponent
                         index={this.props.relationships.length + 1}
                         scrollPosition={animatedDivision}
-                        relationship={{name: ' ', id: '', color: '#FFFFFF', avatar: Assets.icons.add_user}}
+                        relationship={{
+                            name: ' ',
+                            id: '',
+                            color: '#FFFFFF',
+                            avatar: Assets.icons.add_user
+                        }}
                         onSelect={() => this.addNew()}
                     />
                 </ScrollView>

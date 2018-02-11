@@ -1,4 +1,7 @@
 export const Assets = {
+    elements: {
+        star: require('../assets/elements/star.png')
+    },
     icons: {
         add_user: require('../assets/icons/add_user.png'),
         archivement: require('../assets/icons/archivement.png'),
