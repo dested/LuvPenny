@@ -41,12 +41,12 @@ export default class FullPanComponent extends Component<Props, State> {
             onMoveShouldSetPanResponderCapture: (evt, gestureState) => Math.abs(gestureState.dy) > 10,
             onPanResponderMove: (evt, gestureState) => {
                 if (this.canPan) {
-                    if (gestureState.dy < -15 && this.props.canReverse) {
+                    if (gestureState.dy < -15 && this.props.canProgress) {
                         if (this.props.pageIndex < React.Children.count(this.props.children) - 1) {
                             this.progressIndex(+1);
                         }
                     }
-                    if (gestureState.dy > 15 && this.props.canProgress) {
+                    if (gestureState.dy > 15 && this.props.canReverse) {
                         if (this.props.pageIndex > 0) {
                             this.progressIndex(-1);
                         }
@@ -72,10 +72,6 @@ export default class FullPanComponent extends Component<Props, State> {
             () => this.props.onIndexChange(this.props.pageIndex + amount)
         );
         this.canPan = false;
-    }
-
-    shouldComponentUpdate(nextProps: Readonly<Props>, nextState: Readonly<State>, nextContext: any): boolean {
-        return false;
     }
 
     render() {

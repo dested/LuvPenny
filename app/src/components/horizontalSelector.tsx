@@ -14,17 +14,18 @@ import {
 } from 'react-native';
 import {CommonStyles} from '../utils/commonStyles';
 
-interface Item {
+export interface HorizontalSelectorItem {
     color: string;
+    value: string;
     icon: ImageRequireSource;
     label: string;
 }
 
 interface Props {
-    extraItem?: Item;
-    items: Item[];
-    selectedItem: Item;
-    onSelect: (r: Item) => void;
+    extraItem?: HorizontalSelectorItem;
+    items: HorizontalSelectorItem[];
+    selectedItem: HorizontalSelectorItem;
+    onSelect: (r: HorizontalSelectorItem) => void;
     highlightColor?: string;
 }
 
@@ -57,7 +58,7 @@ export class HorizontalSelector extends Component<Props, State> {
         }, 300);
     }
 
-    private selectItem(r: Item) {
+    private selectItem(r: HorizontalSelectorItem) {
         this.scrollToIndex(this.props.items.indexOf(r));
         this.props.onSelect(r);
     }
@@ -147,7 +148,7 @@ let styles = StyleSheet.create({
 });
 
 interface ItemProps {
-    item: Item;
+    item: HorizontalSelectorItem;
     index: number;
     scrollPosition: Animated.AnimatedInterpolation;
     onSelect: () => void;

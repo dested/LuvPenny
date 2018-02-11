@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, View, Animated, Easing, StyleSheet, EasingFunction} from 'react-native';
+import {Image, Animated, StyleSheet} from 'react-native';
 import {Assets} from '../../../assets';
 import {AnimationUtils} from '../../../utils/animationUtils';
 

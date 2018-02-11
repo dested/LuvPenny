@@ -4,8 +4,14 @@ import {hideHeader, Navigation} from 'src/utils/navigationUtils';
 import FullPanComponent from 'src/components/fullPanComponent';
 import {Utils} from 'src/utils/utils';
 import {Assets} from 'src/assets';
-import {HorizontalSelector} from '../../components/horizontalSelector';
+import {HorizontalSelector, HorizontalSelectorItem} from '../../components/horizontalSelector';
 import {DownBounceArrow} from './components/downBounceArrow';
+
+interface Survey {
+    gender?: string;
+    significantOtherRelationship?: string;
+    significantOtherName?: string;
+}
 
 interface State {
     stars: {translateX: Animated.Animated; translateY: Animated.Animated; scale: Animated.Animated}[];
@@ -13,10 +19,7 @@ interface State {
     canReverse: boolean;
     pageIndex: number;
     colors: string[];
-    survey: {
-        significantOther?: string;
-        significantOtherRelationship?: string;
-    };
+    survey: Survey;
 }
 
 interface Props {}
@@ -25,6 +28,19 @@ interface Props {}
     ...hideHeader
 })
 export default class IntroPage extends React.Component<Props, State> {
+    relationshipItems = [
+        {color: 'yellow', icon: Assets.elements.relationship.boyfriend, label: 'Boyfriend', value: 'boyfriend'},
+        {color: 'yellow', icon: Assets.elements.relationship.girlfriend, label: 'Girlfriend', value: 'girlfriend'},
+        {color: 'yellow', icon: Assets.elements.relationship.husband, label: 'Husband', value: 'husband'},
+        {color: 'yellow', icon: Assets.elements.relationship.wife, label: 'Wife', value: 'wife'},
+        {color: 'yellow', icon: Assets.elements.relationship.son, label: 'Son', value: 'son'},
+        {color: 'yellow', icon: Assets.elements.relationship.daughter, label: 'Daughter', value: 'daughter'},
+        {color: 'yellow', icon: Assets.elements.relationship.daughter, label: 'Mother', value: 'mother'},
+        {color: 'yellow', icon: Assets.elements.relationship.son, label: 'Father', value: 'father'},
+        {color: 'yellow', icon: Assets.elements.relationship.girlfriend, label: 'Best Friend', value: 'bestFriendGirl'},
+        {color: 'yellow', icon: Assets.elements.relationship.boyfriend, label: 'Best Friend', value: 'bestFriendBoy'}
+    ];
+
     constructor(props: Props) {
         super(props);
 
@@ -57,7 +73,6 @@ export default class IntroPage extends React.Component<Props, State> {
                         )
                     )
                 }),
-
                 scale: animator.interpolate({
                     inputRange: introRange,
                     outputRange: introRange.map(() => Math.random() * 0.5 + 0.5)
@@ -67,19 +82,40 @@ export default class IntroPage extends React.Component<Props, State> {
     }
 
     updatePageIndex(pageIndex: number): void {
-        this.setState(prev => ({...prev, pageIndex: pageIndex, canProgress: true, canReverse: true}));
+        this.setState(prev => {
+            let newState = {...prev, pageIndex: pageIndex, canReverse: true};
+            newState.canProgress = this.canProgress(newState);
+            return newState;
+        });
+    }
+
+    private canProgress(state: State) {
+        let canProgress: boolean;
+        switch (state.pageIndex) {
+            case 6:
+                canProgress = !!state.survey.gender;
+                break;
+            case 7:
+                canProgress = !!state.survey.significantOtherRelationship;
+                break;
+            case 8:
+                canProgress = !!state.survey.significantOtherName;
+                break;
+            default:
+                canProgress = true;
+        }
+        return canProgress;
+    }
+
+    updateSurvey(survey: Survey): void {
+        this.setState(prev => {
+            let newState: State = {...prev, survey: {...prev.survey, ...survey}};
+            newState.canProgress = this.canProgress(newState);
+            return newState;
+        });
     }
 
     render() {
-        let relationshipItems = [
-            {color: 'yellow', icon: Assets.elements.relationship.boyfriend, label: 'Boyfriend'},
-            {color: 'yellow', icon: Assets.elements.relationship.girlfriend, label: 'Girlfriend'},
-            {color: 'yellow', icon: Assets.elements.relationship.husband, label: 'Husband'},
-            {color: 'yellow', icon: Assets.elements.relationship.wife, label: 'Wife'},
-            {color: 'yellow', icon: Assets.elements.relationship.son, label: 'Son'},
-            {color: 'yellow', icon: Assets.elements.relationship.daughter, label: 'Daughter'}
-        ];
-
         return (
             <View style={{left: 0, right: 0, top: 0, bottom: 0}}>
                 <FullPanComponent
@@ -90,82 +126,117 @@ export default class IntroPage extends React.Component<Props, State> {
                     canReverse={this.state.canReverse}
                     onIndexChange={index => this.updatePageIndex(index)}
                 >
-                    <View style={styles.textHolder}>
-                        <Text style={styles.text}>This is Penny</Text>
-                        <DownBounceArrow />
-                    </View>
-                    <View style={styles.textHolder}>
-                        <Text style={styles.text}>Penny is your relationship manager</Text>
-                        <DownBounceArrow />
-                    </View>
-                    <View style={styles.textHolder}>
-                        <Text style={styles.text}>She will make you a rockstar</Text>
-                        <DownBounceArrow />
-                    </View>
-                    <View style={styles.textHolder}>
-                        <Text style={styles.text}>The more information Penny knows about your significant others</Text>
-                        <DownBounceArrow />
-                    </View>
-                    <View style={styles.textHolder}>
-                        <Text style={styles.text}>The more help Penny can provide you</Text>
-                        <DownBounceArrow />
-                    </View>
-                    <View style={styles.textHolder}>
-                        <Text style={styles.text}>Let's get started with a simple questionnaire</Text>
-                        <DownBounceArrow />
-                    </View>
-                    <View style={styles.textHolder}>
-                        <Text style={styles.text}>
-                            You don't have to answer every question, but the more you do the more Penny can help
-                        </Text>
-                        <DownBounceArrow />
-                    </View>
-                    <KeyboardAvoidingView style={styles.textHolder} behavior={'position'}>
-                        <Text style={[styles.text, {fontSize: 26}]}>Answer this:</Text>
-                        <Text style={styles.text}>My most significant other is</Text>
-                        <TextInput
-                            style={styles.textInput}
-                            autoCapitalize={'words'}
-                            returnKeyType={'next'}
-                            onChangeText={text =>
-                                this.setState(prev => ({...prev, survey: {...prev.survey, significantOther: text}}))
-                            }
-                            value={this.state.survey.significantOther}
-                        />
-                        {this.state.canProgress && <DownBounceArrow />}
-                    </KeyboardAvoidingView>
-
-                    <View style={styles.textHolder}>
-                        <Text style={styles.text}>They are my</Text>
-
-                        <HorizontalSelector
-                            items={relationshipItems}
-                            onSelect={() => {}}
-                            selectedItem={relationshipItems[0]}
-                            extraItem={{label: 'Other', color: 'yellow', icon: Assets.icons.star}}
-                        />
-                        {this.state.canProgress && <DownBounceArrow />}
-                    </View>
-                </FullPanComponent>
-                {this.state.stars.map((star, i) => (
-                    <Animated.Image
-                        key={i}
-                        style={[
-                            styles.star,
+                    {this.renderText('This is Penny')}
+                    {this.renderText('Penny is your relationship manager')}
+                    {this.renderText('She will make you a rockstar')}
+                    {this.renderText('The more information Penny knows about your significant others')}
+                    {this.renderText('The more help Penny can provide you')}
+                    {this.renderText(`Let's get started with a simple questionnaire`)}
+                    {this.renderSelect({
+                        upperText: 'Answer this:',
+                        label: 'I am a',
+                        items: [
+                            {label: 'Boy', color: 'yellow', icon: Assets.elements.relationship.boyfriend, value: 'boy'},
                             {
-                                transform: [
-                                    {translateX: star.translateX},
-                                    {translateY: star.translateY},
-                                    {scaleX: star.scale},
-                                    {scaleY: star.scale}
-                                ]
+                                label: 'Girl',
+                                color: 'yellow',
+                                icon: Assets.elements.relationship.girlfriend,
+                                value: 'girl'
                             }
-                        ]}
-                        source={Assets.elements.star}
-                    />
-                ))}
+                        ],
+                        selectedItem: this.relationshipItems[0],
+                        otherItem: {label: 'Something Else', color: 'yellow', icon: Assets.icons.star, value: 'other'},
+                        set: item => this.updateSurvey({gender: item.value})
+                    })}
+                    {this.renderSelect({
+                        label: 'My most significant other is my',
+                        items: this.relationshipItems,
+                        selectedItem: this.relationshipItems[0],
+                        otherItem: {label: 'Other', color: 'yellow', icon: Assets.icons.star, value: 'other'},
+                        set: item => this.updateSurvey({significantOtherRelationship: item.value})
+                    })}
+                    {this.renderTextInput({
+                        label: 'Their name is',
+                        value: this.state.survey.significantOtherName,
+                        set: text => this.updateSurvey({significantOtherName: text})
+                    })}
+                </FullPanComponent>
+                {this.renderStars()}
             </View>
         );
+    }
+
+    private renderText(label: string) {
+        return (
+            <View style={styles.textHolder}>
+                <Text style={styles.text}>{label}</Text>
+                <DownBounceArrow />
+            </View>
+        );
+    }
+
+    private renderTextInput(options: {label: string; value: string; set: (value: string) => void; upperText?: string}) {
+        let {label, value, set, upperText} = options;
+        return (
+            <KeyboardAvoidingView style={styles.textHolder} behavior={'padding'}>
+                {upperText && <Text style={[styles.text, {fontSize: 24}]}>{upperText}</Text>}
+                <Text style={styles.text}>{label}</Text>
+                <TextInput
+                    style={styles.textInput}
+                    autoCapitalize={'words'}
+                    returnKeyType={'next'}
+                    onChangeText={text => set(text)}
+                    value={value}
+                />
+                {this.state.canProgress && <DownBounceArrow />}
+            </KeyboardAvoidingView>
+        );
+    }
+
+    private renderSelect(options: {
+        label: string;
+        items: HorizontalSelectorItem[];
+        selectedItem: HorizontalSelectorItem;
+        otherItem: HorizontalSelectorItem;
+        set: (value: HorizontalSelectorItem) => void;
+        upperText?: string;
+    }) {
+        let {label, items, set, selectedItem, otherItem, upperText} = options;
+        return (
+            <View style={styles.textHolder}>
+                {upperText && <Text style={[styles.text, {fontSize: 24}]}>{upperText}</Text>}
+                <Text style={styles.text}>{label}</Text>
+                <HorizontalSelector
+                    items={items}
+                    onSelect={item => {
+                        set(item);
+                    }}
+                    selectedItem={selectedItem}
+                    extraItem={otherItem}
+                />
+                {this.state.canProgress && <DownBounceArrow />}
+            </View>
+        );
+    }
+
+    private renderStars() {
+        return this.state.stars.map((star, i) => (
+            <Animated.Image
+                key={i}
+                style={[
+                    styles.star,
+                    {
+                        transform: [
+                            {translateX: star.translateX},
+                            {translateY: star.translateY},
+                            {scaleX: star.scale},
+                            {scaleY: star.scale}
+                        ]
+                    }
+                ]}
+                source={Assets.elements.star}
+            />
+        ));
     }
 }
 
