@@ -7,12 +7,11 @@ export interface AppStoreProps {
 
 export class AppStore {
     static key = 'appStore';
+    @observable public date: string;
 
     constructor() {
         this.date = moment().format('YYYY-MM-DD');
     }
-
-    @observable public date: string;
 
     @action
     setDate(date: string): void {

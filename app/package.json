@@ -3,12 +3,13 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "pretty": "prettier \"*/**/*.ts*\"  --config .prettierrc --write",
+    "pretty": "npx prettier \"*/**/*.ts*\"  --config .prettierrc --write",
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "deploy:android": "cd android && gradlew assembleRelease && adb install -r ./app/build/outputs/apk/app-release.apk && cd ..",
     "clean:android": "cd android && gradlew clean",
-    "test": "jest",
-    "tsc": "tsc",
+    "test": "npx jest",
+    "tsc": "npx tsc",
+    "lint": "npx tslint -p tsconfig.json",
     "images": "node scripts/process-images",
     "translate": "node scripts/process-translate"
   },

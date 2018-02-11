@@ -1,4 +1,4 @@
-import React, {Component, ReactNode} from 'react';
+import React, {Component} from 'react';
 import {Animated, PanResponder, PanResponderInstance, StyleSheet, View} from 'react-native';
 import {Utils} from '../utils/utils';
 import LinearGradient from 'react-native-linear-gradient';
@@ -29,11 +29,10 @@ export default class FullPanComponent extends Component<Props, State> {
         };
     }
 
-    componentDidMount(): void {}
-
     componentWillMount(): void {
-        this.props.indexAnimator &&
+        if (this.props.indexAnimator) {
             this.props.indexAnimator(this.state.indexAnimator, React.Children.count(this.props.children));
+        }
 
         this.panResponder = PanResponder.create({
             onMoveShouldSetPanResponder: () => true,

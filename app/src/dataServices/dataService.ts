@@ -60,7 +60,9 @@ export class DataService {
         };
 
         const value = await StorageService.get_jwt();
-        if (value) headers.Authorization = value;
+        if (value) {
+            headers.Authorization = value;
+        }
         return headers;
     }
 }

@@ -85,14 +85,18 @@ export class SwiperComponent extends Component<Props, State> {
             onPanResponderMove: (e, gestureState) => {
                 let dx = gestureState.dx;
                 let offsetX = -dx / this.state.viewWidth + this.state.page;
-                if (offsetX < 0 || offsetX > this.props.children.length - 1) return;
+                if (offsetX < 0 || offsetX > this.props.children.length - 1) {
+                    return;
+                }
                 this.state.scrollValue.setValue(offsetX);
             }
         });
     }
 
     shouldComponentUpdate(nextProps: Props, nextState: State) {
-        if (nextState.page !== this.state.page) return false;
+        if (nextState.page !== this.state.page) {
+            return false;
+        }
         /*        if (this.shallowEqualObjects(this.props, nextProps)) {
             return false;
         }*/

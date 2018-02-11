@@ -37,14 +37,14 @@ export class MainScrollView extends React.Component<Props, State> {
                             }
                         }
                     ])}
-                    refreshControl={(
-                        <RefreshControl refreshing={this.props.refreshing} onRefresh={() => this.props.onRefresh()}/>
-                    )}
+                    refreshControl={
+                        <RefreshControl refreshing={this.props.refreshing} onRefresh={() => this.props.onRefresh()} />
+                    }
                 >
                     {this.props.children}
-                    <BottomScrollViewPadding/>
+                    <BottomScrollViewPadding />
                 </ScrollView>
-                <ScrollViewFader scrollPosition={this.state.scrollPosition}/>
+                <ScrollViewFader scrollPosition={this.state.scrollPosition} />
             </Aux>
         );
     }

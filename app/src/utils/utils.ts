@@ -11,7 +11,7 @@ export class Utils {
 
     static getWindowHeight(): number {
         let height = Dimensions.get('window').height;
-        return Platform.OS == 'android' ? height - 24 : height;
+        return Platform.OS === 'android' ? height - 24 : height;
     }
 
     static getWindowWidth(): number {

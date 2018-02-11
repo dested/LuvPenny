@@ -106,7 +106,7 @@ export class HomePage extends Component<Props, State> {
     }
 
     shouldComponentUpdate(nextProps: Props, nextState: State) {
-        if (nextState.currentPage != this.state.currentPage) {
+        if (nextState.currentPage !== this.state.currentPage) {
             return false;
         }
         return true;

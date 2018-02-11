@@ -27,11 +27,11 @@ function getDayNumber(month: Moment, day: number) {
     }
 }
 
-function weekCount(year: number, month_number: number) {
+function weekCount(year: number, monthNumber: number) {
     // month_number is in the range 1..12
 
-    let firstOfMonth = new Date(year, month_number - 1, 1);
-    let lastOfMonth = new Date(year, month_number, 0);
+    let firstOfMonth = new Date(year, monthNumber - 1, 1);
+    let lastOfMonth = new Date(year, monthNumber, 0);
 
     let used = firstOfMonth.getDay() + lastOfMonth.getDate();
 
