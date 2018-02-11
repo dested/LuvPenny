@@ -1,24 +1,14 @@
 import React from 'react';
-import {
-    Animated,
-    Image,
-    KeyboardAvoidingView,
-    Picker,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View
-} from 'react-native';
+import {Animated, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View} from 'react-native';
 import {hideHeader, Navigation} from 'src/utils/navigationUtils';
 import FullPanComponent from 'src/components/fullPanComponent';
 import {Utils} from 'src/utils/utils';
 import {Assets} from 'src/assets';
 import {HorizontalSelector} from '../../components/horizontalSelector';
+import {DownBounceArrow} from './components/downBounceArrow';
 
 interface State {
-    stars: { animationX: Animated.Animated; animationY: Animated.Animated }[];
+    stars: {translateX: Animated.Animated; translateY: Animated.Animated; scale: Animated.Animated}[];
     canProgress: boolean;
     canReverse: boolean;
     pageIndex: number;
@@ -29,8 +19,7 @@ interface State {
     };
 }
 
-interface Props {
-}
+interface Props {}
 
 @Navigation({
     ...hideHeader
@@ -43,7 +32,7 @@ export default class IntroPage extends React.Component<Props, State> {
             stars: [],
             canReverse: true,
             canProgress: true,
-            pageIndex: 7,
+            pageIndex: 0,
             colors: ['#60b6ff', '#ffabaa', '#af6fff', '#8fffa3', '#59d9ff'],
             survey: {}
         };
@@ -55,18 +44,23 @@ export default class IntroPage extends React.Component<Props, State> {
         this.setState(prev => ({
             ...prev,
             stars: Utils.range(6).map(() => ({
-                animationX: animator.interpolate({
+                translateX: animator.interpolate({
                     inputRange: introRange,
                     outputRange: introRange.map(() => Math.random() * Utils.getWindowWidth())
                 }),
-                animationY: animator.interpolate({
+                translateY: animator.interpolate({
                     inputRange: introRange,
                     outputRange: introRange.map(() =>
                         Utils.randomFlip(
-                            () => Math.random() * (Utils.getWindowHeight() * 0.35),
-                            () => Utils.getWindowHeight() - Math.random() * (Utils.getWindowHeight() * 0.35)
+                            () => Math.random() * (Utils.getWindowHeight() * 0.25),
+                            () => Utils.getWindowHeight() - Math.random() * (Utils.getWindowHeight() * 0.25)
                         )
                     )
+                }),
+
+                scale: animator.interpolate({
+                    inputRange: introRange,
+                    outputRange: introRange.map(() => Math.random() * 0.5 + 0.5)
                 })
             }))
         }));
@@ -98,29 +92,36 @@ export default class IntroPage extends React.Component<Props, State> {
                 >
                     <View style={styles.textHolder}>
                         <Text style={styles.text}>This is Penny</Text>
+                        <DownBounceArrow />
                     </View>
                     <View style={styles.textHolder}>
                         <Text style={styles.text}>Penny is your relationship manager</Text>
+                        <DownBounceArrow />
                     </View>
                     <View style={styles.textHolder}>
                         <Text style={styles.text}>She will make you a rockstar</Text>
+                        <DownBounceArrow />
                     </View>
                     <View style={styles.textHolder}>
                         <Text style={styles.text}>The more information Penny knows about your significant others</Text>
+                        <DownBounceArrow />
                     </View>
                     <View style={styles.textHolder}>
                         <Text style={styles.text}>The more help Penny can provide you</Text>
+                        <DownBounceArrow />
                     </View>
                     <View style={styles.textHolder}>
                         <Text style={styles.text}>Let's get started with a simple questionnaire</Text>
+                        <DownBounceArrow />
                     </View>
                     <View style={styles.textHolder}>
                         <Text style={styles.text}>
                             You don't have to answer every question, but the more you do the more Penny can help
                         </Text>
+                        <DownBounceArrow />
                     </View>
                     <KeyboardAvoidingView style={styles.textHolder} behavior={'position'}>
-                        <Text style={styles.text}>Answer this:</Text>
+                        <Text style={[styles.text, {fontSize: 26}]}>Answer this:</Text>
                         <Text style={styles.text}>My most significant other is</Text>
                         <TextInput
                             style={styles.textInput}
@@ -131,6 +132,7 @@ export default class IntroPage extends React.Component<Props, State> {
                             }
                             value={this.state.survey.significantOther}
                         />
+                        {this.state.canProgress && <DownBounceArrow />}
                     </KeyboardAvoidingView>
 
                     <View style={styles.textHolder}>
@@ -138,11 +140,11 @@ export default class IntroPage extends React.Component<Props, State> {
 
                         <HorizontalSelector
                             items={relationshipItems}
-                            onSelect={() => {
-                            }}
+                            onSelect={() => {}}
                             selectedItem={relationshipItems[0]}
                             extraItem={{label: 'Other', color: 'yellow', icon: Assets.icons.star}}
                         />
+                        {this.state.canProgress && <DownBounceArrow />}
                     </View>
                 </FullPanComponent>
                 {this.state.stars.map((star, i) => (
@@ -150,7 +152,14 @@ export default class IntroPage extends React.Component<Props, State> {
                         key={i}
                         style={[
                             styles.star,
-                            {transform: [{translateX: star.animationX}, {translateY: star.animationY}]}
+                            {
+                                transform: [
+                                    {translateX: star.translateX},
+                                    {translateY: star.translateY},
+                                    {scaleX: star.scale},
+                                    {scaleY: star.scale}
+                                ]
+                            }
                         ]}
                         source={Assets.elements.star}
                     />

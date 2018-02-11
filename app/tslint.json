@@ -39,10 +39,7 @@
     "no-any": false,
     "no-arg": true,
     "no-bitwise": true,
-    "no-consecutive-blank-lines": [
-      true,
-      2
-    ],
+    "no-consecutive-blank-lines": [true,2],
     "no-construct": true,
     "no-debugger": true,
     "no-duplicate-variable": true,
@@ -66,7 +63,7 @@
       "single",
       "jsx-double"
     ],
-    "jsx-curly-spacing": "always",
+    "jsx-curly-spacing":"always",
     "radix": true,
     "semicolon": [
       true,

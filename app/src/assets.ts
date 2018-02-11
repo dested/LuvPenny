@@ -13,6 +13,7 @@ export const Assets = {
     icons: {
         add_user: require('../assets/icons/add_user.png'),
         archivement: require('../assets/icons/archivement.png'),
+        arrow_down: require('../assets/icons/arrow_down.png'),
         at: require('../assets/icons/at.png'),
         bag: require('../assets/icons/bag.png'),
         bar_chart: require('../assets/icons/bar_chart.png'),

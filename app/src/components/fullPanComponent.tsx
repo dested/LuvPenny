@@ -29,11 +29,13 @@ export default class FullPanComponent extends Component<Props, State> {
         };
     }
 
-    componentWillMount(): void {
+    componentDidMount() {
         if (this.props.indexAnimator) {
             this.props.indexAnimator(this.state.indexAnimator, React.Children.count(this.props.children));
         }
+    }
 
+    componentWillMount(): void {
         this.panResponder = PanResponder.create({
             onMoveShouldSetPanResponder: (evt, gestureState) => Math.abs(gestureState.dy) > 10,
             onMoveShouldSetPanResponderCapture: (evt, gestureState) => Math.abs(gestureState.dy) > 10,
