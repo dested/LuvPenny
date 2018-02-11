@@ -4,13 +4,16 @@ import {Utils} from '../utils/utils';
 import LinearGradient from 'react-native-linear-gradient';
 
 interface State {
-    introIndex: number;
-    introIndexAnimator: Animated.Value;
+    indexAnimator: Animated.Value;
 }
 
 interface Props {
-    items: {color: string; component: ReactNode}[];
-    introIndexAnimator?: (animator: Animated.Value) => void;
+    colors: string[];
+    onIndexChange: (index: number) => void;
+    canReverse: boolean;
+    canProgress: boolean;
+    indexAnimator?: (animator: Animated.Value, range: number) => void;
+    pageIndex: number;
 }
 
 export default class FullPanComponent extends Component<Props, State> {
@@ -22,28 +25,28 @@ export default class FullPanComponent extends Component<Props, State> {
         this.canPan = true;
 
         this.state = {
-            introIndex: 0,
-            introIndexAnimator: new Animated.Value(0)
+            indexAnimator: new Animated.Value(props.pageIndex)
         };
     }
 
+    componentDidMount(): void {}
+
     componentWillMount(): void {
-        this.props.introIndexAnimator && this.props.introIndexAnimator(this.state.introIndexAnimator);
+        this.props.indexAnimator &&
+            this.props.indexAnimator(this.state.indexAnimator, React.Children.count(this.props.children));
 
         this.panResponder = PanResponder.create({
-            onStartShouldSetPanResponder: () => true,
-            onStartShouldSetPanResponderCapture: () => true,
             onMoveShouldSetPanResponder: () => true,
-            onMoveShouldSetPanResponderCapture: () => true,
+            onMoveShouldSetPanResponderCapture: (evt, gestureState) => Math.abs(gestureState.dy) > 5,
             onPanResponderMove: (evt, gestureState) => {
                 if (this.canPan) {
-                    if (gestureState.dy < -15) {
-                        if (this.state.introIndex < this.props.items.length - 1) {
+                    if (gestureState.dy < -15 && this.props.canReverse) {
+                        if (this.props.pageIndex < React.Children.count(this.props.children) - 1) {
                             this.progressIndex(+1);
                         }
                     }
-                    if (gestureState.dy > 15) {
-                        if (this.state.introIndex > 0) {
+                    if (gestureState.dy > 15 && this.props.canProgress) {
+                        if (this.props.pageIndex > 0) {
                             this.progressIndex(-1);
                         }
                     }
@@ -56,14 +59,17 @@ export default class FullPanComponent extends Component<Props, State> {
     }
 
     private progressIndex(amount: number) {
-        this.setState(prev => {
-            Animated.timing(this.state.introIndexAnimator, {
-                toValue: prev.introIndex + amount,
-                duration: 500,
-                useNativeDriver: true
-            }).start();
-            return {...prev, canPan: false, introIndex: prev.introIndex + amount};
-        });
+        this.setState(
+            (prev, props) => {
+                Animated.timing(this.state.indexAnimator, {
+                    toValue: props.pageIndex + amount,
+                    duration: 500,
+                    useNativeDriver: true
+                }).start();
+                return {...prev, canPan: false, index: props.pageIndex + amount};
+            },
+            () => this.props.onIndexChange(this.props.pageIndex + amount)
+        );
         this.canPan = false;
     }
 
@@ -72,15 +78,15 @@ export default class FullPanComponent extends Component<Props, State> {
     }
 
     render() {
-        let introRange = Utils.range(this.props.items.length);
-        const scrollPosition = this.state.introIndexAnimator.interpolate({
-            inputRange: introRange,
-            outputRange: introRange.map(a => -a * Utils.getWindowHeight())
+        let range = Utils.range(React.Children.count(this.props.children));
+        const scrollPosition = this.state.indexAnimator.interpolate({
+            inputRange: range,
+            outputRange: range.map(a => -a * Utils.getWindowHeight())
         });
 
         return (
             <View style={{left: 0, right: 0, top: 0, bottom: 0}} {...this.panResponder.panHandlers}>
-                {this.props.items.map((intro, index) => (
+                {React.Children.map(this.props.children, (item, index) => (
                     <Animated.View
                         key={index}
                         style={[
@@ -93,31 +99,29 @@ export default class FullPanComponent extends Component<Props, State> {
                             }
                         ]}
                     >
-                        <LinearGradient
-                            colors={[
-                                intro.color,
-                                this.props.items[index + 1] ? this.props.items[index + 1].color : intro.color
-                            ]}
-                            locations={[0.9, 1]}
-                            style={styles.section}
-                        >
-                            {this.props.items[index].component}
+                        <LinearGradient colors={this.getColors(index)} locations={[0.85, 1]} style={styles.section}>
+                            {item}
                         </LinearGradient>
                     </Animated.View>
                 ))}
             </View>
         );
     }
+
+    private getColors(index: number) {
+        let getIndex = (i: number) => i % this.props.colors.length;
+        return [
+            this.props.colors[getIndex(index)],
+            this.props.colors[getIndex(index + 1)]
+                ? this.props.colors[getIndex(index + 1)]
+                : this.props.colors[getIndex(index)]
+        ];
+    }
 }
 
 let styles = StyleSheet.create({
     outer: {
         height: '100%'
-    },
-    introText: {
-        fontSize: 32,
-        textAlign: 'center',
-        margin: 20
     },
     section: {
         height: Utils.getWindowHeight()
