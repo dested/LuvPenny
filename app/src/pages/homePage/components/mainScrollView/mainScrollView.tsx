@@ -13,7 +13,6 @@ interface Props {
     refreshing: boolean;
 }
 
-
 export class MainScrollView extends React.Component<Props, State> {
     constructor(props: Props, context: any) {
         super(props, context);

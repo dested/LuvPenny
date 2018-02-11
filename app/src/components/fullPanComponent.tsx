@@ -35,8 +35,8 @@ export default class FullPanComponent extends Component<Props, State> {
         }
 
         this.panResponder = PanResponder.create({
-            onMoveShouldSetPanResponder: () => true,
-            onMoveShouldSetPanResponderCapture: (evt, gestureState) => Math.abs(gestureState.dy) > 5,
+            onMoveShouldSetPanResponder: (evt, gestureState) => Math.abs(gestureState.dy) > 10,
+            onMoveShouldSetPanResponderCapture: (evt, gestureState) => Math.abs(gestureState.dy) > 10,
             onPanResponderMove: (evt, gestureState) => {
                 if (this.canPan) {
                     if (gestureState.dy < -15 && this.props.canReverse) {

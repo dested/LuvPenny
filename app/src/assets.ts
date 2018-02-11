@@ -1,5 +1,13 @@
 export const Assets = {
     elements: {
+        relationship: {
+            boyfriend: require('../assets/elements/relationship/boyfriend.png'),
+            daughter: require('../assets/elements/relationship/daughter.png'),
+            girlfriend: require('../assets/elements/relationship/girlfriend.png'),
+            husband: require('../assets/elements/relationship/husband.png'),
+            son: require('../assets/elements/relationship/son.png'),
+            wife: require('../assets/elements/relationship/wife.png')
+        },
         star: require('../assets/elements/star.png')
     },
     icons: {
