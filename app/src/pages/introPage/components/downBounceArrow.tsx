@@ -26,6 +26,7 @@ let styles = StyleSheet.create({
     outer: {
         position: 'absolute',
         bottom: 30,
+
         left: 0,
         right: 0,
         flexDirection: 'row',

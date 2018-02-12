@@ -8,7 +8,10 @@ import {
     StyleSheet,
     Text,
     TextInput,
-    View
+    TouchableWithoutFeedback,
+    View,
+    DatePickerAndroid,
+    DatePickerIOS
 } from 'react-native';
 import {hideHeader, Navigation} from 'src/utils/navigationUtils';
 import {Utils} from 'src/utils/utils';
@@ -18,15 +21,19 @@ import {DownBounceArrow} from './components/downBounceArrow';
 import {Penny} from 'src/components/penny';
 import FullPan from 'src/components/fullPan';
 import {Animator} from 'src/utils/animator';
+import {platform} from 'os';
 
 interface Survey {
     gender?: string;
+    myName?: string;
+    myBirthdate?: string;
     significantOtherRelationship?: string;
     significantOtherName?: string;
+    significantOtherBirthdate?: string;
 }
 
 interface State {
-    stars: { translateX: Animated.Animated; translateY: Animated.Animated; scale: Animated.Animated }[];
+    stars: {translateX: Animated.Animated; translateY: Animated.Animated; scale: Animated.Animated}[];
     canProgress: boolean;
     canReverse: boolean;
     pageIndex: number;
@@ -34,8 +41,7 @@ interface State {
     survey: Survey;
 }
 
-interface Props {
-}
+interface Props {}
 
 @Navigation({
     ...hideHeader
@@ -57,21 +63,21 @@ export default class IntroPage extends React.Component<Props, State> {
     ];
 
     starPositions = [
-        {x: Utils.getWindowWidth() * .30, y: Utils.getWindowHeight() * .20, size: .4},
-        {x: Utils.getWindowWidth() * .25, y: Utils.getWindowHeight() * .10, size: .8},
-        {x: Utils.getWindowWidth() * .12, y: Utils.getWindowHeight() * .05, size: .3},
-        {x: Utils.getWindowWidth() * .04, y: Utils.getWindowHeight() * .11, size: .36},
-        {x: Utils.getWindowWidth() * .48, y: Utils.getWindowHeight() * .10, size: .8},
-        {x: Utils.getWindowWidth() * .83, y: Utils.getWindowHeight() * .09, size: .4},
-        {x: Utils.getWindowWidth() * .81, y: Utils.getWindowHeight() * .17, size: .5},
-        {x: Utils.getWindowWidth() * .56, y: Utils.getWindowHeight() * .04, size: .6},
-        {x: Utils.getWindowWidth() * .75, y: Utils.getWindowHeight() * .08, size: .4},
-        {x: Utils.getWindowWidth() * .67, y: Utils.getWindowHeight() * .16, size: .3},
-        {x: Utils.getWindowWidth() * .22, y: Utils.getWindowHeight() * .18, size: .7},
-        {x: Utils.getWindowWidth() * .75, y: Utils.getWindowHeight() * .24, size: .6},
-        {x: Utils.getWindowWidth() * .71, y: Utils.getWindowHeight() * .18, size: .3},
-        {x: Utils.getWindowWidth() * .11, y: Utils.getWindowHeight() * .18, size: .3},
-        {x: Utils.getWindowWidth() * .02, y: Utils.getWindowHeight() * .02, size: .6},
+        {x: Utils.getWindowWidth() * 0.3, y: Utils.getWindowHeight() * 0.2, size: 0.4},
+        {x: Utils.getWindowWidth() * 0.25, y: Utils.getWindowHeight() * 0.1, size: 0.8},
+        {x: Utils.getWindowWidth() * 0.12, y: Utils.getWindowHeight() * 0.05, size: 0.3},
+        {x: Utils.getWindowWidth() * 0.04, y: Utils.getWindowHeight() * 0.11, size: 0.36},
+        {x: Utils.getWindowWidth() * 0.48, y: Utils.getWindowHeight() * 0.1, size: 0.8},
+        {x: Utils.getWindowWidth() * 0.83, y: Utils.getWindowHeight() * 0.09, size: 0.4},
+        {x: Utils.getWindowWidth() * 0.81, y: Utils.getWindowHeight() * 0.17, size: 0.5},
+        {x: Utils.getWindowWidth() * 0.56, y: Utils.getWindowHeight() * 0.04, size: 0.6},
+        {x: Utils.getWindowWidth() * 0.75, y: Utils.getWindowHeight() * 0.08, size: 0.4},
+        {x: Utils.getWindowWidth() * 0.67, y: Utils.getWindowHeight() * 0.16, size: 0.3},
+        {x: Utils.getWindowWidth() * 0.22, y: Utils.getWindowHeight() * 0.18, size: 0.7},
+        {x: Utils.getWindowWidth() * 0.75, y: Utils.getWindowHeight() * 0.24, size: 0.6},
+        {x: Utils.getWindowWidth() * 0.71, y: Utils.getWindowHeight() * 0.18, size: 0.3},
+        {x: Utils.getWindowWidth() * 0.11, y: Utils.getWindowHeight() * 0.18, size: 0.3},
+        {x: Utils.getWindowWidth() * 0.02, y: Utils.getWindowHeight() * 0.02, size: 0.6}
     ];
 
     constructor(props: Props) {
@@ -82,13 +88,7 @@ export default class IntroPage extends React.Component<Props, State> {
             canReverse: true,
             canProgress: true,
             pageIndex: 0,
-            colors: [
-                '#60b6ff',
-                '#ff8b3c',
-                '#af6fff',
-                '#8fffa3',
-                '#59d9ff'
-            ],
+            colors: ['#60b6ff', '#ff8b3c', '#af6fff', '#8fffa3', '#59d9ff'],
             survey: {}
         };
     }
@@ -96,12 +96,12 @@ export default class IntroPage extends React.Component<Props, State> {
     setupIndexAnimator(animator: Animated.Value, range: number): void {
         let introRange = Utils.range(range);
         let positions = introRange.map(() => Utils.randomizeArray(this.starPositions));
-        let stars = Utils.range(this.starPositions.length).map((_,i) => positions.map(p => p[i]));
+        let stars = Utils.range(this.starPositions.length).map((_, i) => positions.map(p => p[i]));
 
         this.setState(prev => ({
             ...prev,
-            stars: stars.map((s) => {
-                return ({
+            stars: stars.map(s => {
+                return {
                     translateX: animator.interpolate({
                         inputRange: introRange,
                         outputRange: s.map(a => a.x)
@@ -114,7 +114,7 @@ export default class IntroPage extends React.Component<Props, State> {
                         inputRange: introRange,
                         outputRange: s.map(a => a.size)
                     })
-                });
+                };
             })
         }));
     }
@@ -134,10 +134,20 @@ export default class IntroPage extends React.Component<Props, State> {
                 canProgress = !!state.survey.gender;
                 break;
             case 7:
-                canProgress = !!state.survey.significantOtherRelationship;
+                canProgress = !!state.survey.myName;
                 break;
             case 8:
+                canProgress = !!state.survey.myBirthdate;
+                break;
+
+            case 9:
+                canProgress = !!state.survey.significantOtherRelationship;
+                break;
+            case 10:
                 canProgress = !!state.survey.significantOtherName;
+                break;
+            case 11:
+                canProgress = !!state.survey.significantOtherBirthdate;
                 break;
             default:
                 canProgress = true;
@@ -156,7 +166,7 @@ export default class IntroPage extends React.Component<Props, State> {
     render() {
         return (
             <View style={{left: 0, right: 0, top: 0, bottom: 0}}>
-                <Animated.View/>
+                <Animated.View />
 
                 <FullPan
                     ref={p => (this.fullPan = p)}
@@ -169,7 +179,7 @@ export default class IntroPage extends React.Component<Props, State> {
                 >
                     {this.renderText(
                         0,
-                        <Text style={styles.text}>This is {<Penny/>}</Text>,
+                        <Text style={styles.text}>This is {<Penny />}</Text>,
                         <Animator.In
                             startPosition={{
                                 x: Dimensions.get('screen').width + 20,
@@ -181,13 +191,13 @@ export default class IntroPage extends React.Component<Props, State> {
                             }}
                             duration={1000}
                         >
-                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.penny}/>
+                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.penny} />
                         </Animator.In>
                     )}
                     {this.renderText(
                         1,
                         <Text style={styles.text}>
-                            {<Penny/>} is your <Text style={{color: '#d36053'}}>relationship manager</Text>
+                            {<Penny />} is your <Text style={{color: '#d36053'}}>relationship manager</Text>
                         </Text>,
                         <Animator.In
                             startPosition={{
@@ -209,7 +219,7 @@ export default class IntroPage extends React.Component<Props, State> {
                     {this.renderText(
                         2,
                         <Text style={styles.text}>
-                            <Penny she/> will make you a{' '}
+                            <Penny she /> will make you a{' '}
                             <Text style={{fontWeight: '500', color: '#7b001a'}}>rockstar</Text>
                         </Text>,
                         <Animator.In
@@ -223,13 +233,13 @@ export default class IntroPage extends React.Component<Props, State> {
                             }}
                             duration={1000}
                         >
-                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.rockstar}/>
+                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.rockstar} />
                         </Animator.In>
                     )}
                     {this.renderText(
                         3,
                         <Text style={styles.text}>
-                            The more information {<Penny/>} knows about{' '}
+                            The more information {<Penny />} knows about{' '}
                             <Text style={{fontWeight: '500', color: '#387b1a'}}>you</Text> and your{' '}
                             <Text style={{fontWeight: '500', color: '#387b1a'}}>significant others</Text>
                         </Text>,
@@ -244,13 +254,13 @@ export default class IntroPage extends React.Component<Props, State> {
                             }}
                             duration={1000}
                         >
-                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.information}/>
+                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.information} />
                         </Animator.In>
                     )}
                     {this.renderText(
                         4,
                         <Text style={styles.text}>
-                            The more help {<Penny/>} can provide{' '}
+                            The more help {<Penny />} can provide{' '}
                             <Text style={{fontWeight: '500', color: '#387b1a'}}>you</Text>
                         </Text>,
                         <Animator.In
@@ -264,7 +274,7 @@ export default class IntroPage extends React.Component<Props, State> {
                             }}
                             duration={1000}
                         >
-                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.help}/>
+                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.help} />
                         </Animator.In>
                     )}
                     {this.renderText(
@@ -284,7 +294,7 @@ export default class IntroPage extends React.Component<Props, State> {
                             }}
                             duration={1000}
                         >
-                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.smiling}/>
+                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.smiling} />
                         </Animator.In>
                     )}
                     {this.renderSelect(6, {
@@ -303,17 +313,32 @@ export default class IntroPage extends React.Component<Props, State> {
                         otherItem: {label: 'Something Else', color: 'yellow', icon: Assets.icons.star, value: 'other'},
                         set: item => this.updateSurvey({gender: item.value})
                     })}
-                    {this.renderSelect(7, {
+                    {this.renderTextInput(7, {
+                        label: <Text style={styles.text}>My name is</Text>,
+                        value: this.state.survey.myName,
+                        set: text => this.updateSurvey({myName: text})
+                    })}
+                    {this.renderDateInput(8, {
+                        label: <Text style={styles.text}>My birthday is</Text>,
+                        value: this.state.survey.myBirthdate,
+                        set: date => this.updateSurvey({myBirthdate: date})
+                    })}
+                    {this.renderSelect(9, {
                         label: <Text style={styles.text}>My most significant other is my</Text>,
                         items: this.relationshipItems,
                         selectedItem: this.relationshipItems[0],
                         otherItem: {label: 'Other', color: 'yellow', icon: Assets.icons.star, value: 'other'},
                         set: item => this.updateSurvey({significantOtherRelationship: item.value})
                     })}
-                    {this.renderTextInput(8, {
+                    {this.renderTextInput(10, {
                         label: <Text style={styles.text}>Their name is</Text>,
                         value: this.state.survey.significantOtherName,
                         set: text => this.updateSurvey({significantOtherName: text})
+                    })}
+                    {this.renderDateInput(11, {
+                        label: <Text style={styles.text}>Their Birthday is</Text>,
+                        value: this.state.survey.significantOtherBirthdate,
+                        set: text => this.updateSurvey({significantOtherBirthdate: text})
                     })}
                 </FullPan>
                 {this.renderStars()}
@@ -330,7 +355,7 @@ export default class IntroPage extends React.Component<Props, State> {
             <View style={styles.textHolder}>
                 {label}
                 {image}
-                {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)}/>}
+                {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)} />}
             </View>
         );
     }
@@ -360,9 +385,69 @@ export default class IntroPage extends React.Component<Props, State> {
                     onChangeText={text => set(text)}
                     value={value}
                 />
-                {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)}/>}
+                {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)} />}
             </KeyboardAvoidingView>
         );
+    }
+
+    private renderDateInput(
+        pageIndex: number,
+        options: {
+            label: React.ReactNode;
+            value: string;
+            set: (value: string) => void;
+            upperText?: string;
+        }
+    ) {
+        if (pageIndex !== this.state.pageIndex && pageIndex !== this.state.pageIndex - 1) {
+            return null;
+        }
+
+        let {label, value, set, upperText} = options;
+
+        if (Platform.OS === 'android') {
+            return (
+                <TouchableWithoutFeedback
+                    onPress={async () => {
+                        const {action, year, month, day} = await DatePickerAndroid.open({
+                            date: new Date(2000, 0, 1)
+                        });
+                        if (action !== DatePickerAndroid.dismissedAction) {
+                            set(`${year}-${month + 1}-${day}`);
+                        }
+                    }}
+                    style={styles.textHolder}
+                >
+                    <View style={styles.textHolder}>
+                        {upperText && <Text style={[styles.text, {fontSize: 24}]}>{upperText}</Text>}
+                        {label}
+                        <Text
+                            style={{
+                                paddingTop: 20,
+                                fontWeight: '500',
+                                alignSelf: 'center',
+                                fontSize: 22,
+                                color: '#5c6891'
+                            }}
+                        >
+                            {value || 'January 1st, 2000'}
+                        </Text>
+                        {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)} />}
+                    </View>
+                </TouchableWithoutFeedback>
+            );
+        } else {
+            return (
+                <View style={styles.textHolder}>
+                    {upperText && <Text style={[styles.text, {fontSize: 24}]}>{upperText}</Text>}
+                    {label}
+
+                    <DatePickerIOS mode={'date'} date={new Date(value)} onDateChange={d => set(d.toDateString())} />
+
+                    {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)} />}
+                </View>
+            );
+        }
     }
 
     private renderSelect(
@@ -393,7 +478,7 @@ export default class IntroPage extends React.Component<Props, State> {
                     selectedItem={selectedItem}
                     extraItem={otherItem}
                 />
-                {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)}/>}
+                {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)} />}
             </View>
         );
     }
