@@ -29,6 +29,10 @@ interface Props {
     highlightColor?: string;
 }
 
+const circleSize = 96;
+const padding = 16;
+const circleSizeWithPadding = 96 + padding;
+
 interface State {
     scrollPosition: Animated.Value;
 }
@@ -53,14 +57,13 @@ export class HorizontalSelector extends Component<Props, State> {
 
     private snapDragPosition() {
         setTimeout(() => {
-            let position = Math.round(this.scrollPosition / 90);
-            this.scrollView.scrollTo({x: position * 90, animated: true});
+            let position = Math.round(this.scrollPosition / circleSizeWithPadding);
+            this.scrollView.scrollTo({x: position * circleSizeWithPadding, animated: true});
         }, 300);
     }
 
     private selectItem(r: HorizontalSelectorItem) {
         this.scrollToIndex(this.props.items.indexOf(r));
-        this.props.onSelect(r);
     }
 
     private selectExtra() {
@@ -68,7 +71,8 @@ export class HorizontalSelector extends Component<Props, State> {
     }
 
     private scrollToIndex(index: number) {
-        this.scrollView.scrollTo({x: index * 90, animated: true});
+        this.scrollView.scrollTo({x: index * circleSizeWithPadding, animated: true});
+        this.props.onSelect(this.props.items[index]);
     }
 
     render() {
@@ -91,7 +95,7 @@ export class HorizontalSelector extends Component<Props, State> {
                     showsHorizontalScrollIndicator={false}
                     onScrollEndDrag={() => this.snapDragPosition()}
                 >
-                    <View style={styles.leftPadding} />
+                    <View style={styles.leftPadding}/>
                     {this.props.items.map((r, i) => (
                         <ItemComponent
                             key={i}
@@ -103,7 +107,7 @@ export class HorizontalSelector extends Component<Props, State> {
                     ))}
                     {this.props.extraItem ? (
                         <Fragment>
-                            <View style={styles.rightPadding} />
+                            <View style={styles.rightPadding}/>
                             <ItemComponent
                                 index={this.props.items.length + 1}
                                 scrollPosition={animatedDivision}
@@ -112,34 +116,33 @@ export class HorizontalSelector extends Component<Props, State> {
                             />
                         </Fragment>
                     ) : (
-                        <View style={styles.leftPadding} />
+                        <View style={styles.leftPadding}/>
                     )}
                 </ScrollView>
-                <View style={[styles.highlight, {borderColor: this.props.highlightColor}]} pointerEvents={'none'} />
+                <View style={[styles.highlight, {borderColor: this.props.highlightColor}]} pointerEvents={'none'}/>
             </View>
         );
     }
 }
 
-let halfScreen = Dimensions.get('screen').width / 2 - 45;
+let halfScreen = Dimensions.get('screen').width / 2 - circleSize / 2;
 let styles = StyleSheet.create({
     header: {
-        height: 120,
         flexDirection: 'row'
     },
     leftPadding: {
-        width: halfScreen
+        width: halfScreen,
     },
     rightPadding: {
-        width: halfScreen - 90
+        width: halfScreen - circleSizeWithPadding - padding
     },
     highlight: {
-        marginLeft: halfScreen + 5,
-        marginTop: 20,
-        width: 80,
-        height: 80,
+        marginLeft: halfScreen,
+        marginTop: padding / 2,
+        width: circleSize + padding,
+        height: circleSize + padding,
         borderWidth: 3,
-        borderRadius: 45,
+        borderRadius: (circleSizeWithPadding) / 2,
         top: 0,
         bottom: 0,
         position: 'absolute',
@@ -155,25 +158,11 @@ interface ItemProps {
 }
 
 let ItemComponent: React.SFC<ItemProps> = props => {
-    let imageBodyStyles = {
-        marginTop: 20,
-        width: 68,
-        height: 68,
-        borderRadius: 34,
-        backgroundColor: props.item.color
-    };
-
-    let imageStyles = {
-        width: 64,
-        height: 64,
-        borderRadius: 32
-    };
-
     return (
         <TouchableOpacity style={itemStyles.body} onPress={() => props.onSelect()}>
             <View style={itemStyles.innerBody}>
-                <View style={[itemStyles.imageBody, imageBodyStyles]}>
-                    <Image source={props.item.icon} style={[itemStyles.image, imageStyles]} />
+                <View style={[itemStyles.imageBody, {backgroundColor: props.item.color}]}>
+                    <Image source={props.item.icon} style={itemStyles.image}/>
                 </View>
                 <Text style={[itemStyles.text, {opacity: 1}]}>{props.item.label}</Text>
             </View>
@@ -183,25 +172,31 @@ let ItemComponent: React.SFC<ItemProps> = props => {
 
 let itemStyles = StyleSheet.create({
     body: {
-        height: 120,
-        width: 90,
+        width: circleSizeWithPadding,
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    image: {
+        width: circleSize,
+        height: circleSize,
+        borderRadius: circleSize / 2
     },
     innerBody: {
-        height: 90,
-        width: 90,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        margin: padding / 2
     },
-    image: {},
     imageBody: {
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        marginTop: padding / 2,
+        width: circleSize,
+        height: circleSize,
+        borderRadius: circleSize / 2,
     },
     text: {
-        paddingTop: 5,
-        fontSize: 10,
+        paddingTop: 8,
+        fontSize: 15,
         ...CommonStyles.thickFont
     }
 });
