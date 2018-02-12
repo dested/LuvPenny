@@ -21,9 +21,9 @@ import {DownBounceArrow} from './components/downBounceArrow';
 import {Penny} from 'src/components/penny';
 import FullPan from 'src/components/fullPan';
 import {Animator} from 'src/utils/animator';
-import {platform} from 'os';
 import HorizontalFullPan from '../../components/horizontalFullPan';
 import {NavigationActions, TransitionerProps} from 'react-navigation';
+import moment from 'moment';
 
 interface Survey {
     gender?: string;
@@ -35,7 +35,7 @@ interface Survey {
 }
 
 interface State {
-    stars: { translateX: Animated.Animated; translateY: Animated.Animated; scale: Animated.Animated }[];
+    stars: {translateX: Animated.Animated; translateY: Animated.Animated; scale: Animated.Animated}[];
     canProgress: boolean;
     canReverse: boolean;
     pageIndex: number;
@@ -44,12 +44,10 @@ interface State {
     hPageIndex: number;
     hColors: string[];
 
-
     survey: Survey;
 }
 
-interface Props extends TransitionerProps {
-}
+interface Props extends TransitionerProps {}
 
 @Navigation({
     ...hideHeader
@@ -95,16 +93,11 @@ export default class IntroPage extends React.Component<Props, State> {
             stars: [],
             canReverse: true,
             canProgress: true,
-            pageIndex: 5,
+            pageIndex: 9,
             colors: ['#60b6ff', '#ff8b3c', '#af6fff', '#8fffa3', '#59d9ff'],
 
             hPageIndex: 0,
-            hColors: [
-                'rgba(232,31,20,.2)',
-                'rgba(2,48,128,.2)',
-                'rgba(232,195,58,.2)',
-                'rgba(41,85,68,.2)'
-            ],
+            hColors: ['rgba(232,31,20,.2)', 'rgba(2,48,128,.2)', 'rgba(232,195,58,.2)', 'rgba(41,85,68,.2)'],
 
             survey: {}
         };
@@ -188,7 +181,7 @@ export default class IntroPage extends React.Component<Props, State> {
 
         return (
             <View style={{left: 0, right: 0, top: 0, bottom: 0}}>
-                <Animated.View/>
+                <Animated.View />
 
                 <FullPan
                     ref={p => (this.fullPan = p)}
@@ -201,7 +194,7 @@ export default class IntroPage extends React.Component<Props, State> {
                 >
                     {this.renderText(
                         page++,
-                        <Text style={styles.text}>This is {<Penny/>}</Text>,
+                        <Text style={styles.text}>This is {<Penny />}</Text>,
                         <Animator.In
                             startPosition={{
                                 x: Dimensions.get('screen').width + 20,
@@ -213,13 +206,13 @@ export default class IntroPage extends React.Component<Props, State> {
                             }}
                             duration={1000}
                         >
-                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.penny}/>
+                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.penny} />
                         </Animator.In>
                     )}
                     {this.renderText(
                         page++,
                         <Text style={styles.text}>
-                            {<Penny/>} is your <Text style={{color: '#d36053'}}>relationship manager</Text>
+                            {<Penny />} is your <Text style={{color: '#d36053'}}>relationship manager</Text>
                         </Text>,
                         <Animator.In
                             startPosition={{
@@ -241,7 +234,7 @@ export default class IntroPage extends React.Component<Props, State> {
                     {this.renderText(
                         page++,
                         <Text style={styles.text}>
-                            <Penny she/> will make you a{' '}
+                            <Penny she /> will make you a{' '}
                             <Text style={{fontWeight: '500', color: '#7b001a'}}>rockstar</Text>
                         </Text>,
                         <Animator.In
@@ -255,13 +248,13 @@ export default class IntroPage extends React.Component<Props, State> {
                             }}
                             duration={1000}
                         >
-                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.rockstar}/>
+                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.rockstar} />
                         </Animator.In>
                     )}
                     {this.renderText(
                         page++,
                         <Text style={styles.text}>
-                            The more information {<Penny/>} knows about{' '}
+                            The more information {<Penny />} knows about{' '}
                             <Text style={{fontWeight: '500', color: '#387b1a'}}>you</Text> and your{' '}
                             <Text style={{fontWeight: '500', color: '#387b1a'}}>significant others</Text>
                         </Text>,
@@ -276,13 +269,13 @@ export default class IntroPage extends React.Component<Props, State> {
                             }}
                             duration={1000}
                         >
-                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.information}/>
+                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.information} />
                         </Animator.In>
                     )}
                     {this.renderText(
                         page++,
                         <Text style={styles.text}>
-                            The more help {<Penny/>} can provide{' '}
+                            The more help {<Penny />} can provide{' '}
                             <Text style={{fontWeight: '500', color: '#387b1a'}}>you</Text>
                         </Text>,
                         <Animator.In
@@ -296,58 +289,46 @@ export default class IntroPage extends React.Component<Props, State> {
                             }}
                             duration={1000}
                         >
-                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.help}/>
+                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.help} />
                         </Animator.In>
                     )}
-                    {page++ && <View style={styles.textHolder}>
-                        <HorizontalFullPan
-                            colors={this.state.hColors}
-                            pageIndex={this.state.hPageIndex}
-                            canProgress={true}
-                            canReverse={true}
-                            onIndexChange={index => {
-                                this.setState(prev => ({...prev, hPageIndex: index}));
-                            }}
-                        >
-                            <View style={styles.textHolder}>
-                                <Text style={styles.text}>
-                                    Keep track of birthday presents months in advance
-                                </Text>
-                            </View>
-                            <View style={styles.textHolder}>
-                                <Text style={styles.text}>
-                                    Get the chocolates they want, not the ones you want
-                                </Text>
-                            </View>
-                            <View style={styles.textHolder}>
-                                <Text style={styles.text}>
-                                    Secretly plan a seemingly spontaneous date night
-                                </Text>
-                            </View>
-                            <View style={styles.textHolder}>
-                                <Text style={styles.text}>
-                                    Keep track of their favorite meal at Chipotle
-                                </Text>
-                            </View>
-                            <View style={styles.textHolder}>
-                                <Text style={styles.text}>
-                                    Never forget their favorite Disney princess again
-                                </Text>
-                            </View>
-                            <View style={styles.textHolder}>
-                                <Text style={styles.text}>
-                                    Be notified when their favorite team comes to town
-                                </Text>
-                            </View>
-                            <View style={styles.textHolder}>
-                                <Text style={styles.text}>
-                                    Never get them the wrong flowers again
-                                </Text>
-                            </View>
-                        </HorizontalFullPan>
+                    {page++ && (
+                        <View style={styles.textHolder}>
+                            <HorizontalFullPan
+                                colors={this.state.hColors}
+                                pageIndex={this.state.hPageIndex}
+                                canProgress={true}
+                                canReverse={true}
+                                onIndexChange={index => {
+                                    this.setState(prev => ({...prev, hPageIndex: index}));
+                                }}
+                            >
+                                <View style={styles.textHolder}>
+                                    <Text style={styles.text}>Keep track of birthday presents months in advance</Text>
+                                </View>
+                                <View style={styles.textHolder}>
+                                    <Text style={styles.text}>Get the chocolates they want, not the ones you want</Text>
+                                </View>
+                                <View style={styles.textHolder}>
+                                    <Text style={styles.text}>Secretly plan a seemingly spontaneous date night</Text>
+                                </View>
+                                <View style={styles.textHolder}>
+                                    <Text style={styles.text}>Keep track of their favorite meal at Chipotle</Text>
+                                </View>
+                                <View style={styles.textHolder}>
+                                    <Text style={styles.text}>Never forget their favorite Disney princess again</Text>
+                                </View>
+                                <View style={styles.textHolder}>
+                                    <Text style={styles.text}>Be notified when their favorite team comes to town</Text>
+                                </View>
+                                <View style={styles.textHolder}>
+                                    <Text style={styles.text}>Never get them the wrong flowers again</Text>
+                                </View>
+                            </HorizontalFullPan>
 
-                        {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)}/>}
-                    </View>}
+                            {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)} />}
+                        </View>
+                    )}
 
                     {this.renderText(
                         page++,
@@ -366,7 +347,7 @@ export default class IntroPage extends React.Component<Props, State> {
                             }}
                             duration={1000}
                         >
-                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.smiling}/>
+                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.smiling} />
                         </Animator.In>
                     )}
                     {this.renderSelect(page++, {
@@ -407,7 +388,7 @@ export default class IntroPage extends React.Component<Props, State> {
                         value: this.state.survey.significantOtherName,
                         set: text => this.updateSurvey({significantOtherName: text})
                     })}
-                    {this.renderDateInput(page++, {
+                    {this.renderDateInput(page, {
                         label: <Text style={styles.text}>Their Birthday is</Text>,
                         value: this.state.survey.significantOtherBirthdate,
                         set: text => this.updateSurvey({significantOtherBirthdate: text})
@@ -439,7 +420,6 @@ export default class IntroPage extends React.Component<Props, State> {
                             </View>
                         </TouchableWithoutFeedback>
                     </View>
-
                 </FullPan>
                 {this.renderStars()}
             </View>
@@ -455,7 +435,7 @@ export default class IntroPage extends React.Component<Props, State> {
             <View style={styles.textHolder}>
                 {label}
                 {image}
-                {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)}/>}
+                {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)} />}
             </View>
         );
     }
@@ -485,7 +465,7 @@ export default class IntroPage extends React.Component<Props, State> {
                     onChangeText={text => set(text)}
                     value={value}
                 />
-                {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)}/>}
+                {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)} />}
             </KeyboardAvoidingView>
         );
     }
@@ -513,7 +493,7 @@ export default class IntroPage extends React.Component<Props, State> {
                             date: new Date(2000, 0, 1)
                         });
                         if (action !== DatePickerAndroid.dismissedAction) {
-                            set(`${year}-${month + 1}-${day}`);
+                            set(moment(new Date(year, month, day)).format('YYYY-MM-DD'));
                         }
                     }}
                     style={styles.textHolder}
@@ -530,9 +510,9 @@ export default class IntroPage extends React.Component<Props, State> {
                                 color: '#5c6891'
                             }}
                         >
-                            {value || 'January 1st, 2000'}
+                            {value ? moment(value).format('MMMM Do, YYYY') : 'January 1st, 2000'}
                         </Text>
-                        {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)}/>}
+                        {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)} />}
                     </View>
                 </TouchableWithoutFeedback>
             );
@@ -542,9 +522,13 @@ export default class IntroPage extends React.Component<Props, State> {
                     {upperText && <Text style={[styles.text, {fontSize: 24}]}>{upperText}</Text>}
                     {label}
 
-                    <DatePickerIOS mode={'date'} date={new Date(value)} onDateChange={d => set(d.toDateString())}/>
+                    <DatePickerIOS
+                        mode={'date'}
+                        date={new Date(value)}
+                        onDateChange={d => set(moment(d).format('YYYY-MM-DD'))}
+                    />
 
-                    {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)}/>}
+                    {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)} />}
                 </View>
             );
         }
@@ -578,7 +562,7 @@ export default class IntroPage extends React.Component<Props, State> {
                     selectedItem={selectedItem}
                     extraItem={otherItem}
                 />
-                {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)}/>}
+                {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)} />}
             </View>
         );
     }

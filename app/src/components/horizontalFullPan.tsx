@@ -83,7 +83,10 @@ export default class HorizontalFullPan extends Component<Props, State> {
         });
 
         return (
-            <View style={{left: 0, right: 0, top: 0, bottom: 0, flexDirection: 'row'}} {...this.panResponder.panHandlers}>
+            <View
+                style={{left: 0, right: 0, top: 0, bottom: 0, flexDirection: 'row'}}
+                {...this.panResponder.panHandlers}
+            >
                 {React.Children.map(this.props.children, (item, index) => (
                     <Animated.View
                         key={index}
@@ -116,14 +119,11 @@ export default class HorizontalFullPan extends Component<Props, State> {
         let getIndex = (i: number) => i % this.props.colors.length;
         return [
             this.props.colors[getIndex(index)],
-            index === total - 1 ?
-                this.props.colors[getIndex(index)] :
-                (
-                    this.props.colors[getIndex(index + 1)]
-                        ? this.props.colors[getIndex(index + 1)]
-                        : this.props.colors[getIndex(index)]
-
-                )
+            index === total - 1
+                ? this.props.colors[getIndex(index)]
+                : this.props.colors[getIndex(index + 1)]
+                  ? this.props.colors[getIndex(index + 1)]
+                  : this.props.colors[getIndex(index)]
         ];
     }
 }

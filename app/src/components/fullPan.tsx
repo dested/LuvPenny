@@ -97,7 +97,11 @@ export default class FullPan extends Component<Props, State> {
                             }
                         ]}
                     >
-                        <LinearGradient colors={this.getColors(index, totalChildren)} locations={[0.85, 1]} style={styles.section}>
+                        <LinearGradient
+                            colors={this.getColors(index, totalChildren)}
+                            locations={[0.85, 1]}
+                            style={styles.section}
+                        >
                             {item}
                         </LinearGradient>
                     </Animated.View>
@@ -110,14 +114,11 @@ export default class FullPan extends Component<Props, State> {
         let getIndex = (i: number) => i % this.props.colors.length;
         return [
             this.props.colors[getIndex(index)],
-            index === total - 1 ?
-                this.props.colors[getIndex(index)] :
-                (
-                    this.props.colors[getIndex(index + 1)]
-                        ? this.props.colors[getIndex(index + 1)]
-                        : this.props.colors[getIndex(index)]
-
-                )
+            index === total - 1
+                ? this.props.colors[getIndex(index)]
+                : this.props.colors[getIndex(index + 1)]
+                  ? this.props.colors[getIndex(index + 1)]
+                  : this.props.colors[getIndex(index)]
         ];
     }
 }
