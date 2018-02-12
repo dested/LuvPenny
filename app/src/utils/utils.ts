@@ -25,4 +25,18 @@ export class Utils {
         }
         return arr;
     }
+
+    static randomizeArray<T>(arr: T[]): T[] {
+        let items = [...arr];
+        for (let i = items.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * (i + 1));
+            [items[i], items[j]] = [items[j], items[i]];
+        }
+
+        return items.sort(() => Math.random());
+    }
+
+    static getRandomItem<T>(items: T[]): T {
+        return this.randomizeArray(items)[0];
+    }
 }

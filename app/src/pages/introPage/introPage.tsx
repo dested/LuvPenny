@@ -26,7 +26,7 @@ interface Survey {
 }
 
 interface State {
-    stars: {translateX: Animated.Animated; translateY: Animated.Animated; scale: Animated.Animated}[];
+    stars: { translateX: Animated.Animated; translateY: Animated.Animated; scale: Animated.Animated }[];
     canProgress: boolean;
     canReverse: boolean;
     pageIndex: number;
@@ -34,7 +34,8 @@ interface State {
     survey: Survey;
 }
 
-interface Props {}
+interface Props {
+}
 
 @Navigation({
     ...hideHeader
@@ -55,6 +56,24 @@ export default class IntroPage extends React.Component<Props, State> {
         {color: 'yellow', icon: Assets.elements.relationship.boyfriend, label: 'Best Friend', value: 'bestFriendBoy'}
     ];
 
+    starPositions = [
+        {x: Utils.getWindowWidth() * .30, y: Utils.getWindowHeight() * .20, size: .4},
+        {x: Utils.getWindowWidth() * .25, y: Utils.getWindowHeight() * .10, size: .8},
+        {x: Utils.getWindowWidth() * .12, y: Utils.getWindowHeight() * .05, size: .3},
+        {x: Utils.getWindowWidth() * .04, y: Utils.getWindowHeight() * .11, size: .36},
+        {x: Utils.getWindowWidth() * .48, y: Utils.getWindowHeight() * .10, size: .8},
+        {x: Utils.getWindowWidth() * .83, y: Utils.getWindowHeight() * .09, size: .4},
+        {x: Utils.getWindowWidth() * .81, y: Utils.getWindowHeight() * .17, size: .5},
+        {x: Utils.getWindowWidth() * .56, y: Utils.getWindowHeight() * .04, size: .6},
+        {x: Utils.getWindowWidth() * .75, y: Utils.getWindowHeight() * .08, size: .4},
+        {x: Utils.getWindowWidth() * .67, y: Utils.getWindowHeight() * .16, size: .3},
+        {x: Utils.getWindowWidth() * .22, y: Utils.getWindowHeight() * .18, size: .7},
+        {x: Utils.getWindowWidth() * .75, y: Utils.getWindowHeight() * .24, size: .6},
+        {x: Utils.getWindowWidth() * .71, y: Utils.getWindowHeight() * .18, size: .3},
+        {x: Utils.getWindowWidth() * .11, y: Utils.getWindowHeight() * .18, size: .3},
+        {x: Utils.getWindowWidth() * .02, y: Utils.getWindowHeight() * .02, size: .6},
+    ];
+
     constructor(props: Props) {
         super(props);
 
@@ -62,33 +81,41 @@ export default class IntroPage extends React.Component<Props, State> {
             stars: [],
             canReverse: true,
             canProgress: true,
-            pageIndex: 6,
-            colors: ['#60b6ff', '#ffabaa', '#af6fff', '#8fffa3', '#59d9ff'],
+            pageIndex: 0,
+            colors: [
+                '#60b6ff',
+                '#ff8b3c',
+                '#af6fff',
+                '#8fffa3',
+                '#59d9ff'
+            ],
             survey: {}
         };
     }
 
     setupIndexAnimator(animator: Animated.Value, range: number): void {
         let introRange = Utils.range(range);
+        let positions = introRange.map(() => Utils.randomizeArray(this.starPositions));
+        let stars = Utils.range(this.starPositions.length).map((_,i) => positions.map(p => p[i]));
 
         this.setState(prev => ({
             ...prev,
-            stars: Utils.range(12).map(() => ({
-                translateX: animator.interpolate({
-                    inputRange: introRange,
-                    outputRange: introRange.map(
-                        () => Math.random() * Utils.getWindowWidth() * 0.7 + Utils.getWindowWidth() * 0.1
-                    )
-                }),
-                translateY: animator.interpolate({
-                    inputRange: introRange,
-                    outputRange: introRange.map(() => Math.random() * (Utils.getWindowHeight() * 0.25))
-                }),
-                scale: animator.interpolate({
-                    inputRange: introRange,
-                    outputRange: introRange.map(() => Math.random() * 0.5 + 0.1)
-                })
-            }))
+            stars: stars.map((s) => {
+                return ({
+                    translateX: animator.interpolate({
+                        inputRange: introRange,
+                        outputRange: s.map(a => a.x)
+                    }),
+                    translateY: animator.interpolate({
+                        inputRange: introRange,
+                        outputRange: s.map(a => a.y)
+                    }),
+                    scale: animator.interpolate({
+                        inputRange: introRange,
+                        outputRange: s.map(a => a.size)
+                    })
+                });
+            })
         }));
     }
 
@@ -129,7 +156,7 @@ export default class IntroPage extends React.Component<Props, State> {
     render() {
         return (
             <View style={{left: 0, right: 0, top: 0, bottom: 0}}>
-                <Animated.View />
+                <Animated.View/>
 
                 <FullPan
                     ref={p => (this.fullPan = p)}
@@ -142,7 +169,7 @@ export default class IntroPage extends React.Component<Props, State> {
                 >
                     {this.renderText(
                         0,
-                        <Text style={styles.text}>This is {<Penny />}</Text>,
+                        <Text style={styles.text}>This is {<Penny/>}</Text>,
                         <Animator.In
                             startPosition={{
                                 x: Dimensions.get('screen').width + 20,
@@ -154,13 +181,13 @@ export default class IntroPage extends React.Component<Props, State> {
                             }}
                             duration={1000}
                         >
-                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.penny} />
+                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.penny}/>
                         </Animator.In>
                     )}
                     {this.renderText(
                         1,
                         <Text style={styles.text}>
-                            {<Penny />} is your <Text style={{color: '#d36053'}}>relationship manager</Text>
+                            {<Penny/>} is your <Text style={{color: '#d36053'}}>relationship manager</Text>
                         </Text>,
                         <Animator.In
                             startPosition={{
@@ -182,7 +209,7 @@ export default class IntroPage extends React.Component<Props, State> {
                     {this.renderText(
                         2,
                         <Text style={styles.text}>
-                            <Penny she /> will make you a{' '}
+                            <Penny she/> will make you a{' '}
                             <Text style={{fontWeight: '500', color: '#7b001a'}}>rockstar</Text>
                         </Text>,
                         <Animator.In
@@ -196,13 +223,13 @@ export default class IntroPage extends React.Component<Props, State> {
                             }}
                             duration={1000}
                         >
-                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.rockstar} />
+                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.rockstar}/>
                         </Animator.In>
                     )}
                     {this.renderText(
                         3,
                         <Text style={styles.text}>
-                            The more information {<Penny />} knows about{' '}
+                            The more information {<Penny/>} knows about{' '}
                             <Text style={{fontWeight: '500', color: '#387b1a'}}>you</Text> and your{' '}
                             <Text style={{fontWeight: '500', color: '#387b1a'}}>significant others</Text>
                         </Text>,
@@ -217,13 +244,13 @@ export default class IntroPage extends React.Component<Props, State> {
                             }}
                             duration={1000}
                         >
-                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.information} />
+                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.information}/>
                         </Animator.In>
                     )}
                     {this.renderText(
                         4,
                         <Text style={styles.text}>
-                            The more help {<Penny />} can provide{' '}
+                            The more help {<Penny/>} can provide{' '}
                             <Text style={{fontWeight: '500', color: '#387b1a'}}>you</Text>
                         </Text>,
                         <Animator.In
@@ -237,7 +264,7 @@ export default class IntroPage extends React.Component<Props, State> {
                             }}
                             duration={1000}
                         >
-                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.help} />
+                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.help}/>
                         </Animator.In>
                     )}
                     {this.renderText(
@@ -257,7 +284,7 @@ export default class IntroPage extends React.Component<Props, State> {
                             }}
                             duration={1000}
                         >
-                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.smiling} />
+                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.smiling}/>
                         </Animator.In>
                     )}
                     {this.renderSelect(6, {
@@ -303,7 +330,7 @@ export default class IntroPage extends React.Component<Props, State> {
             <View style={styles.textHolder}>
                 {label}
                 {image}
-                {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)} />}
+                {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)}/>}
             </View>
         );
     }
@@ -333,7 +360,7 @@ export default class IntroPage extends React.Component<Props, State> {
                     onChangeText={text => set(text)}
                     value={value}
                 />
-                {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)} />}
+                {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)}/>}
             </KeyboardAvoidingView>
         );
     }
@@ -366,7 +393,7 @@ export default class IntroPage extends React.Component<Props, State> {
                     selectedItem={selectedItem}
                     extraItem={otherItem}
                 />
-                {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)} />}
+                {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)}/>}
             </View>
         );
     }
