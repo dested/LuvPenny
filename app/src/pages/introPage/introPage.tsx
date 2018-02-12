@@ -93,7 +93,7 @@ export default class IntroPage extends React.Component<Props, State> {
             stars: [],
             canReverse: true,
             canProgress: true,
-            pageIndex: 9,
+            pageIndex: 0,
             colors: ['#60b6ff', '#ff8b3c', '#af6fff', '#8fffa3', '#59d9ff'],
 
             hPageIndex: 0,
