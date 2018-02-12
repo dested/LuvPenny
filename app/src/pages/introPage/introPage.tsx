@@ -1,11 +1,23 @@
 import React from 'react';
-import {Animated, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View} from 'react-native';
+import {
+    Animated,
+    Dimensions,
+    Image,
+    KeyboardAvoidingView,
+    Platform,
+    StyleSheet,
+    Text,
+    TextInput,
+    View
+} from 'react-native';
 import {hideHeader, Navigation} from 'src/utils/navigationUtils';
-import FullPanComponent from 'src/components/fullPanComponent';
 import {Utils} from 'src/utils/utils';
 import {Assets} from 'src/assets';
 import {HorizontalSelector, HorizontalSelectorItem} from '../../components/horizontalSelector';
 import {DownBounceArrow} from './components/downBounceArrow';
+import {Penny} from 'src/components/penny';
+import FullPan from 'src/components/fullPan';
+import {Animator} from 'src/utils/animator';
 
 interface Survey {
     gender?: string;
@@ -28,6 +40,8 @@ interface Props {}
     ...hideHeader
 })
 export default class IntroPage extends React.Component<Props, State> {
+    fullPan: FullPan;
+
     relationshipItems = [
         {color: 'yellow', icon: Assets.elements.relationship.boyfriend, label: 'Boyfriend', value: 'boyfriend'},
         {color: 'yellow', icon: Assets.elements.relationship.girlfriend, label: 'Girlfriend', value: 'girlfriend'},
@@ -48,7 +62,7 @@ export default class IntroPage extends React.Component<Props, State> {
             stars: [],
             canReverse: true,
             canProgress: true,
-            pageIndex: 0,
+            pageIndex: 6,
             colors: ['#60b6ff', '#ffabaa', '#af6fff', '#8fffa3', '#59d9ff'],
             survey: {}
         };
@@ -59,23 +73,20 @@ export default class IntroPage extends React.Component<Props, State> {
 
         this.setState(prev => ({
             ...prev,
-            stars: Utils.range(6).map(() => ({
+            stars: Utils.range(12).map(() => ({
                 translateX: animator.interpolate({
                     inputRange: introRange,
-                    outputRange: introRange.map(() => Math.random() * Utils.getWindowWidth())
+                    outputRange: introRange.map(
+                        () => Math.random() * Utils.getWindowWidth() * 0.7 + Utils.getWindowWidth() * 0.1
+                    )
                 }),
                 translateY: animator.interpolate({
                     inputRange: introRange,
-                    outputRange: introRange.map(() =>
-                        Utils.randomFlip(
-                            () => Math.random() * (Utils.getWindowHeight() * 0.25),
-                            () => Utils.getWindowHeight() - Math.random() * (Utils.getWindowHeight() * 0.25)
-                        )
-                    )
+                    outputRange: introRange.map(() => Math.random() * (Utils.getWindowHeight() * 0.25))
                 }),
                 scale: animator.interpolate({
                     inputRange: introRange,
-                    outputRange: introRange.map(() => Math.random() * 0.5 + 0.5)
+                    outputRange: introRange.map(() => Math.random() * 0.5 + 0.1)
                 })
             }))
         }));
@@ -118,7 +129,10 @@ export default class IntroPage extends React.Component<Props, State> {
     render() {
         return (
             <View style={{left: 0, right: 0, top: 0, bottom: 0}}>
-                <FullPanComponent
+                <Animated.View />
+
+                <FullPan
+                    ref={p => (this.fullPan = p)}
                     colors={this.state.colors}
                     pageIndex={this.state.pageIndex}
                     indexAnimator={(animator, range) => this.setupIndexAnimator(animator, range)}
@@ -126,15 +140,129 @@ export default class IntroPage extends React.Component<Props, State> {
                     canReverse={this.state.canReverse}
                     onIndexChange={index => this.updatePageIndex(index)}
                 >
-                    {this.renderText('This is Penny')}
-                    {this.renderText('Penny is your relationship manager')}
-                    {this.renderText('She will make you a rockstar')}
-                    {this.renderText('The more information Penny knows about your significant others')}
-                    {this.renderText('The more help Penny can provide you')}
-                    {this.renderText(`Let's get started with a simple questionnaire`)}
-                    {this.renderSelect({
+                    {this.renderText(
+                        0,
+                        <Text style={styles.text}>This is {<Penny />}</Text>,
+                        <Animator.In
+                            startPosition={{
+                                x: Dimensions.get('screen').width + 20,
+                                y: Dimensions.get('screen').height - 200
+                            }}
+                            finalPosition={{
+                                x: Dimensions.get('screen').width / 2,
+                                y: Dimensions.get('screen').height - 250
+                            }}
+                            duration={1000}
+                        >
+                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.penny} />
+                        </Animator.In>
+                    )}
+                    {this.renderText(
+                        1,
+                        <Text style={styles.text}>
+                            {<Penny />} is your <Text style={{color: '#d36053'}}>relationship manager</Text>
+                        </Text>,
+                        <Animator.In
+                            startPosition={{
+                                x: -150,
+                                y: Dimensions.get('screen').height - 200
+                            }}
+                            finalPosition={{
+                                x: Dimensions.get('screen').width / 2 - 198,
+                                y: Dimensions.get('screen').height - 250
+                            }}
+                            duration={1000}
+                        >
+                            <Image
+                                style={{width: 128, height: 128}}
+                                source={Assets.elements.penny.relationship_manager}
+                            />
+                        </Animator.In>
+                    )}
+                    {this.renderText(
+                        2,
+                        <Text style={styles.text}>
+                            <Penny she /> will make you a{' '}
+                            <Text style={{fontWeight: '500', color: '#7b001a'}}>rockstar</Text>
+                        </Text>,
+                        <Animator.In
+                            startPosition={{
+                                x: Dimensions.get('screen').width / 2 - 80,
+                                y: Dimensions.get('screen').height + 200
+                            }}
+                            finalPosition={{
+                                x: Dimensions.get('screen').width / 2 - 64,
+                                y: Dimensions.get('screen').height - 250
+                            }}
+                            duration={1000}
+                        >
+                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.rockstar} />
+                        </Animator.In>
+                    )}
+                    {this.renderText(
+                        3,
+                        <Text style={styles.text}>
+                            The more information {<Penny />} knows about{' '}
+                            <Text style={{fontWeight: '500', color: '#387b1a'}}>you</Text> and your{' '}
+                            <Text style={{fontWeight: '500', color: '#387b1a'}}>significant others</Text>
+                        </Text>,
+                        <Animator.In
+                            startPosition={{
+                                x: Dimensions.get('screen').width + 100,
+                                y: Dimensions.get('screen').height + 200
+                            }}
+                            finalPosition={{
+                                x: Dimensions.get('screen').width / 2 - 128,
+                                y: Dimensions.get('screen').height - 250
+                            }}
+                            duration={1000}
+                        >
+                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.information} />
+                        </Animator.In>
+                    )}
+                    {this.renderText(
+                        4,
+                        <Text style={styles.text}>
+                            The more help {<Penny />} can provide{' '}
+                            <Text style={{fontWeight: '500', color: '#387b1a'}}>you</Text>
+                        </Text>,
+                        <Animator.In
+                            startPosition={{
+                                x: -180,
+                                y: Dimensions.get('screen').height + 200
+                            }}
+                            finalPosition={{
+                                x: Dimensions.get('screen').width / 2,
+                                y: Dimensions.get('screen').height - 250
+                            }}
+                            duration={1000}
+                        >
+                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.help} />
+                        </Animator.In>
+                    )}
+                    {this.renderText(
+                        5,
+                        <Text style={styles.text}>
+                            Let's get started with a{' '}
+                            <Text style={{fontWeight: '500', color: '#dfdd5b'}}>simple questionnaire</Text>
+                        </Text>,
+                        <Animator.In
+                            startPosition={{
+                                x: -150,
+                                y: Dimensions.get('screen').height - 250
+                            }}
+                            finalPosition={{
+                                x: Dimensions.get('screen').width / 2 - 64,
+                                y: Dimensions.get('screen').height - 250
+                            }}
+                            duration={1000}
+                        >
+                            <Image style={{width: 128, height: 128}} source={Assets.elements.penny.smiling} />
+                        </Animator.In>
+                    )}
+                    {this.renderSelect(6, {
                         upperText: 'Answer this:',
-                        label: 'I am a',
+                        label: <Text style={styles.text}>I am a</Text>,
                         items: [
                             {label: 'Boy', color: 'yellow', icon: Assets.elements.relationship.boyfriend, value: 'boy'},
                             {
@@ -148,39 +276,56 @@ export default class IntroPage extends React.Component<Props, State> {
                         otherItem: {label: 'Something Else', color: 'yellow', icon: Assets.icons.star, value: 'other'},
                         set: item => this.updateSurvey({gender: item.value})
                     })}
-                    {this.renderSelect({
-                        label: 'My most significant other is my',
+                    {this.renderSelect(7, {
+                        label: <Text style={styles.text}>My most significant other is my</Text>,
                         items: this.relationshipItems,
                         selectedItem: this.relationshipItems[0],
                         otherItem: {label: 'Other', color: 'yellow', icon: Assets.icons.star, value: 'other'},
                         set: item => this.updateSurvey({significantOtherRelationship: item.value})
                     })}
-                    {this.renderTextInput({
-                        label: 'Their name is',
+                    {this.renderTextInput(8, {
+                        label: <Text style={styles.text}>Their name is</Text>,
                         value: this.state.survey.significantOtherName,
                         set: text => this.updateSurvey({significantOtherName: text})
                     })}
-                </FullPanComponent>
+                </FullPan>
                 {this.renderStars()}
             </View>
         );
     }
 
-    private renderText(label: string) {
+    private renderText(pageIndex: number, label: React.ReactNode, image?: React.ReactNode) {
+        if (pageIndex !== this.state.pageIndex && pageIndex !== this.state.pageIndex - 1) {
+            return null;
+        }
+
         return (
             <View style={styles.textHolder}>
-                <Text style={styles.text}>{label}</Text>
-                <DownBounceArrow />
+                {label}
+                {image}
+                {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)} />}
             </View>
         );
     }
 
-    private renderTextInput(options: {label: string; value: string; set: (value: string) => void; upperText?: string}) {
+    private renderTextInput(
+        pageIndex: number,
+        options: {
+            label: React.ReactNode;
+            value: string;
+            set: (value: string) => void;
+            upperText?: string;
+        }
+    ) {
+        if (pageIndex !== this.state.pageIndex && pageIndex !== this.state.pageIndex - 1) {
+            return null;
+        }
+
         let {label, value, set, upperText} = options;
         return (
             <KeyboardAvoidingView style={styles.textHolder} behavior={'padding'}>
                 {upperText && <Text style={[styles.text, {fontSize: 24}]}>{upperText}</Text>}
-                <Text style={styles.text}>{label}</Text>
+                {label}
                 <TextInput
                     style={styles.textInput}
                     autoCapitalize={'words'}
@@ -188,24 +333,31 @@ export default class IntroPage extends React.Component<Props, State> {
                     onChangeText={text => set(text)}
                     value={value}
                 />
-                {this.state.canProgress && <DownBounceArrow />}
+                {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)} />}
             </KeyboardAvoidingView>
         );
     }
 
-    private renderSelect(options: {
-        label: string;
-        items: HorizontalSelectorItem[];
-        selectedItem: HorizontalSelectorItem;
-        otherItem: HorizontalSelectorItem;
-        set: (value: HorizontalSelectorItem) => void;
-        upperText?: string;
-    }) {
+    private renderSelect(
+        pageIndex: number,
+        options: {
+            label: React.ReactNode;
+            items: HorizontalSelectorItem[];
+            selectedItem: HorizontalSelectorItem;
+            otherItem: HorizontalSelectorItem;
+            set: (value: HorizontalSelectorItem) => void;
+            upperText?: string;
+        }
+    ) {
+        if (pageIndex !== this.state.pageIndex && pageIndex !== this.state.pageIndex - 1) {
+            return null;
+        }
+
         let {label, items, set, selectedItem, otherItem, upperText} = options;
         return (
             <View style={styles.textHolder}>
                 {upperText && <Text style={[styles.text, {fontSize: 24}]}>{upperText}</Text>}
-                <Text style={styles.text}>{label}</Text>
+                {label}
                 <HorizontalSelector
                     items={items}
                     onSelect={item => {
@@ -214,7 +366,7 @@ export default class IntroPage extends React.Component<Props, State> {
                     selectedItem={selectedItem}
                     extraItem={otherItem}
                 />
-                {this.state.canProgress && <DownBounceArrow />}
+                {this.state.canProgress && <DownBounceArrow press={() => this.fullPan.progressIndex(1)} />}
             </View>
         );
     }
@@ -256,7 +408,7 @@ let styles = StyleSheet.create({
     text: {
         fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif-light',
         color: '#262926',
-        margin: 20,
+        marginHorizontal: 30,
         fontSize: 32,
         textAlign: 'center'
     },
@@ -272,3 +424,5 @@ let styles = StyleSheet.create({
         margin: 20
     }
 });
+
+// http://www.iconarchive.com/artist/dapino.html

@@ -24,7 +24,7 @@ interface State {
     viewWidth: number;
 }
 
-export class SwiperComponent extends Component<Props, State> {
+export class Swiper extends Component<Props, State> {
     private _panResponder: PanResponderInstance;
 
     constructor(props: Props) {
@@ -100,7 +100,6 @@ export class SwiperComponent extends Component<Props, State> {
         /*        if (this.shallowEqualObjects(this.props, nextProps)) {
             return false;
         }*/
-        console.log(nextProps, this.props);
         return true;
     }
 
@@ -129,7 +128,6 @@ export class SwiperComponent extends Component<Props, State> {
     }
 
     render() {
-        console.log('rendewr');
         const scenes = React.Children.map(this.props.children, (child: any) => {
             return React.cloneElement(child, {style: [child.props.style, {flex: 1}]});
         });

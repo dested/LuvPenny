@@ -16,7 +16,7 @@ interface Props {
     pageIndex: number;
 }
 
-export default class FullPanComponent extends Component<Props, State> {
+export default class FullPan extends Component<Props, State> {
     panResponder: PanResponderInstance;
     canPan: boolean;
 
@@ -59,7 +59,7 @@ export default class FullPanComponent extends Component<Props, State> {
         });
     }
 
-    private progressIndex(amount: number) {
+    public progressIndex(amount: number) {
         this.setState(
             (prev, props) => {
                 Animated.timing(this.state.indexAnimator, {

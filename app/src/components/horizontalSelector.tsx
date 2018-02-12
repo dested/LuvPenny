@@ -95,7 +95,7 @@ export class HorizontalSelector extends Component<Props, State> {
                     showsHorizontalScrollIndicator={false}
                     onScrollEndDrag={() => this.snapDragPosition()}
                 >
-                    <View style={styles.leftPadding}/>
+                    <View style={styles.leftPadding} />
                     {this.props.items.map((r, i) => (
                         <ItemComponent
                             key={i}
@@ -107,7 +107,7 @@ export class HorizontalSelector extends Component<Props, State> {
                     ))}
                     {this.props.extraItem ? (
                         <Fragment>
-                            <View style={styles.rightPadding}/>
+                            <View style={styles.rightPadding} />
                             <ItemComponent
                                 index={this.props.items.length + 1}
                                 scrollPosition={animatedDivision}
@@ -116,10 +116,10 @@ export class HorizontalSelector extends Component<Props, State> {
                             />
                         </Fragment>
                     ) : (
-                        <View style={styles.leftPadding}/>
+                        <View style={styles.leftPadding} />
                     )}
                 </ScrollView>
-                <View style={[styles.highlight, {borderColor: this.props.highlightColor}]} pointerEvents={'none'}/>
+                <View style={[styles.highlight, {borderColor: this.props.highlightColor}]} pointerEvents={'none'} />
             </View>
         );
     }
@@ -131,7 +131,7 @@ let styles = StyleSheet.create({
         flexDirection: 'row'
     },
     leftPadding: {
-        width: halfScreen,
+        width: halfScreen
     },
     rightPadding: {
         width: halfScreen - circleSizeWithPadding - padding
@@ -142,7 +142,7 @@ let styles = StyleSheet.create({
         width: circleSize + padding,
         height: circleSize + padding,
         borderWidth: 3,
-        borderRadius: (circleSizeWithPadding) / 2,
+        borderRadius: circleSizeWithPadding / 2,
         top: 0,
         bottom: 0,
         position: 'absolute',
@@ -162,7 +162,7 @@ let ItemComponent: React.SFC<ItemProps> = props => {
         <TouchableOpacity style={itemStyles.body} onPress={() => props.onSelect()}>
             <View style={itemStyles.innerBody}>
                 <View style={[itemStyles.imageBody, {backgroundColor: props.item.color}]}>
-                    <Image source={props.item.icon} style={itemStyles.image}/>
+                    <Image source={props.item.icon} style={itemStyles.image} />
                 </View>
                 <Text style={[itemStyles.text, {opacity: 1}]}>{props.item.label}</Text>
             </View>
@@ -192,7 +192,7 @@ let itemStyles = StyleSheet.create({
         marginTop: padding / 2,
         width: circleSize,
         height: circleSize,
-        borderRadius: circleSize / 2,
+        borderRadius: circleSize / 2
     },
     text: {
         paddingTop: 8,

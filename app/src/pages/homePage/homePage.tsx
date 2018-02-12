@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {hideHeader, Navigation} from '../../utils/navigationUtils';
-import {SwiperComponent} from '../../components/swiperComponent';
 import {CalendarScreen} from './screens/calendar/calendarScreen';
 import {HomeScreen} from './screens/home/homeScreen';
 import {PlusScreen} from './screens/plus/plusScreen';
 import {IconAnimator} from './components/iconAnimator/iconAnimator';
 import {PersonHeader} from './components/personHeader/personHeader';
 import {Relationship} from 'src/models/member';
+import {Swiper} from 'src/components/swiper';
 
 interface State {
     currentPage: number;
@@ -22,7 +22,7 @@ interface Props {}
     ...hideHeader
 })
 export class HomePage extends Component<Props, State> {
-    private swiper: SwiperComponent;
+    private swiper: Swiper;
     private iconAnimator: IconAnimator;
 
     constructor(props: Props) {
@@ -120,7 +120,7 @@ export class HomePage extends Component<Props, State> {
                     selectedRelationship={this.state.selectedRelationship}
                     onSelect={r => this.updateRelationship(r)}
                 />
-                <SwiperComponent
+                <Swiper
                     ref={r => (this.swiper = r)}
                     startPage={1}
                     onAnimation={page => this.animationIndex(page)}
@@ -132,7 +132,7 @@ export class HomePage extends Component<Props, State> {
                     <CalendarScreen refreshing={this.state.refreshing} onRefresh={this.onRefresh.bind(this)} />
                     <HomeScreen refreshing={this.state.refreshing} onRefresh={this.onRefresh.bind(this)} />
                     <PlusScreen refreshing={this.state.refreshing} onRefresh={this.onRefresh.bind(this)} />
-                </SwiperComponent>
+                </Swiper>
                 <IconAnimator ref={r => (this.iconAnimator = r)} gotoPage={page => this.swiper.gotoPage(page)} />
             </View>
         );
