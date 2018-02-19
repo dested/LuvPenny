@@ -3,8 +3,8 @@ import {Animated} from 'react-native';
 
 export namespace Animator {
     interface SwingLeftProps {
-        startPosition: {x: number; y: number};
-        finalPosition: {x: number; y: number};
+        startPosition: { x: number; y: number };
+        finalPosition: { x: number; y: number };
         duration: number;
     }
 
@@ -46,6 +46,62 @@ export namespace Animator {
                         right: 0,
                         position: 'absolute',
                         transform: [{translateX: swingX}, {translateY: swingY}]
+                    }}
+                >
+                    {this.props.children}
+                </Animated.View>
+            );
+        }
+    }
+
+    interface FadeAndBumpProps {
+        duration: number;
+        distance: number;
+        in: boolean;
+    }
+
+    export class FadeAndBump extends React.PureComponent<FadeAndBumpProps, { animation: Animated.Value }> {
+
+        constructor(props: FadeAndBumpProps) {
+            super(props);
+            this.state = {animation: new Animated.Value(0)};
+            this.state.animation.setValue(props.in ? 0 : 1);
+            Animated.timing(this.state.animation, {
+                toValue: props.in ? 1 : 0,
+                duration: this.props.duration,
+                useNativeDriver: true
+            }).start();
+        }
+
+
+        componentWillReceiveProps(nextProps: Readonly<FadeAndBumpProps>): void {
+            if (this.props.in !== nextProps.in) {
+                this.state.animation.setValue(nextProps.in ? 0 : 1);
+                Animated.timing(this.state.animation, {
+                    toValue: nextProps.in ? 1 : 0,
+                    duration: this.props.duration,
+                    useNativeDriver: true
+                }).start();
+            }
+        }
+
+        render() {
+            let opacity = this.state.animation.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, 1]
+            });
+            let bump = this.state.animation.interpolate({
+                inputRange: [0, 1],
+                outputRange: [this.props.distance, 0]
+            });
+
+            return (
+                <Animated.View
+                    pointerEvents={'none'}
+                    style={{
+                        flex: 1,
+                        opacity,
+                        transform: [{translateY: bump}]
                     }}
                 >
                     {this.props.children}

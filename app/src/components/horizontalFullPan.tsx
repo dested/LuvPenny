@@ -37,8 +37,8 @@ export default class HorizontalFullPan extends Component<Props, State> {
 
     componentWillMount(): void {
         this.panResponder = PanResponder.create({
-            onMoveShouldSetPanResponder: (evt, gestureState) => Math.abs(gestureState.dx) > 10,
-            onMoveShouldSetPanResponderCapture: (evt, gestureState) => Math.abs(gestureState.dx) > 10,
+            onMoveShouldSetPanResponder: (evt, gestureState) => Math.abs(gestureState.dx) > 0,
+            onMoveShouldSetPanResponderCapture: (evt, gestureState) => Math.abs(gestureState.dx) > 0,
             onPanResponderMove: (evt, gestureState) => {
                 if (this.canPan) {
                     if (gestureState.dx < -15 && this.props.canProgress) {
@@ -122,17 +122,19 @@ export default class HorizontalFullPan extends Component<Props, State> {
             index === total - 1
                 ? this.props.colors[getIndex(index)]
                 : this.props.colors[getIndex(index + 1)]
-                  ? this.props.colors[getIndex(index + 1)]
-                  : this.props.colors[getIndex(index)]
+                ? this.props.colors[getIndex(index + 1)]
+                : this.props.colors[getIndex(index)]
         ];
     }
 }
 
 let styles = StyleSheet.create({
     outer: {
-        height: '100%'
+        height: '100%',
+        width: '100%'
     },
     section: {
-        height: Utils.getWindowHeight()
+        height: Utils.getWindowHeight(),
+        width: Utils.getWindowWidth()
     }
 });

@@ -97,7 +97,7 @@ export default class IntroPage extends React.Component<Props, State> {
             colors: ['#60b6ff', '#ff8b3c', '#af6fff', '#8fffa3', '#59d9ff'],
 
             hPageIndex: 0,
-            hColors: ['rgba(232,31,20,.2)', 'rgba(2,48,128,.2)', 'rgba(232,195,58,.2)', 'rgba(41,85,68,.2)'],
+            hColors: ['rgba(232,31,20,.05)', 'rgba(2,48,128,.05)', 'rgba(232,195,58,.05)', 'rgba(41,85,68,.05)'],
 
             survey: {}
         };

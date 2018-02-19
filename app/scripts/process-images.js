@@ -16,8 +16,8 @@ glob("assets/**/*", {}, (er, files) => {
     let pieces = [];
     for (let i = 0; i < files.length; i++) {
         let file = files[i];
-        if (!file.endsWith('.png')) continue;
-        let piece = [file, ...file.replace('.png', '').replace('assets/', '').split('/')];
+        if (!file.endsWith('.png') && !file.endsWith(".jpg") && !file.endsWith(".jepg")) continue;
+        let piece = [file, ...file.replace('.png', '').replace('.jpeg', '').replace('.jpg', '').replace('assets/', '').split('/')];
         pieces.push(piece);
     }
 
