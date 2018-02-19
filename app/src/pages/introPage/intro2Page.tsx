@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-    Animated,
-    Platform,
-    StyleSheet,
-    Text,
-    View,
-    PanResponderInstance, PanResponder, Image
-} from 'react-native';
+import {Animated, Platform, StyleSheet, Text, View, PanResponderInstance, PanResponder, Image} from 'react-native';
 import {hideHeader, Navigation} from 'src/utils/navigationUtils';
 import {Utils} from 'src/utils/utils';
 import {DownBounceArrow} from './components/downBounceArrow';
@@ -17,15 +10,13 @@ import {Assets} from '../../assets';
 import {AnimatedLinearGradient} from '../../components/animatedLinearGradient';
 import {Animator} from 'src/utils/animator';
 
-
 interface State {
     pageIndex: number;
     indexAnimator: Animated.Value;
     nonNativeIndexAnimator: Animated.Value;
 }
 
-interface Props extends TransitionerProps {
-}
+interface Props extends TransitionerProps {}
 
 @Navigation({
     ...hideHeader
@@ -44,15 +35,16 @@ export default class Intro2Page extends React.Component<Props, State> {
         };
     }
 
-
     componentWillMount(): void {
         this.panResponder = PanResponder.create({
-            onMoveShouldSetPanResponder: (evt, gestureState) => Math.abs(gestureState.dy) > 10 || Math.abs(gestureState.dx) > 10,
-            onMoveShouldSetPanResponderCapture: (evt, gestureState) => Math.abs(gestureState.dy) > 10 || Math.abs(gestureState.dx) > 10,
+            onMoveShouldSetPanResponder: (evt, gestureState) =>
+                Math.abs(gestureState.dy) > 10 || Math.abs(gestureState.dx) > 10,
+            onMoveShouldSetPanResponderCapture: (evt, gestureState) =>
+                Math.abs(gestureState.dy) > 10 || Math.abs(gestureState.dx) > 10,
             onPanResponderMove: (evt, gestureState) => {
                 if (this.canPan) {
                     if (gestureState.dy < -15) {
-                        if (this.state.pageIndex < 11/*todo*/) {
+                        if (this.state.pageIndex < 11 /*todo*/) {
                             this.progressIndex(+1);
                         }
                     }
@@ -69,25 +61,21 @@ export default class Intro2Page extends React.Component<Props, State> {
         });
     }
 
-
     public progressIndex(amount: number) {
-        this.setState(
-            (prev) => {
-                Animated.timing(this.state.indexAnimator, {
-                    toValue: this.state.pageIndex + amount,
-                    duration: 500,
-                    useNativeDriver: true
-                }).start();
-                Animated.timing(this.state.nonNativeIndexAnimator, {
-                    toValue: this.state.pageIndex + amount,
-                    duration: 500
-                }).start();
-                return {...prev, canPan: false, pageIndex: this.state.pageIndex + amount};
-            }
-        );
+        this.setState(prev => {
+            Animated.timing(this.state.indexAnimator, {
+                toValue: this.state.pageIndex + amount,
+                duration: 500,
+                useNativeDriver: true
+            }).start();
+            Animated.timing(this.state.nonNativeIndexAnimator, {
+                toValue: this.state.pageIndex + amount,
+                duration: 500
+            }).start();
+            return {...prev, canPan: false, pageIndex: this.state.pageIndex + amount};
+        });
         this.canPan = false;
     }
-
 
     render() {
         let range = Utils.range(12);
@@ -96,10 +84,9 @@ export default class Intro2Page extends React.Component<Props, State> {
             outputRange: range.map(a => -a * Utils.getWindowHeight())
         });
 
-
         const numberOfPages = 12;
         let animatedDivision = Animated.divide(this.state.nonNativeIndexAnimator, numberOfPages);
-        let animatedAddition = Animated.add(animatedDivision, .4);
+        let animatedAddition = Animated.add(animatedDivision, 0.4);
 
         let page = 0;
         return (
@@ -111,56 +98,72 @@ export default class Intro2Page extends React.Component<Props, State> {
                     location1={animatedDivision}
                     location2={animatedAddition}
                 />
-                <View style={{left: 0, right: 0, top: 0, bottom: 0, position: 'absolute'}} {...this.panResponder.panHandlers}>
-                    {this.renderText(page++,
-                        <Text style={styles.text}>This is {<Penny/>}</Text>, scrollPosition
-                    )}
-                    {this.renderText(page++,
+                <View
+                    style={{left: 0, right: 0, top: 0, bottom: 0, position: 'absolute'}}
+                    {...this.panResponder.panHandlers}
+                >
+                    {this.renderText(page++, <Text style={styles.text}>This is {<Penny />}</Text>, scrollPosition)}
+                    {this.renderText(
+                        page++,
                         <Text style={styles.text}>
-                            {<Penny/>} is your <Text style={{color: '#d36053'}}>relationship ma1nager</Text>
-                        </Text>, scrollPosition
+                            {<Penny />} is your <Text style={{color: '#d36053'}}>relationship ma1nager</Text>
+                        </Text>,
+                        scrollPosition
                     )}
-                    {this.renderText(page++,
+                    {this.renderText(
+                        page++,
                         <Text style={styles.text}>
-                            {<Penny/>} is your <Text style={{color: '#d36053'}}>relationship man2ager</Text>
-                        </Text>, scrollPosition
+                            {<Penny />} is your <Text style={{color: '#d36053'}}>relationship man2ager</Text>
+                        </Text>,
+                        scrollPosition
                     )}
-                    {this.renderText(page++,
+                    {this.renderText(
+                        page++,
                         <Text style={styles.text}>
-                            {<Penny/>} is your <Text style={{color: '#d36053'}}>relationship mana3ger</Text>
-                        </Text>, scrollPosition
+                            {<Penny />} is your <Text style={{color: '#d36053'}}>relationship mana3ger</Text>
+                        </Text>,
+                        scrollPosition
                     )}
-                    {this.renderText(page++,
+                    {this.renderText(
+                        page++,
                         <Text style={styles.text}>
-                            {<Penny/>} is your <Text style={{color: '#d36053'}}>relationship mana4ger</Text>
-                        </Text>, scrollPosition
+                            {<Penny />} is your <Text style={{color: '#d36053'}}>relationship mana4ger</Text>
+                        </Text>,
+                        scrollPosition
                     )}
-                    {this.renderText(page++,
+                    {this.renderText(
+                        page++,
                         <Text style={styles.text}>
-                            {<Penny/>} is your <Text style={{color: '#d36053'}}>relationship ma5nager</Text>
-                        </Text>, scrollPosition
+                            {<Penny />} is your <Text style={{color: '#d36053'}}>relationship ma5nager</Text>
+                        </Text>,
+                        scrollPosition
                     )}
-                    {this.renderText(page++,
+                    {this.renderText(
+                        page++,
                         <Text style={styles.text}>
-                            <Penny she/> will make you a{' '}
+                            <Penny she /> will make you a{' '}
                             <Text style={{fontWeight: '500', color: '#7b001a'}}>rocks6tar</Text>
-                        </Text>, scrollPosition
+                        </Text>,
+                        scrollPosition
                     )}
-                    {this.renderText(page++,
+                    {this.renderText(
+                        page++,
                         <Text style={styles.text}>
-                            The more information {<Penny/>} knows about{' '}
+                            The more information {<Penny />} knows about{' '}
                             <Text style={{fontWeight: '500', color: '#387b1a'}}>you</Text> and1 your{' '}
                             <Text style={{fontWeight: '500', color: '#387b1a'}}>significant others</Text>
-                        </Text>, scrollPosition
+                        </Text>,
+                        scrollPosition
                     )}
-                    {this.renderText(page++,
+                    {this.renderText(
+                        page++,
                         <Text style={styles.text}>
-                            The more help {<Penny/>} can provide{' '}
+                            The more help {<Penny />} can provide{' '}
                             <Text style={{fontWeight: '500', color: '#387b1a'}}>y2ou</Text>
-                        </Text>, scrollPosition
+                        </Text>,
+                        scrollPosition
                     )}
                 </View>
-
             </View>
         );
     }
@@ -170,9 +173,7 @@ export default class Intro2Page extends React.Component<Props, State> {
             return null;
         }
 
-
         return (
-
             <View
                 style={{
                     backgroundColor: 'transparent',
@@ -181,23 +182,16 @@ export default class Intro2Page extends React.Component<Props, State> {
                     width: Utils.getWindowWidth()
                 }}
             >
-                {
-                    this.state.pageIndex === page ?
-                        <Animator.FadeAndBump in={true} duration={600} distance={15}>
-                            <View style={styles.textHolder}>
-                                {label}
-                            </View>
-                        </Animator.FadeAndBump>
-                        :
-                        <Animator.FadeAndBump in={false} duration={600} distance={-100}>
-                            <View style={styles.textHolder}>
-                                {label}
-                            </View>
-                        </Animator.FadeAndBump>
-                }
-                <DownBounceArrow press={() => this.progressIndex(1)}/>
-
-
+                {this.state.pageIndex === page ? (
+                    <Animator.FadeAndBump in={true} duration={600} distance={15}>
+                        <View style={styles.textHolder}>{label}</View>
+                    </Animator.FadeAndBump>
+                ) : (
+                    <Animator.FadeAndBump in={false} duration={600} distance={-100}>
+                        <View style={styles.textHolder}>{label}</View>
+                    </Animator.FadeAndBump>
+                )}
+                <DownBounceArrow press={() => this.progressIndex(1)} />
             </View>
         );
     }

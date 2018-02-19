@@ -61,5 +61,10 @@
     "preset": "jest-preset-typescript-react-native",
     "setupTestFrameworkScriptFile": "./node_modules/jest-enzyme/lib/index.js"
   },
-  "pre-commit": []
+  "pre-commit": [],
+  "rnpm": {
+    "assets": [
+      "./assets/fonts/"
+    ]
+  }
 }

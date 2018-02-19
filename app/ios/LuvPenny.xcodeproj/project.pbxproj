@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -38,6 +37,9 @@
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		E287290440E942568ADFAC6C /* libBVLinearGradient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3382288926AE46689098F686 /* libBVLinearGradient.a */; };
+		90999DE8576B40CCBA72908C /* ProximaNovaSoft-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = EA785F2BC5514298A5488E07 /* ProximaNovaSoft-Regular.otf */; };
+		516CC054987F41D6AF370B5E /* proxima-nova-soft.otf in Resources */ = {isa = PBXBuildFile; fileRef = BDDC2867C3B64F34A64294E0 /* proxima-nova-soft.otf */; };
+		4387525F2C6B4D3596A6EB0F /* ProximaNovaSoft-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4003DF55CA084FEEA098B6DB /* ProximaNovaSoft-Bold.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -302,6 +304,9 @@
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
 		C66637E9233E454B9FFA531E /* BVLinearGradient.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = BVLinearGradient.xcodeproj; path = "../node_modules/react-native-linear-gradient/BVLinearGradient.xcodeproj"; sourceTree = "<group>"; };
+		EA785F2BC5514298A5488E07 /* ProximaNovaSoft-Regular.otf */ = {isa = PBXFileReference; name = "ProximaNovaSoft-Regular.otf"; path = "../assets/fonts/ProximaNovaSoft-Regular.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		BDDC2867C3B64F34A64294E0 /* proxima-nova-soft.otf */ = {isa = PBXFileReference; name = "proxima-nova-soft.otf"; path = "../assets/fonts/proxima-nova-soft.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		4003DF55CA084FEEA098B6DB /* ProximaNovaSoft-Bold.otf */ = {isa = PBXFileReference; name = "ProximaNovaSoft-Bold.otf"; path = "../assets/fonts/ProximaNovaSoft-Bold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -522,6 +527,7 @@
 				00E356EF1AD99517003FC87E /* LuvPennyTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				E389811F2031683D00EF1337 /* Recovered References */,
+				DF3FFF24605546EE899BFFB1 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -564,6 +570,17 @@
 			);
 			name = Products;
 			sourceTree = "<group>";
+		};
+		DF3FFF24605546EE899BFFB1 /* Resources */ = {
+			isa = "PBXGroup";
+			children = (
+				EA785F2BC5514298A5488E07 /* ProximaNovaSoft-Regular.otf */,
+				BDDC2867C3B64F34A64294E0 /* proxima-nova-soft.otf */,
+				4003DF55CA084FEEA098B6DB /* ProximaNovaSoft-Bold.otf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+			path = "";
 		};
 /* End PBXGroup section */
 
@@ -977,6 +994,9 @@
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
+				90999DE8576B40CCBA72908C /* ProximaNovaSoft-Regular.otf in Resources */,
+				516CC054987F41D6AF370B5E /* proxima-nova-soft.otf in Resources */,
+				4387525F2C6B4D3596A6EB0F /* ProximaNovaSoft-Bold.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

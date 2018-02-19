@@ -122,8 +122,8 @@ export default class HorizontalFullPan extends Component<Props, State> {
             index === total - 1
                 ? this.props.colors[getIndex(index)]
                 : this.props.colors[getIndex(index + 1)]
-                ? this.props.colors[getIndex(index + 1)]
-                : this.props.colors[getIndex(index)]
+                  ? this.props.colors[getIndex(index + 1)]
+                  : this.props.colors[getIndex(index)]
         ];
     }
 }

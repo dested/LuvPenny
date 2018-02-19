@@ -6,6 +6,7 @@ import {Provider} from 'mobx-react';
 import IntroPage from './pages/introPage/introPage';
 import {Button, View} from 'react-native';
 import Intro2Page from './pages/introPage/intro2Page';
+import CalendarPage from './pages/calendarPage/calendarPage';
 
 const PennyApp = StackNavigator(
     {
@@ -16,40 +17,58 @@ const PennyApp = StackNavigator(
                     <View>
                         <Button
                             title={'old'}
-                            onPress={() => props.navigation.dispatch(
-                                NavigationActions.reset({
-                                    index: 0,
-                                    actions: [NavigationActions.navigate({routeName: 'IntroPage'})]
-                                })
-                            )}
+                            onPress={() =>
+                                props.navigation.dispatch(
+                                    NavigationActions.reset({
+                                        index: 0,
+                                        actions: [NavigationActions.navigate({routeName: 'IntroPage'})]
+                                    })
+                                )
+                            }
                         />
                         <Button
                             title={'new'}
-                            onPress={() => props.navigation.dispatch(
-                                NavigationActions.reset({
-                                    index: 0,
-                                    actions: [NavigationActions.navigate({routeName: 'Intro2Page'})]
-                                })
-                            )}
+                            onPress={() =>
+                                props.navigation.dispatch(
+                                    NavigationActions.reset({
+                                        index: 0,
+                                        actions: [NavigationActions.navigate({routeName: 'Intro2Page'})]
+                                    })
+                                )
+                            }
                         />
                         <Button
                             title={'home'}
-                            onPress={() => props.navigation.dispatch(
-                                NavigationActions.reset({
-                                    index: 0,
-                                    actions: [NavigationActions.navigate({routeName: 'HomePage'})]
-                                })
-                            )}
+                            onPress={() =>
+                                props.navigation.dispatch(
+                                    NavigationActions.reset({
+                                        index: 0,
+                                        actions: [NavigationActions.navigate({routeName: 'HomePage'})]
+                                    })
+                                )
+                            }
+                        />
+                        <Button
+                            title={'CalendarPage'}
+                            onPress={() =>
+                                props.navigation.dispatch(
+                                    NavigationActions.reset({
+                                        index: 0,
+                                        actions: [NavigationActions.navigate({routeName: 'CalendarPage'})]
+                                    })
+                                )
+                            }
                         />
                     </View>
                 );
             }
         },
         IntroPage: {screen: IntroPage},
+        CalendarPage: {screen: CalendarPage},
         Intro2Page: {screen: Intro2Page}
     },
     {
-        initialRouteName: 'Switcher'
+        initialRouteName: 'CalendarPage'
     }
 );
 
@@ -61,7 +80,7 @@ const rootStores = {
 export default () => {
     return (
         <Provider {...rootStores}>
-            <PennyApp/>
+            <PennyApp />
         </Provider>
     );
 };

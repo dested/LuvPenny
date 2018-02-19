@@ -3,8 +3,8 @@ import {Animated} from 'react-native';
 
 export namespace Animator {
     interface SwingLeftProps {
-        startPosition: { x: number; y: number };
-        finalPosition: { x: number; y: number };
+        startPosition: {x: number; y: number};
+        finalPosition: {x: number; y: number};
         duration: number;
     }
 
@@ -60,8 +60,7 @@ export namespace Animator {
         in: boolean;
     }
 
-    export class FadeAndBump extends React.PureComponent<FadeAndBumpProps, { animation: Animated.Value }> {
-
+    export class FadeAndBump extends React.PureComponent<FadeAndBumpProps, {animation: Animated.Value}> {
         constructor(props: FadeAndBumpProps) {
             super(props);
             this.state = {animation: new Animated.Value(0)};
@@ -72,7 +71,6 @@ export namespace Animator {
                 useNativeDriver: true
             }).start();
         }
-
 
         componentWillReceiveProps(nextProps: Readonly<FadeAndBumpProps>): void {
             if (this.props.in !== nextProps.in) {
