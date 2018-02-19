@@ -6,12 +6,15 @@ import LinearGradient from 'react-native-linear-gradient';
 interface Props {
     month: number;
     year: number;
-    selectedDate: Moment;
-    updateCalendar: (date: Moment) => void;
+    selectedDate?: Moment;
+    selectDate: (date: Moment) => void;
 }
 
 interface State {
+    wasSelectedDate: Moment | null;
+
     selectedAnimation: Animated.Value;
+    weekHeightAnimation: Animated.Value[];
     month: Moment;
     today: Moment;
     calendarDays: DateInfo[][];
@@ -46,16 +49,20 @@ export class CalendarComponent extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
+            wasSelectedDate: null,
+
             selectedAnimation: new Animated.Value(0),
+            weekHeightAnimation: [
+                new Animated.Value(1),
+                new Animated.Value(1),
+                new Animated.Value(1),
+                new Animated.Value(1),
+                new Animated.Value(1)
+            ],
             month: moment(props.year + '-' + padZero(props.month) + '-01'),
             today: moment(),
             calendarDays: this.getCalendarDays(props.year, props.month)
         };
-        Animated.timing(this.state.selectedAnimation, {
-            toValue: 1,
-            duration: 200,
-            useNativeDriver: true
-        }).start();
     }
 
     private getCalendarDays(year: number, monthNumber: number): DateInfo[][] {
@@ -91,29 +98,63 @@ export class CalendarComponent extends React.Component<Props, State> {
     }
 
     componentWillReceiveProps(nextProps: Readonly<Props>, nextContext: any): void {
-        if (this.props.selectedDate.get('date') !== nextProps.selectedDate.get('date')) {
+        let calendarDays = this.getCalendarDays(nextProps.year, nextProps.month);
+
+        if (
+            nextProps.selectedDate &&
+            (!this.props.selectedDate || this.props.selectedDate.get('date') !== nextProps.selectedDate.get('date'))
+        ) {
+            console.log('fpwrds');
             this.state.selectedAnimation.setValue(0);
             Animated.timing(this.state.selectedAnimation, {
                 toValue: 1,
-                duration: 200,
-                useNativeDriver: true
+                duration: 1000
             }).start();
-            this.setState(prev => ({
-                ...prev,
-                month: moment(nextProps.year + '-' + padZero(nextProps.month) + '-01'),
-                calendarDays: this.getCalendarDays(nextProps.year, nextProps.month)
-            }));
+
+            let weekIndex = 0;
+            for (const week of calendarDays) {
+                let weekIsSelected = nextProps.selectedDate && nextProps.selectedDate.isSame(week[0].date, 'week');
+                Animated.timing(this.state.weekHeightAnimation[weekIndex], {
+                    toValue: weekIsSelected ? 1 : 0,
+                    duration: 350
+                }).start();
+                weekIndex++;
+            }
         }
+
+        if (!nextProps.selectedDate) {
+            console.log('reverse');
+            for (let weekIndex = 0; weekIndex < calendarDays.length; weekIndex++) {
+                Animated.timing(this.state.weekHeightAnimation[weekIndex], {
+                    toValue: 1,
+                    duration: 350
+                }).start();
+            }
+        }
+
+        this.setState(prev => ({
+            ...prev,
+            month: moment(nextProps.year + '-' + padZero(nextProps.month) + '-01'),
+            calendarDays: calendarDays,
+            wasSelectedDate: this.props.selectedDate
+        }));
     }
 
     render() {
         let calendarDays = this.state.calendarDays;
         let today = this.state.today;
 
+        let weekHeights = this.state.weekHeightAnimation.map(ani =>
+            ani.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, 40]
+            })
+        );
+
         return (
             <LinearGradient colors={['#FF9D83', '#FB6B67']} start={{x: 0, y: 0}} end={{x: 1, y: 1}}>
                 <View style={styles.calendarBody}>
-                    <View style={styles.calendarHeader}>
+                    <View key={'header'} style={styles.calendarHeader}>
                         <View style={styles.flexPadding} />
                         <View style={styles.monthHeader}>
                             <Text style={styles.monthHeaderText}>{this.state.month.format('MMMM YYYY')}</Text>
@@ -121,7 +162,7 @@ export class CalendarComponent extends React.Component<Props, State> {
                         <View style={styles.flexPadding} />
                     </View>
 
-                    <View style={styles.week}>
+                    <View key={'weekday-header'} style={styles.week}>
                         {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, k) => {
                             return (
                                 <View key={k} style={styles.day}>
@@ -133,39 +174,58 @@ export class CalendarComponent extends React.Component<Props, State> {
                         })}
                     </View>
 
-                    {calendarDays.map((week, k) => (
-                        <View key={k} style={styles.week}>
-                            {week.map(dayInfo => {
-                                let dateIsSelected = this.props.selectedDate.isSame(dayInfo.date, 'day');
-                                return (
-                                    <TouchableOpacity
-                                        activeOpacity={1}
-                                        key={dayInfo.dateNumber}
-                                        style={styles.day}
-                                        onPress={() => this.props.updateCalendar(dayInfo.date)}
-                                    >
-                                        {today.isSame(dayInfo.date, 'day') && this.renderTodayCircle()}
-                                        {dateIsSelected && this.renderSelectedDateCircle()}
-                                        <View style={[styles.dayBox]}>
-                                            <Text
-                                                style={[
-                                                    styles.dayText,
-                                                    dateIsSelected
-                                                        ? {color: '#FB6B67'}
-                                                        : dayInfo.outOfMonth
-                                                          ? {color: 'rgba(255,255,255,.4)'}
-                                                          : {color: 'rgba(255,255,255,1)'}
-                                                ]}
-                                            >
-                                                {dayInfo.day}
-                                            </Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                );
-                            })}
-                        </View>
-                    ))}
-                    <View style={styles.week} />
+                    {calendarDays.map((week, k) => {
+                        return (
+                            <Animated.View key={k} style={[styles.week, {height: weekHeights[k]}]}>
+                                {week.map(dayInfo => {
+                                    let dateIsSelected =
+                                        this.props.selectedDate && this.props.selectedDate.isSame(dayInfo.date, 'day');
+                                    let dateWasSelected =
+                                        this.state.wasSelectedDate &&
+                                        this.state.wasSelectedDate.isSame(dayInfo.date, 'day');
+                                    return (
+                                        <TouchableOpacity
+                                            activeOpacity={1}
+                                            key={dayInfo.dateNumber}
+                                            style={styles.day}
+                                            onPress={() => this.props.selectDate(dayInfo.date)}
+                                        >
+                                            {today.isSame(dayInfo.date, 'day') && this.renderTodayCircle()}
+                                            {dateIsSelected && this.renderSelectedDateCircle()}
+                                            {dateWasSelected && this.renderSelectedDateCircle(true)}
+                                            <View style={[styles.dayBox]}>
+                                                <Text
+                                                    style={[
+                                                        styles.dayText,
+                                                        dateIsSelected
+                                                            ? {color: '#FB6B67'}
+                                                            : dayInfo.outOfMonth
+                                                              ? {color: 'rgba(255,255,255,.4)'}
+                                                              : {color: 'rgba(255,255,255,1)'}
+                                                    ]}
+                                                >
+                                                    {dayInfo.dateNumber}
+                                                </Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                    );
+                                })}
+                            </Animated.View>
+                        );
+                    })}
+                    <View key={'footer'} style={styles.week}>
+                        {this.props.selectedDate && (
+                            <TouchableOpacity
+                                activeOpacity={1}
+                                style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}
+                                onPress={() => this.props.selectDate(null)}
+                            >
+                                <Text style={[styles.dayText, {fontSize: 12, color: 'rgba(255,255,255,.4)'}]}>
+                                    BACK
+                                </Text>
+                            </TouchableOpacity>
+                        )}
+                    </View>
                 </View>
             </LinearGradient>
         );
@@ -187,11 +247,17 @@ export class CalendarComponent extends React.Component<Props, State> {
         );
     }
 
-    renderSelectedDateCircle() {
-        let size = this.state.selectedAnimation.interpolate({
-            inputRange: [0, 1],
-            outputRange: [0.7, 1]
-        });
+    renderSelectedDateCircle(invert: boolean = false) {
+        let size = !invert
+            ? this.state.selectedAnimation.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0.5, 1]
+              })
+            : this.state.selectedAnimation.interpolate({
+                  inputRange: [0, 0.2],
+                  outputRange: [1, 0.01],
+                  extrapolate: 'clamp'
+              });
         return (
             <View style={{position: 'absolute', flex: 1, alignSelf: 'center', justifyContent: 'center'}}>
                 <Animated.View
@@ -220,7 +286,7 @@ let styles = StyleSheet.create({
     },
     day: {
         flex: 1,
-        justifyContent: 'center',
+        justifyContent: 'center'
     },
     dayBox: {
         alignSelf: 'center',

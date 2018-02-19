@@ -68,7 +68,7 @@ const PennyApp = StackNavigator(
         Intro2Page: {screen: Intro2Page}
     },
     {
-        initialRouteName: 'CalendarPage'
+        initialRouteName: 'Switcher'
     }
 );
 

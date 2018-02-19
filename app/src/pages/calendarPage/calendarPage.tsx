@@ -22,7 +22,7 @@ export default class CalendarPage extends Component<Props, State> {
         this.state = {
             month: moment().get('month') + 1,
             year: moment().get('year'),
-            selectedDate: moment()
+            selectedDate: null
         };
     }
 
@@ -33,7 +33,7 @@ export default class CalendarPage extends Component<Props, State> {
                     month={this.state.month}
                     year={this.state.year}
                     selectedDate={this.state.selectedDate}
-                    updateCalendar={date => {
+                    selectDate={date => {
                         this.setState({...this.state, selectedDate: date});
                     }}
                 />

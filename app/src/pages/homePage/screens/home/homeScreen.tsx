@@ -24,10 +24,10 @@ export class HomeScreen extends React.Component<Props, State> {
                 <MainScrollView refreshing={this.props.refreshing} onRefresh={() => this.props.onRefresh()}>
                     <Container>
                         <Card style={styles.topCard}>
-                            <View style={{flex: 1, alignContent: 'center', justifyContent: 'center'}}>
-                                <Text style={{alignSelf: 'center'}}>hi</Text>
-                                <Text style={{alignSelf: 'center'}}>hi</Text>
-                                <Text style={{alignSelf: 'center'}}>hi</Text>
+                            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                                <Text>hi</Text>
+                                <Text>hi</Text>
+                                <Text>hi</Text>
                             </View>
                         </Card>
                     </Container>
