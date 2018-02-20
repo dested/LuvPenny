@@ -1,6 +1,6 @@
 import React from 'react';
 import moment, {Moment} from 'moment';
-import {Animated, PanResponder, PanResponderInstance, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Animated, LayoutAnimation, PanResponder, PanResponderInstance, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {Utils} from '../../../utils/utils';
 import CleanRender from '../../../components/cleanRender';
@@ -23,7 +23,7 @@ interface State {
 
     horizontalPan: Animated.Value;
     selectedAnimation: Animated.Value;
-    weekHeightAnimation: Animated.Value[];
+    weekHeightState: boolean[];
     today: Moment;
     calendarInfo: CalendarInfo[];
 }
@@ -52,13 +52,13 @@ export class CalendarComponent extends React.Component<Props, State> {
             wasSelectedDate: null,
 
             selectedAnimation: new Animated.Value(0),
-            weekHeightAnimation: [
-                new Animated.Value(1),
-                new Animated.Value(1),
-                new Animated.Value(1),
-                new Animated.Value(1),
-                new Animated.Value(1),
-                new Animated.Value(1)
+            weekHeightState: [
+                true,
+                true,
+                true,
+                true,
+                true,
+                true
             ],
 
             today: moment(),
@@ -158,6 +158,8 @@ export class CalendarComponent extends React.Component<Props, State> {
             this.state.horizontalPan.setValue(1);
         }
 
+        let weekHeightState = [...this.state.weekHeightState];
+
         if (
             nextProps.selectedDate &&
             (!this.props.selectedDate || this.props.selectedDate.get('date') !== nextProps.selectedDate.get('date'))
@@ -172,27 +174,36 @@ export class CalendarComponent extends React.Component<Props, State> {
             let weekIndex = 0;
             for (const week of calendarInfo.weeks) {
                 let weekIsSelected = nextProps.selectedDate && nextProps.selectedDate.isSame(week[0].date, 'week');
-                Animated.timing(this.state.weekHeightAnimation[weekIndex], {
-                    toValue: weekIsSelected ? 1 : 0,
-                    duration: 350
-                }).start();
+                weekHeightState[weekIndex] = weekIsSelected;
                 weekIndex++;
             }
         }
 
         if (!nextProps.selectedDate) {
             for (let weekIndex = 0; weekIndex < calendarInfo.weeks.length; weekIndex++) {
-                Animated.timing(this.state.weekHeightAnimation[weekIndex], {
-                    toValue: 1,
-                    duration: 350
-                }).start();
+                weekHeightState[weekIndex] = true;
             }
         }
 
+        LayoutAnimation.configureNext({
+            duration: 150,
+            create: {
+                type: LayoutAnimation.Types.linear,
+                property: LayoutAnimation.Properties.scaleXY,
+            },
+            update: {
+                type: LayoutAnimation.Types.linear,
+            },
+            delete: {
+                type: LayoutAnimation.Types.linear,
+                property: LayoutAnimation.Properties.scaleXY,
+            }
+        });
         this.setState(prev => ({
             ...prev,
             month: moment(nextProps.year + '-' + padZero(nextProps.month) + '-01'),
             calendarInfo: calendarInfos,
+            weekHeightState: weekHeightState,
             wasSelectedDate: this.props.selectedDate
         }));
     }
@@ -222,15 +233,7 @@ export class CalendarComponent extends React.Component<Props, State> {
         let calendarWeeks = calendarInfo.weeks;
         let today = this.state.today;
 
-        let weekHeights = this.state.weekHeightAnimation.map(
-            (ani, i) =>
-                main
-                    ? ani.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: [0, 40]
-                      })
-                    : 40
-        );
+        let weekHeights = this.state.weekHeightState;
 
         let monthFormat = calendarInfo.month.format('MMMM YYYY');
         return (
@@ -243,11 +246,11 @@ export class CalendarComponent extends React.Component<Props, State> {
                 ]}
             >
                 <View style={styles.calendarHeader}>
-                    <View style={styles.flexPadding} />
+                    <View style={styles.flexPadding}/>
                     <View style={styles.monthHeader}>
                         <Text style={styles.monthHeaderText}>{monthFormat}</Text>
                     </View>
-                    <View style={styles.flexPadding} />
+                    <View style={styles.flexPadding}/>
                 </View>
 
                 <View style={styles.week}>
@@ -264,7 +267,7 @@ export class CalendarComponent extends React.Component<Props, State> {
 
                 {calendarWeeks.map((week, k) => {
                     return (
-                        <Animated.View key={monthFormat + 'w' + k} style={[styles.week, {height: weekHeights[k]}]}>
+                        <Animated.View key={monthFormat + 'w' + k} style={[styles.week, {height: weekHeights[k] ? 40 : 0}]}>
                             {week.map(dayInfo => {
                                 let dateIsSelected =
                                     this.props.selectedDate && this.props.selectedDate.isSame(dayInfo.date, 'day');
@@ -288,8 +291,8 @@ export class CalendarComponent extends React.Component<Props, State> {
                                                     dateIsSelected
                                                         ? {color: '#FB6B67'}
                                                         : dayInfo.outOfMonth
-                                                          ? {color: 'rgba(255,255,255,.4)'}
-                                                          : {color: 'rgba(255,255,255,1)'}
+                                                        ? {color: 'rgba(255,255,255,.4)'}
+                                                        : {color: 'rgba(255,255,255,1)'}
                                                 ]}
                                             >
                                                 {dayInfo.dateNumber}
@@ -335,14 +338,14 @@ export class CalendarComponent extends React.Component<Props, State> {
     renderSelectedDateCircle(invert: boolean = false) {
         let size = !invert
             ? this.state.selectedAnimation.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0.5, 1]
-              })
+                inputRange: [0, 1],
+                outputRange: [0.5, 1]
+            })
             : this.state.selectedAnimation.interpolate({
-                  inputRange: [0, 0.2],
-                  outputRange: [1, 0.01],
-                  extrapolate: 'clamp'
-              });
+                inputRange: [0, 0.2],
+                outputRange: [1, 0.01],
+                extrapolate: 'clamp'
+            });
         return (
             <View style={{position: 'absolute', flex: 1, alignSelf: 'center', justifyContent: 'center'}}>
                 <Animated.View
