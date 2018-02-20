@@ -33,6 +33,18 @@ export default class CalendarPage extends Component<Props, State> {
                     month={this.state.month}
                     year={this.state.year}
                     selectedDate={this.state.selectedDate}
+                    setMonth={(month, year) => {
+                        if (month < 1) {
+                            month += 12;
+                            year -= 1;
+                        }
+                        if (month > 12) {
+                            month -= 12;
+                            year += 1;
+                        }
+
+                        this.setState(prev => ({...prev, month, year}));
+                    }}
                     selectDate={date => {
                         this.setState({...this.state, selectedDate: date});
                     }}

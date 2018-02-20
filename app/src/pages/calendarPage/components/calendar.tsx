@@ -3,12 +3,14 @@ import moment, {Moment} from 'moment';
 import {Animated, PanResponder, PanResponderInstance, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {Utils} from '../../../utils/utils';
+import CleanRender from '../../../components/cleanRender';
 
 interface Props {
     month: number;
     year: number;
     selectedDate?: Moment;
     selectDate: (date: Moment) => void;
+    setMonth: (month: number, year: number) => void;
 }
 
 interface CalendarInfo {
@@ -62,7 +64,6 @@ export class CalendarComponent extends React.Component<Props, State> {
             today: moment(),
             calendarInfo: this.getCalendarInfo(props.year, props.month)
         };
-
     }
 
     private weekCount(year: number, monthNumber: number) {
@@ -75,7 +76,6 @@ export class CalendarComponent extends React.Component<Props, State> {
     }
 
     private getCalendarInfo(year: number, monthNumber: number): CalendarInfo[] {
-
         let calendarInfo: CalendarInfo[] = [];
         for (let c = -1; c <= 1; c++) {
             let month = moment(year + '-' + padZero(monthNumber) + '-01').add(c, 'months');
@@ -114,7 +114,6 @@ export class CalendarComponent extends React.Component<Props, State> {
             });
         }
 
-
         return calendarInfo;
     }
 
@@ -125,24 +124,28 @@ export class CalendarComponent extends React.Component<Props, State> {
             onPanResponderGrant: (e, g) => {
                 this.state.horizontalPan.setValue(1);
             },
-            onPanResponderMove: Animated.event([
-                null, {dx: this.state.horizontalPan},
-            ]),
+            onPanResponderMove: Animated.event([null, {dx: this.state.horizontalPan}]),
             onPanResponderRelease: (c, g) => {
                 if (g.dx < -50) {
                     Animated.spring(this.state.horizontalPan, {
-                        toValue: -Utils.getWindowWidth() * 2
-                    }).start();
+                        toValue: -Utils.getWindowWidth() * 2,
+                        useNativeDriver: true
+                    }).start(() => {
+                        this.props.setMonth(this.props.month + 1, this.props.year);
+                    });
                 } else if (g.dx > 50) {
                     Animated.spring(this.state.horizontalPan, {
-                        toValue: Utils.getWindowWidth() * 2
-                    }).start();
+                        toValue: Utils.getWindowWidth() * 2,
+                        useNativeDriver: true
+                    }).start(() => {
+                        this.props.setMonth(this.props.month - 1, this.props.year);
+                    });
                 } else {
                     Animated.spring(this.state.horizontalPan, {
-                        toValue: 0
+                        toValue: 0,
+                        useNativeDriver: true
                     }).start();
                 }
-
             }
         });
     }
@@ -151,6 +154,10 @@ export class CalendarComponent extends React.Component<Props, State> {
         let calendarInfos = this.getCalendarInfo(nextProps.year, nextProps.month);
         let calendarInfo = calendarInfos[1];
 
+        if (nextProps.month !== this.props.month) {
+            this.state.horizontalPan.setValue(1);
+        }
+
         if (
             nextProps.selectedDate &&
             (!this.props.selectedDate || this.props.selectedDate.get('date') !== nextProps.selectedDate.get('date'))
@@ -158,7 +165,8 @@ export class CalendarComponent extends React.Component<Props, State> {
             this.state.selectedAnimation.setValue(0);
             Animated.timing(this.state.selectedAnimation, {
                 toValue: 1,
-                duration: 1000
+                duration: 1000,
+                useNativeDriver: true
             }).start();
 
             let weekIndex = 0;
@@ -190,47 +198,56 @@ export class CalendarComponent extends React.Component<Props, State> {
     }
 
     render() {
-
-        return (
-            <LinearGradient {...this.panResponder.panHandlers} style={styles.calendarArea} colors={['#FF9D83', '#FB6B67']} start={{x: 0, y: 0}} end={{x: 1, y: 1}}>
-
-                {/*{this.calendarBody(this.state.calendarInfo[0], false, -Utils.getWindowWidth(), this.state.horizontalPan)}*/}
-                {this.calendarBody(this.state.calendarInfo[1], true, 0, this.state.horizontalPan)}
-                {/*{this.calendarBody(this.state.calendarInfo[2], false, Utils.getWindowWidth(), this.state.horizontalPan)}*/}
-
-            </LinearGradient>
-        );
-    }
-
-    private calendarBody(calendarInfo: CalendarInfo, main: boolean, pos: number, horizontalPositionOffset: Animated.Value) {
-        let calendarWeeks = calendarInfo.weeks;
-        let today = this.state.today;
-
-        let weekHeights =
-            this.state.weekHeightAnimation.map(ani =>
-                main ?
-                    ani.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [0, 40]
-                    })
-                    :
-                    40
-            );
-
-        let hOffset = horizontalPositionOffset.interpolate({
+        let hOffset = this.state.horizontalPan.interpolate({
             inputRange: [-Utils.getWindowWidth(), 0, Utils.getWindowWidth()],
             outputRange: [-Utils.getWindowWidth() / 2, 0, Utils.getWindowWidth() / 2]
         });
 
+        return (
+            <LinearGradient
+                {...this.panResponder.panHandlers}
+                style={styles.calendarArea}
+                colors={['#FF9D83', '#FB6B67']}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1}}
+            >
+                {this.calendarBody(this.state.calendarInfo[0], false, hOffset)}
+                {this.calendarBody(this.state.calendarInfo[1], true, hOffset)}
+                {this.calendarBody(this.state.calendarInfo[2], false, hOffset)}
+            </LinearGradient>
+        );
+    }
+
+    private calendarBody(calendarInfo: CalendarInfo, main: boolean, hOffset: Animated.AnimatedInterpolation) {
+        let calendarWeeks = calendarInfo.weeks;
+        let today = this.state.today;
+
+        let weekHeights = this.state.weekHeightAnimation.map(
+            (ani, i) =>
+                main
+                    ? ani.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0, 40]
+                      })
+                    : 40
+        );
+
         let monthFormat = calendarInfo.month.format('MMMM YYYY');
         return (
-            <Animated.View style={[styles.calendarBody, {transform: [{translateX: Animated.add(hOffset, pos)}]}]}>
+            <Animated.View
+                style={[
+                    styles.calendarBody,
+                    {
+                        transform: [{translateX: Animated.add(hOffset, -Utils.getWindowWidth())}]
+                    }
+                ]}
+            >
                 <View style={styles.calendarHeader}>
-                    <View style={styles.flexPadding}/>
+                    <View style={styles.flexPadding} />
                     <View style={styles.monthHeader}>
                         <Text style={styles.monthHeaderText}>{monthFormat}</Text>
                     </View>
-                    <View style={styles.flexPadding}/>
+                    <View style={styles.flexPadding} />
                 </View>
 
                 <View style={styles.week}>
@@ -271,8 +288,8 @@ export class CalendarComponent extends React.Component<Props, State> {
                                                     dateIsSelected
                                                         ? {color: '#FB6B67'}
                                                         : dayInfo.outOfMonth
-                                                        ? {color: 'rgba(255,255,255,.4)'}
-                                                        : {color: 'rgba(255,255,255,1)'}
+                                                          ? {color: 'rgba(255,255,255,.4)'}
+                                                          : {color: 'rgba(255,255,255,1)'}
                                                 ]}
                                             >
                                                 {dayInfo.dateNumber}
@@ -291,9 +308,7 @@ export class CalendarComponent extends React.Component<Props, State> {
                             style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}
                             onPress={() => this.props.selectDate(null)}
                         >
-                            <Text style={[styles.dayText, {fontSize: 12, color: 'rgba(255,255,255,.4)'}]}>
-                                BACK
-                            </Text>
+                            <Text style={[styles.dayText, {fontSize: 12, color: 'rgba(255,255,255,.4)'}]}>BACK</Text>
                         </TouchableOpacity>
                     )}
                 </View>
@@ -320,14 +335,14 @@ export class CalendarComponent extends React.Component<Props, State> {
     renderSelectedDateCircle(invert: boolean = false) {
         let size = !invert
             ? this.state.selectedAnimation.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0.5, 1]
-            })
+                  inputRange: [0, 1],
+                  outputRange: [0.5, 1]
+              })
             : this.state.selectedAnimation.interpolate({
-                inputRange: [0, 0.2],
-                outputRange: [1, 0.01],
-                extrapolate: 'clamp'
-            });
+                  inputRange: [0, 0.2],
+                  outputRange: [1, 0.01],
+                  extrapolate: 'clamp'
+              });
         return (
             <View style={{position: 'absolute', flex: 1, alignSelf: 'center', justifyContent: 'center'}}>
                 <Animated.View
@@ -348,13 +363,11 @@ export class CalendarComponent extends React.Component<Props, State> {
 
 let styles = StyleSheet.create({
     calendarArea: {
-        height: 40 * 7 + 70,
-        width: Utils.getWindowWidth()
+        flexDirection: 'row'
     },
 
     calendarBody: {
         marginHorizontal: 20,
-        position: 'absolute',
         width: Utils.getWindowWidth() - 20 * 2
     },
     week: {

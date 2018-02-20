@@ -3,7 +3,7 @@ import React from 'react';
 import LinearGradient, {LinearGradientProps} from 'react-native-linear-gradient';
 
 export const AnimatedLinearGradient = Animated.createAnimatedComponent(
-    class extends React.Component<{location1: number; location2: number} & LinearGradientProps> {
+    class extends React.Component<{location0: number; location1: number; location2: number} & LinearGradientProps> {
         render() {
             return (
                 <LinearGradient
