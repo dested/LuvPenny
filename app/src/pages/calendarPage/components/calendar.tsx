@@ -2,42 +2,36 @@ import React from 'react';
 import moment, {Moment} from 'moment';
 import {Animated, LayoutAnimation, PanResponder, PanResponderInstance, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {Utils} from '../../../utils/utils';
-import CleanRender from '../../../components/cleanRender';
+import {Utils} from 'src/utils/utils';
 
 interface Props {
-    month: number;
-    year: number;
+    view: 'week' | 'month';
     selectedDate?: Moment;
+    visibleDate?: Moment;
     selectDate: (date: Moment) => void;
-    setMonth: (month: number, year: number) => void;
+    setVisibleDate: (date: Moment) => void;
+    updateView: (view: 'week' | 'month') => void;
 }
 
-interface CalendarInfo {
+interface WeekInfo {
+    days: DateInfo[],
+    weekIndex: number
+}
+
+interface MonthInfo {
     month: Moment;
-    weeks: DateInfo[][];
+    weeks: WeekInfo[];
 }
 
 interface State {
-    wasSelectedDate: Moment | null;
-
     horizontalPan: Animated.Value;
-    selectedAnimation: Animated.Value;
-    weekHeightState: boolean[];
     today: Moment;
-    calendarInfo: CalendarInfo[];
-}
-
-function padZero(m: number) {
-    if (m < 10) {
-        return '0' + m;
-    }
-    return m;
+    monthInfo: MonthInfo[];
+    weekInfo: WeekInfo[];
 }
 
 interface DateInfo {
     outOfMonth: boolean;
-    day: number;
     dateNumber: number;
     date: Moment;
 }
@@ -47,74 +41,72 @@ export class CalendarComponent extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
+
+        const calendarInfo = this.getCalendarInfo(props.selectedDate);
         this.state = {
             horizontalPan: new Animated.Value(1),
-            wasSelectedDate: null,
-
-            selectedAnimation: new Animated.Value(0),
-            weekHeightState: [
-                true,
-                true,
-                true,
-                true,
-                true,
-                true
-            ],
 
             today: moment(),
-            calendarInfo: this.getCalendarInfo(props.year, props.month)
+            monthInfo: calendarInfo.months,
+            weekInfo: calendarInfo.weeks,
         };
     }
 
-    private weekCount(year: number, monthNumber: number) {
+    private weekCount(month: Moment) {
         // month_number is in the range 1..12
-
-        let firstOfMonth = new Date(year, monthNumber - 1, 1);
-        let lastOfMonth = new Date(year, monthNumber, 0);
+        let firstOfMonth = month.clone().startOf('month').toDate();
+        let lastOfMonth = month.clone().endOf('month').toDate();
         let used = firstOfMonth.getDay() + lastOfMonth.getDate();
         return Math.ceil(used / 7);
     }
 
-    private getCalendarInfo(year: number, monthNumber: number): CalendarInfo[] {
-        let calendarInfo: CalendarInfo[] = [];
+    private getCalendarInfo(date: Moment): { months: MonthInfo[], weeks: WeekInfo[] } {
+        let months: MonthInfo[] = [];
+        let startOfDate = date.clone().startOf('month');
         for (let c = -1; c <= 1; c++) {
-            let month = moment(year + '-' + padZero(monthNumber) + '-01').add(c, 'months');
+            let startOfMonth = startOfDate.clone().add(c, 'months');
 
-            let firstOfTheMonth = month.weekday();
-            let daysInMonth = month.daysInMonth();
-
-            let weeks: DateInfo[][] = [];
-            let numOfWeeks = this.weekCount(month.get('year'), month.get('month') + 1);
+            let weeks: WeekInfo[] = [];
+            let numOfWeeks = this.weekCount(startOfMonth);
             for (let i = 0; i < numOfWeeks; i++) {
-                let week: DateInfo[] = [];
+                let week: WeekInfo = {days: [], weekIndex: i};
                 weeks.push(week);
-                for (let j = 1; j <= 7; j++) {
-                    let day = i * 7 + j;
 
-                    let outOfMonth = false;
-                    if (day - 1 - firstOfTheMonth < 0) {
-                        outOfMonth = true;
-                    } else if (day - 1 - firstOfTheMonth >= daysInMonth) {
-                        outOfMonth = true;
-                    }
-
-                    week.push({
-                        day: day,
-                        dateNumber: moment(month)
-                            .add(day - 1 - firstOfTheMonth, 'day')
-                            .get('date'),
-                        date: moment(month).add(day - 1 - firstOfTheMonth, 'day'),
+                let startOfWeek = startOfMonth.clone().add(i, 'weeks').startOf('week');
+                for (let d = 0; d < 7; d++) {
+                    let now = startOfWeek.clone().add(d, "days");
+                    const outOfMonth = !now.isSame(startOfMonth, 'month');
+                    week.days.push({
+                        dateNumber: now.get('date'),
+                        date: now,
                         outOfMonth: outOfMonth
                     });
                 }
             }
-            calendarInfo.push({
-                month,
+            months.push({
+                month: startOfMonth,
                 weeks
             });
         }
+        let weeks: WeekInfo[] = [];
+        for (let c = -1; c <= 1; c++) {
+            let startOfWeek = date.clone()
+                .startOf('week')
+                .add(c, 'week');
 
-        return calendarInfo;
+            let weekInfo: WeekInfo = {days: [], weekIndex: 0};
+            weeks.push(weekInfo);
+
+            for (let d = 0; d < 7; d++) {
+                let now = startOfWeek.clone().add(d, "days");
+                weekInfo.days.push({
+                    dateNumber: now.get('date'),
+                    date: now,
+                    outOfMonth: false
+                });
+            }
+        }
+        return {months, weeks};
     }
 
     componentWillMount(): void {
@@ -127,18 +119,20 @@ export class CalendarComponent extends React.Component<Props, State> {
             onPanResponderMove: Animated.event([null, {dx: this.state.horizontalPan}]),
             onPanResponderRelease: (c, g) => {
                 if (g.dx < -50) {
-                    Animated.spring(this.state.horizontalPan, {
+                    Animated.timing(this.state.horizontalPan, {
                         toValue: -Utils.getWindowWidth() * 2,
-                        useNativeDriver: true
+                        useNativeDriver: true,
+                        duration: 200
                     }).start(() => {
-                        this.props.setMonth(this.props.month + 1, this.props.year);
+                        this.swingRight();
                     });
                 } else if (g.dx > 50) {
-                    Animated.spring(this.state.horizontalPan, {
+                    Animated.timing(this.state.horizontalPan, {
                         toValue: Utils.getWindowWidth() * 2,
-                        useNativeDriver: true
+                        useNativeDriver: true,
+                        duration: 200
                     }).start(() => {
-                        this.props.setMonth(this.props.month - 1, this.props.year);
+                        this.swingLeft();
                     });
                 } else {
                     Animated.spring(this.state.horizontalPan, {
@@ -151,65 +145,39 @@ export class CalendarComponent extends React.Component<Props, State> {
     }
 
     componentWillReceiveProps(nextProps: Readonly<Props>, nextContext: any): void {
-        let calendarInfos = this.getCalendarInfo(nextProps.year, nextProps.month);
-        let calendarInfo = calendarInfos[1];
-
-        if (nextProps.month !== this.props.month) {
+        if (!this.props.visibleDate.isSame(nextProps.visibleDate)) {
             this.state.horizontalPan.setValue(1);
+            const calendarInfo = this.getCalendarInfo(nextProps.visibleDate);
+            this.setState(prev => ({
+                ...prev,
+                monthInfo: calendarInfo.months,
+                weekInfo: calendarInfo.weeks,
+            }));
         }
-
-        let weekHeightState = [...this.state.weekHeightState];
-
         if (
-            nextProps.selectedDate &&
-            (!this.props.selectedDate || this.props.selectedDate.get('date') !== nextProps.selectedDate.get('date'))
+            this.props.view !== nextProps.view ||
+            !this.props.selectedDate.isSame(nextProps.selectedDate)
         ) {
-            this.state.selectedAnimation.setValue(0);
-            Animated.timing(this.state.selectedAnimation, {
-                toValue: 1,
-                duration: 1000,
-                useNativeDriver: true
-            }).start();
-
-            let weekIndex = 0;
-            for (const week of calendarInfo.weeks) {
-                let weekIsSelected = nextProps.selectedDate && nextProps.selectedDate.isSame(week[0].date, 'week');
-                weekHeightState[weekIndex] = weekIsSelected;
-                weekIndex++;
-            }
+            LayoutAnimation.configureNext({
+                duration: 150,
+                create: {
+                    type: LayoutAnimation.Types.linear,
+                    property: LayoutAnimation.Properties.scaleXY,
+                },
+                update: {
+                    type: LayoutAnimation.Types.linear,
+                    property: LayoutAnimation.Properties.scaleXY,
+                },
+                delete: {
+                    type: LayoutAnimation.Types.linear,
+                    property: LayoutAnimation.Properties.scaleXY,
+                }
+            });
         }
-
-        if (!nextProps.selectedDate) {
-            for (let weekIndex = 0; weekIndex < calendarInfo.weeks.length; weekIndex++) {
-                weekHeightState[weekIndex] = true;
-            }
-        }
-
-        LayoutAnimation.configureNext({
-            duration: 150,
-            create: {
-                type: LayoutAnimation.Types.linear,
-                property: LayoutAnimation.Properties.scaleXY,
-            },
-            update: {
-                type: LayoutAnimation.Types.linear,
-            },
-            delete: {
-                type: LayoutAnimation.Types.linear,
-                property: LayoutAnimation.Properties.scaleXY,
-            }
-        });
-        this.setState(prev => ({
-            ...prev,
-            month: moment(nextProps.year + '-' + padZero(nextProps.month) + '-01'),
-            calendarInfo: calendarInfos,
-            weekHeightState: weekHeightState,
-            wasSelectedDate: this.props.selectedDate
-        }));
     }
 
     render() {
-        let hOffset = this.state.horizontalPan.interpolate({
+        let horizontal = this.state.horizontalPan.interpolate({
             inputRange: [-Utils.getWindowWidth(), 0, Utils.getWindowWidth()],
             outputRange: [-Utils.getWindowWidth() / 2, 0, Utils.getWindowWidth() / 2]
         });
@@ -222,20 +190,18 @@ export class CalendarComponent extends React.Component<Props, State> {
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 1}}
             >
-                {this.calendarBody(this.state.calendarInfo[0], false, hOffset)}
-                {this.calendarBody(this.state.calendarInfo[1], true, hOffset)}
-                {this.calendarBody(this.state.calendarInfo[2], false, hOffset)}
+                {this.calendarBody(0, horizontal)}
+                {this.calendarBody(1, horizontal)}
+                {this.calendarBody(2, horizontal)}
             </LinearGradient>
         );
     }
 
-    private calendarBody(calendarInfo: CalendarInfo, main: boolean, hOffset: Animated.AnimatedInterpolation) {
-        let calendarWeeks = calendarInfo.weeks;
-        let today = this.state.today;
+    private calendarBody(positionIndex: number, hOffset: Animated.AnimatedInterpolation) {
 
-        let weekHeights = this.state.weekHeightState;
-
-        let monthFormat = calendarInfo.month.format('MMMM YYYY');
+        let monthInfo = this.state.monthInfo[positionIndex];
+        let weekInfo = this.state.weekInfo[positionIndex];
+        let monthLabel = this.getMonthLabel(monthInfo, weekInfo);
         return (
             <Animated.View
                 style={[
@@ -245,130 +211,171 @@ export class CalendarComponent extends React.Component<Props, State> {
                     }
                 ]}
             >
-                <View style={styles.calendarHeader}>
-                    <View style={styles.flexPadding}/>
-                    <View style={styles.monthHeader}>
-                        <Text style={styles.monthHeaderText}>{monthFormat}</Text>
+                {this.renderMonthHeader(monthLabel)}
+                {this.renderDayHeader()}
+                {
+                    this.props.view === "month"
+                        ?
+                        monthInfo.weeks.map(week => this.renderWeek(week))
+                        :
+                        this.renderWeek(weekInfo)
+                }
+                {
+                    this.props.view === "month" && monthInfo.weeks.length < 6 &&
+                    <View style={styles.week}/>
+                }
+                {
+                    this.props.view === "week" ?
+                        <View style={styles.week}>
+                            <TouchableOpacity
+                                activeOpacity={1}
+                                style={styles.backButton}
+                                onPress={() => this.props.updateView('month')}
+                            >
+                                <Text style={[styles.dayText, {fontSize: 12, color: 'rgba(255,255,255,.4)'}]}>BACK</Text>
+                            </TouchableOpacity>
+                        </View> :
+                        <View style={[styles.week, {height: 20}]}>
+                        </View>
+                }
+            </Animated.View>
+        );
+    }
+
+    private getMonthLabel(monthInfo: MonthInfo, weekInfo: WeekInfo) {
+        const monthFormat = "MMMM YYYY";
+        let monthLabel: string;
+
+        if (this.props.view === "month") {
+            monthLabel = monthInfo.month.format(monthFormat);
+        } else {
+            if (this.props.selectedDate.isSame(this.props.visibleDate)) {
+                monthLabel = this.props.selectedDate.format(monthFormat);
+            } else {
+                let dayIndex: number = this.props.selectedDate.isAfter(this.props.visibleDate) ? 6 : 0;
+                monthLabel = weekInfo.days[dayIndex].date.format(monthFormat);
+            }
+        }
+        return monthLabel;
+    }
+
+    private renderMonthHeader(monthFormat: string) {
+        return <View style={styles.calendarHeader}>
+            <View style={styles.flexPadding}/>
+            <View style={styles.monthHeader}>
+                <Text style={styles.monthHeaderText}>{monthFormat}</Text>
+            </View>
+            <View style={styles.flexPadding}/>
+        </View>;
+    }
+
+    private renderDayHeader() {
+        return <View style={styles.week}>
+            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, k) => {
+                return (
+                    <View key={k} style={styles.day}>
+                        <View style={styles.dayBox}>
+                            <Text style={styles.dayText}>{day}</Text>
+                        </View>
                     </View>
-                    <View style={styles.flexPadding}/>
-                </View>
+                );
+            })}
+        </View>;
+    }
 
-                <View style={styles.week}>
-                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, k) => {
-                        return (
-                            <View key={monthFormat + 'w' + k} style={styles.day}>
-                                <View style={styles.dayBox}>
-                                    <Text style={styles.dayText}>{day}</Text>
-                                </View>
-                            </View>
-                        );
-                    })}
-                </View>
-
-                {calendarWeeks.map((week, k) => {
+    private renderWeek(week: WeekInfo) {
+        return (
+            <View key={week.weekIndex} style={styles.week}>
+                {week.days.map(dayInfo => {
+                    let dateIsSelected = this.props.selectedDate && this.props.selectedDate.isSame(dayInfo.date, 'day');
                     return (
-                        <Animated.View key={monthFormat + 'w' + k} style={[styles.week, {height: weekHeights[k] ? 40 : 0}]}>
-                            {week.map(dayInfo => {
-                                let dateIsSelected =
-                                    this.props.selectedDate && this.props.selectedDate.isSame(dayInfo.date, 'day');
-                                let dateWasSelected =
-                                    this.state.wasSelectedDate &&
-                                    this.state.wasSelectedDate.isSame(dayInfo.date, 'day');
-                                return (
-                                    <TouchableOpacity
-                                        activeOpacity={1}
-                                        key={monthFormat + 'd' + dayInfo.dateNumber}
-                                        style={styles.day}
-                                        onPress={() => this.props.selectDate(dayInfo.date)}
-                                    >
-                                        {today.isSame(dayInfo.date, 'day') && this.renderTodayCircle()}
-                                        {dateIsSelected && this.renderSelectedDateCircle()}
-                                        {dateWasSelected && this.renderSelectedDateCircle(true)}
-                                        <View style={[styles.dayBox]}>
-                                            <Text
-                                                style={[
-                                                    styles.dayText,
-                                                    dateIsSelected
-                                                        ? {color: '#FB6B67'}
-                                                        : dayInfo.outOfMonth
-                                                        ? {color: 'rgba(255,255,255,.4)'}
-                                                        : {color: 'rgba(255,255,255,1)'}
-                                                ]}
-                                            >
-                                                {dayInfo.dateNumber}
-                                            </Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                );
-                            })}
-                        </Animated.View>
-                    );
-                })}
-                <View style={styles.week}>
-                    {this.props.selectedDate && (
                         <TouchableOpacity
                             activeOpacity={1}
-                            style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}
-                            onPress={() => this.props.selectDate(null)}
+                            key={+dayInfo.date.toDate()}
+                            style={styles.day}
+                            onPress={() => this.props.selectDate(dayInfo.date)}
                         >
-                            <Text style={[styles.dayText, {fontSize: 12, color: 'rgba(255,255,255,.4)'}]}>BACK</Text>
+                            {this.state.today.isSame(dayInfo.date, 'day') && this.renderTodayCircle()}
+                            {dateIsSelected && this.renderSelectedDateCircle()}
+                            <View style={[styles.dayBox]}>
+                                <Text
+                                    style={[
+                                        styles.dayText,
+                                        dateIsSelected
+                                            ? {color: '#FB6B67'}
+                                            : dayInfo.outOfMonth
+                                            ? {color: 'rgba(255,255,255,.4)'}
+                                            : {color: 'rgba(255,255,255,1)'}
+                                    ]}
+                                >
+                                    {dayInfo.dateNumber}
+                                </Text>
+                            </View>
                         </TouchableOpacity>
-                    )}
-                </View>
-            </Animated.View>
+                    );
+                })}
+            </View>
         );
     }
 
     private renderTodayCircle() {
         return (
-            <View style={{position: 'absolute', flex: 1, alignSelf: 'center', justifyContent: 'center'}}>
-                <View
-                    style={{
-                        width: 30,
-                        height: 30,
-                        borderRadius: 15,
-                        borderWidth: 2,
-                        borderColor: 'rgba(255,255,255,.5)'
-                    }}
-                />
+            <View style={styles.todayOuter}>
+                <View style={styles.today}/>
             </View>
         );
     }
 
-    renderSelectedDateCircle(invert: boolean = false) {
-        let size = !invert
-            ? this.state.selectedAnimation.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0.5, 1]
-            })
-            : this.state.selectedAnimation.interpolate({
-                inputRange: [0, 0.2],
-                outputRange: [1, 0.01],
-                extrapolate: 'clamp'
-            });
+    private renderSelectedDateCircle() {
         return (
-            <View style={{position: 'absolute', flex: 1, alignSelf: 'center', justifyContent: 'center'}}>
-                <Animated.View
-                    style={{
-                        width: 35,
-                        height: 35,
-                        transform: [{scale: size}],
-                        backgroundColor: '#ffffff',
-                        borderRadius: 35 / 2,
-                        borderWidth: 3,
-                        borderColor: 'rgba(255,255,255,.5)'
-                    }}
-                />
+            <View style={styles.selectedDateOuter}>
+                <View style={styles.selectedDate}/>
             </View>
         );
     }
+
+    private swingLeft() {
+        if (this.props.view === "week") {
+            this.props.setVisibleDate(this.props.visibleDate.clone().add(-1, 'week'));
+        } else {
+            this.props.setVisibleDate(this.props.visibleDate.clone().add(-1, 'month'));
+        }
+    }
+
+    private swingRight() {
+        if (this.props.view === "week") {
+            this.props.setVisibleDate(this.props.visibleDate.clone().add(1, 'week'));
+        } else {
+            this.props.setVisibleDate(this.props.visibleDate.clone().add(1, 'month'));
+        }
+    }
+
+
 }
 
 let styles = StyleSheet.create({
     calendarArea: {
         flexDirection: 'row'
     },
-
+    backButton: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    today: {
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        borderWidth: 2,
+        borderColor: 'rgba(255,255,255,.5)'
+    },
+    todayOuter: {
+        position: 'absolute',
+        flex: 1,
+        alignSelf: 'center',
+        justifyContent: 'center'
+    },
     calendarBody: {
         marginHorizontal: 20,
         width: Utils.getWindowWidth() - 20 * 2
@@ -376,6 +383,20 @@ let styles = StyleSheet.create({
     week: {
         flexDirection: 'row',
         height: 40
+    },
+    selectedDateOuter: {
+        position: 'absolute',
+        flex: 1,
+        alignSelf: 'center',
+        justifyContent: 'center'
+    },
+    selectedDate: {
+        width: 35,
+        height: 35,
+        backgroundColor: '#ffffff',
+        borderRadius: 35 / 2,
+        borderWidth: 3,
+        borderColor: 'rgba(255,255,255,.5)'
     },
     day: {
         flex: 1,
