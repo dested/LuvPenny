@@ -1,8 +1,18 @@
 import React from 'react';
 import moment, {Moment} from 'moment';
-import {Animated, LayoutAnimation, PanResponder, PanResponderInstance, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+    Animated,
+    LayoutAnimation,
+    PanResponder,
+    PanResponderInstance,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
+} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {Utils} from 'src/utils/utils';
+import {VPadding} from '../../../components/styled/padding';
 
 interface Props {
     view: 'week' | 'month';
@@ -14,8 +24,8 @@ interface Props {
 }
 
 interface WeekInfo {
-    days: DateInfo[],
-    weekIndex: number
+    days: DateInfo[];
+    weekIndex: number;
 }
 
 interface MonthInfo {
@@ -48,33 +58,42 @@ export class CalendarComponent extends React.Component<Props, State> {
 
             today: moment(),
             monthInfo: calendarInfo.months,
-            weekInfo: calendarInfo.weeks,
+            weekInfo: calendarInfo.weeks
         };
     }
 
     private weekCount(month: Moment) {
         // month_number is in the range 1..12
-        let firstOfMonth = month.clone().startOf('month').toDate();
-        let lastOfMonth = month.clone().endOf('month').toDate();
+        let firstOfMonth = month
+            .clone()
+            .startOf('month')
+            .toDate();
+        let lastOfMonth = month
+            .clone()
+            .endOf('month')
+            .toDate();
         let used = firstOfMonth.getDay() + lastOfMonth.getDate();
         return Math.ceil(used / 7);
     }
 
-    private getCalendarInfo(date: Moment): { months: MonthInfo[], weeks: WeekInfo[] } {
+    private getCalendarInfo(date: Moment): {months: MonthInfo[]; weeks: WeekInfo[]} {
         let months: MonthInfo[] = [];
         let startOfDate = date.clone().startOf('month');
         for (let c = -1; c <= 1; c++) {
             let startOfMonth = startOfDate.clone().add(c, 'months');
 
-            let weeks: WeekInfo[] = [];
+            let monthlyWeeks: WeekInfo[] = [];
             let numOfWeeks = this.weekCount(startOfMonth);
             for (let i = 0; i < numOfWeeks; i++) {
                 let week: WeekInfo = {days: [], weekIndex: i};
-                weeks.push(week);
+                monthlyWeeks.push(week);
 
-                let startOfWeek = startOfMonth.clone().add(i, 'weeks').startOf('week');
+                let startOfWeek = startOfMonth
+                    .clone()
+                    .add(i, 'weeks')
+                    .startOf('week');
                 for (let d = 0; d < 7; d++) {
-                    let now = startOfWeek.clone().add(d, "days");
+                    let now = startOfWeek.clone().add(d, 'days');
                     const outOfMonth = !now.isSame(startOfMonth, 'month');
                     week.days.push({
                         dateNumber: now.get('date'),
@@ -85,12 +104,13 @@ export class CalendarComponent extends React.Component<Props, State> {
             }
             months.push({
                 month: startOfMonth,
-                weeks
+                weeks: monthlyWeeks
             });
         }
         let weeks: WeekInfo[] = [];
         for (let c = -1; c <= 1; c++) {
-            let startOfWeek = date.clone()
+            let startOfWeek = date
+                .clone()
                 .startOf('week')
                 .add(c, 'week');
 
@@ -98,7 +118,7 @@ export class CalendarComponent extends React.Component<Props, State> {
             weeks.push(weekInfo);
 
             for (let d = 0; d < 7; d++) {
-                let now = startOfWeek.clone().add(d, "days");
+                let now = startOfWeek.clone().add(d, 'days');
                 weekInfo.days.push({
                     dateNumber: now.get('date'),
                     date: now,
@@ -151,26 +171,23 @@ export class CalendarComponent extends React.Component<Props, State> {
             this.setState(prev => ({
                 ...prev,
                 monthInfo: calendarInfo.months,
-                weekInfo: calendarInfo.weeks,
+                weekInfo: calendarInfo.weeks
             }));
         }
-        if (
-            this.props.view !== nextProps.view ||
-            !this.props.selectedDate.isSame(nextProps.selectedDate)
-        ) {
+        if (this.props.view !== nextProps.view || !this.props.selectedDate.isSame(nextProps.selectedDate)) {
             LayoutAnimation.configureNext({
                 duration: 150,
                 create: {
                     type: LayoutAnimation.Types.linear,
-                    property: LayoutAnimation.Properties.scaleXY,
+                    property: LayoutAnimation.Properties.scaleXY
                 },
                 update: {
                     type: LayoutAnimation.Types.linear,
-                    property: LayoutAnimation.Properties.scaleXY,
+                    property: LayoutAnimation.Properties.scaleXY
                 },
                 delete: {
                     type: LayoutAnimation.Types.linear,
-                    property: LayoutAnimation.Properties.scaleXY,
+                    property: LayoutAnimation.Properties.scaleXY
                 }
             });
         }
@@ -198,7 +215,6 @@ export class CalendarComponent extends React.Component<Props, State> {
     }
 
     private calendarBody(positionIndex: number, hOffset: Animated.AnimatedInterpolation) {
-
         let monthInfo = this.state.monthInfo[positionIndex];
         let weekInfo = this.state.weekInfo[positionIndex];
         let monthLabel = this.getMonthLabel(monthInfo, weekInfo);
@@ -213,40 +229,20 @@ export class CalendarComponent extends React.Component<Props, State> {
             >
                 {this.renderMonthHeader(monthLabel)}
                 {this.renderDayHeader()}
-                {
-                    this.props.view === "month"
-                        ?
-                        monthInfo.weeks.map(week => this.renderWeek(week))
-                        :
-                        this.renderWeek(weekInfo)
-                }
-                {
-                    this.props.view === "month" && monthInfo.weeks.length < 6 &&
-                    <View style={styles.week}/>
-                }
-                {
-                    this.props.view === "week" ?
-                        <View style={styles.week}>
-                            <TouchableOpacity
-                                activeOpacity={1}
-                                style={styles.backButton}
-                                onPress={() => this.props.updateView('month')}
-                            >
-                                <Text style={[styles.dayText, {fontSize: 12, color: 'rgba(255,255,255,.4)'}]}>BACK</Text>
-                            </TouchableOpacity>
-                        </View> :
-                        <View style={[styles.week, {height: 20}]}>
-                        </View>
-                }
+                {this.props.view === 'month'
+                    ? monthInfo.weeks.map(week => this.renderWeek(week))
+                    : this.renderWeek(weekInfo)}
+                {this.props.view === 'month' && monthInfo.weeks.length < 6 && <View style={styles.week} />}
+                <VPadding size={20} />
             </Animated.View>
         );
     }
 
     private getMonthLabel(monthInfo: MonthInfo, weekInfo: WeekInfo) {
-        const monthFormat = "MMMM YYYY";
+        const monthFormat = 'MMMM YYYY';
         let monthLabel: string;
 
-        if (this.props.view === "month") {
+        if (this.props.view === 'month') {
             monthLabel = monthInfo.month.format(monthFormat);
         } else {
             if (this.props.selectedDate.isSame(this.props.visibleDate)) {
@@ -260,27 +256,35 @@ export class CalendarComponent extends React.Component<Props, State> {
     }
 
     private renderMonthHeader(monthFormat: string) {
-        return <View style={styles.calendarHeader}>
-            <View style={styles.flexPadding}/>
-            <View style={styles.monthHeader}>
-                <Text style={styles.monthHeaderText}>{monthFormat}</Text>
-            </View>
-            <View style={styles.flexPadding}/>
-        </View>;
+        return (
+            <TouchableOpacity
+                activeOpacity={0.7}
+                style={styles.calendarHeader}
+                onPress={() => this.props.updateView('month')}
+            >
+                <View style={styles.flexPadding} />
+                <View style={styles.monthHeader}>
+                    <Text style={styles.monthHeaderText}>{monthFormat}</Text>
+                </View>
+                <View style={styles.flexPadding} />
+            </TouchableOpacity>
+        );
     }
 
     private renderDayHeader() {
-        return <View style={styles.week}>
-            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, k) => {
-                return (
-                    <View key={k} style={styles.day}>
-                        <View style={styles.dayBox}>
-                            <Text style={styles.dayText}>{day}</Text>
+        return (
+            <View style={styles.week}>
+                {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, k) => {
+                    return (
+                        <View key={k} style={styles.day}>
+                            <View style={styles.dayBox}>
+                                <Text style={styles.dayText}>{day}</Text>
+                            </View>
                         </View>
-                    </View>
-                );
-            })}
-        </View>;
+                    );
+                })}
+            </View>
+        );
     }
 
     private renderWeek(week: WeekInfo) {
@@ -293,7 +297,7 @@ export class CalendarComponent extends React.Component<Props, State> {
                             activeOpacity={1}
                             key={+dayInfo.date.toDate()}
                             style={styles.day}
-                            onPress={() => this.props.selectDate(dayInfo.date)}
+                            onPress={() => !dateIsSelected && this.props.selectDate(dayInfo.date)}
                         >
                             {this.state.today.isSame(dayInfo.date, 'day') && this.renderTodayCircle()}
                             {dateIsSelected && this.renderSelectedDateCircle()}
@@ -304,8 +308,8 @@ export class CalendarComponent extends React.Component<Props, State> {
                                         dateIsSelected
                                             ? {color: '#FB6B67'}
                                             : dayInfo.outOfMonth
-                                            ? {color: 'rgba(255,255,255,.4)'}
-                                            : {color: 'rgba(255,255,255,1)'}
+                                              ? {color: 'rgba(255,255,255,.4)'}
+                                              : {color: 'rgba(255,255,255,1)'}
                                     ]}
                                 >
                                     {dayInfo.dateNumber}
@@ -321,7 +325,7 @@ export class CalendarComponent extends React.Component<Props, State> {
     private renderTodayCircle() {
         return (
             <View style={styles.todayOuter}>
-                <View style={styles.today}/>
+                <View style={styles.today} />
             </View>
         );
     }
@@ -329,13 +333,13 @@ export class CalendarComponent extends React.Component<Props, State> {
     private renderSelectedDateCircle() {
         return (
             <View style={styles.selectedDateOuter}>
-                <View style={styles.selectedDate}/>
+                <View style={styles.selectedDate} />
             </View>
         );
     }
 
     private swingLeft() {
-        if (this.props.view === "week") {
+        if (this.props.view === 'week') {
             this.props.setVisibleDate(this.props.visibleDate.clone().add(-1, 'week'));
         } else {
             this.props.setVisibleDate(this.props.visibleDate.clone().add(-1, 'month'));
@@ -343,25 +347,17 @@ export class CalendarComponent extends React.Component<Props, State> {
     }
 
     private swingRight() {
-        if (this.props.view === "week") {
+        if (this.props.view === 'week') {
             this.props.setVisibleDate(this.props.visibleDate.clone().add(1, 'week'));
         } else {
             this.props.setVisibleDate(this.props.visibleDate.clone().add(1, 'month'));
         }
     }
-
-
 }
 
 let styles = StyleSheet.create({
     calendarArea: {
         flexDirection: 'row'
-    },
-    backButton: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center'
     },
     today: {
         width: 30,

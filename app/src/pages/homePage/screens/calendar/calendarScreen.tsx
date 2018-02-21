@@ -2,8 +2,8 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {CalendarComponent} from './components/calendar/calendarComponent';
 import {MainScrollView} from '../../components/mainScrollView/mainScrollView';
-import {Container} from 'src/components/container';
-import {Card} from 'src/components/card';
+import {Container} from 'src/components/styled/container';
+import {Card} from 'src/components/styled/card';
 import {CommonStyles} from 'src/utils/commonStyles';
 
 interface State {
