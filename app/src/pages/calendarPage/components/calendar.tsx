@@ -1,22 +1,13 @@
 import React from 'react';
 import moment, {Moment} from 'moment';
-import {
-    Animated,
-    LayoutAnimation,
-    PanResponder,
-    PanResponderInstance,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
-} from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+import {Animated, LayoutAnimation, PanResponder, PanResponderInstance, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Utils} from 'src/utils/utils';
 import {VPadding} from '../../../components/styled/padding';
 
 interface Props {
     view: 'week' | 'month';
     selectedDate?: Moment;
+    scrollKeeper: Animated.Value;
     visibleDate?: Moment;
     selectDate: (date: Moment) => void;
     setVisibleDate: (date: Moment) => void;
@@ -76,7 +67,7 @@ export class CalendarComponent extends React.Component<Props, State> {
         return Math.ceil(used / 7);
     }
 
-    private getCalendarInfo(date: Moment): {months: MonthInfo[]; weeks: WeekInfo[]} {
+    private getCalendarInfo(date: Moment): { months: MonthInfo[]; weeks: WeekInfo[] } {
         let months: MonthInfo[] = [];
         let startOfDate = date.clone().startOf('month');
         for (let c = -1; c <= 1; c++) {
@@ -194,23 +185,31 @@ export class CalendarComponent extends React.Component<Props, State> {
     }
 
     render() {
+        let pinPosition;
+        if (this.props.view === 'week') {
+            pinPosition = this.props.scrollKeeper.interpolate({
+                inputRange: [0, 70 , 10000],
+                outputRange: [0, 0, 10000],
+                extrapolate: 'clamp',
+            });
+        } else {
+            pinPosition = 0;
+        }
+
         let horizontal = this.state.horizontalPan.interpolate({
             inputRange: [-Utils.getWindowWidth(), 0, Utils.getWindowWidth()],
             outputRange: [-Utils.getWindowWidth() / 2, 0, Utils.getWindowWidth() / 2]
         });
 
         return (
-            <LinearGradient
+            <Animated.View
                 {...this.panResponder.panHandlers}
-                style={styles.calendarArea}
-                colors={['#FF9D83', '#FB6B67']}
-                start={{x: 0, y: 0}}
-                end={{x: 1, y: 1}}
+                style={[styles.calendarArea, {transform: [{translateY: pinPosition}]}]}
             >
                 {this.calendarBody(0, horizontal)}
                 {this.calendarBody(1, horizontal)}
                 {this.calendarBody(2, horizontal)}
-            </LinearGradient>
+            </Animated.View>
         );
     }
 
@@ -232,8 +231,8 @@ export class CalendarComponent extends React.Component<Props, State> {
                 {this.props.view === 'month'
                     ? monthInfo.weeks.map(week => this.renderWeek(week))
                     : this.renderWeek(weekInfo)}
-                {this.props.view === 'month' && monthInfo.weeks.length < 6 && <View style={styles.week} />}
-                <VPadding size={20} />
+                {this.props.view === 'month' && monthInfo.weeks.length < 6 && <View style={styles.week}/>}
+                <VPadding size={20}/>
             </Animated.View>
         );
     }
@@ -262,11 +261,11 @@ export class CalendarComponent extends React.Component<Props, State> {
                 style={styles.calendarHeader}
                 onPress={() => this.props.updateView('month')}
             >
-                <View style={styles.flexPadding} />
+                <View style={styles.flexPadding}/>
                 <View style={styles.monthHeader}>
                     <Text style={styles.monthHeaderText}>{monthFormat}</Text>
                 </View>
-                <View style={styles.flexPadding} />
+                <View style={styles.flexPadding}/>
             </TouchableOpacity>
         );
     }
@@ -308,8 +307,8 @@ export class CalendarComponent extends React.Component<Props, State> {
                                         dateIsSelected
                                             ? {color: '#FB6B67'}
                                             : dayInfo.outOfMonth
-                                              ? {color: 'rgba(255,255,255,.4)'}
-                                              : {color: 'rgba(255,255,255,1)'}
+                                            ? {color: 'rgba(255,255,255,.4)'}
+                                            : {color: 'rgba(255,255,255,1)'}
                                     ]}
                                 >
                                     {dayInfo.dateNumber}
@@ -325,7 +324,7 @@ export class CalendarComponent extends React.Component<Props, State> {
     private renderTodayCircle() {
         return (
             <View style={styles.todayOuter}>
-                <View style={styles.today} />
+                <View style={styles.today}/>
             </View>
         );
     }
@@ -333,7 +332,7 @@ export class CalendarComponent extends React.Component<Props, State> {
     private renderSelectedDateCircle() {
         return (
             <View style={styles.selectedDateOuter}>
-                <View style={styles.selectedDate} />
+                <View style={styles.selectedDate}/>
             </View>
         );
     }
@@ -357,7 +356,8 @@ export class CalendarComponent extends React.Component<Props, State> {
 
 let styles = StyleSheet.create({
     calendarArea: {
-        flexDirection: 'row'
+        flexDirection: 'row',
+        zIndex: 2
     },
     today: {
         width: 30,
