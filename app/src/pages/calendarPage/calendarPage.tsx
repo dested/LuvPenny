@@ -32,8 +32,8 @@ export default class CalendarPage extends Component<Props, State> {
             loadingItems: false,
             scrollPosition: new Animated.Value(0),
             calendarView: 'week',
-            selectedDate: moment(),
-            visibleDate: moment(),
+            selectedDate: moment(new Date(2018, 3, 30)),
+            visibleDate: moment(new Date(2018, 3, 30)),
             visibleItems: Utils.range(10).map(() => ({
                 height: Math.random() * 250 + 100,
                 title: Math.random() * 10000 + ''

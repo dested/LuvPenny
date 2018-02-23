@@ -125,7 +125,7 @@ export class CalendarComponent extends React.Component<Props, State> {
             onMoveShouldSetPanResponder: (evt, g) => Math.abs(g.dx) > 10,
             onMoveShouldSetPanResponderCapture: (evt, g) => Math.abs(g.dx) > 10,
             onPanResponderGrant: (e, g) => {
-                this.state.horizontalPan.setValue(1);
+                this.state.horizontalPan.setValue(0);
             },
             onPanResponderMove: Animated.event([null, {dx: this.state.horizontalPan}]),
             onPanResponderRelease: (c, g) => {
@@ -157,7 +157,7 @@ export class CalendarComponent extends React.Component<Props, State> {
 
     componentWillReceiveProps(nextProps: Readonly<Props>, nextContext: any): void {
         if (!this.props.visibleDate.isSame(nextProps.visibleDate)) {
-            this.state.horizontalPan.setValue(1);
+            this.state.horizontalPan.setValue(0);
             const calendarInfo = this.getCalendarInfo(nextProps.visibleDate);
             this.setState(prev => ({
                 ...prev,
@@ -185,38 +185,31 @@ export class CalendarComponent extends React.Component<Props, State> {
     }
 
     render() {
-        let pinPosition;
-        if (this.props.view === 'week') {
-            pinPosition = this.props.scrollKeeper.interpolate({
-                inputRange: [0, 70 , 10000],
-                outputRange: [0, 0, 10000],
-                extrapolate: 'clamp',
-            });
-        } else {
-            pinPosition = 0;
-        }
-
         let horizontal = this.state.horizontalPan.interpolate({
             inputRange: [-Utils.getWindowWidth(), 0, Utils.getWindowWidth()],
             outputRange: [-Utils.getWindowWidth() / 2, 0, Utils.getWindowWidth() / 2]
         });
 
+
         return (
-            <Animated.View
-                {...this.panResponder.panHandlers}
-                style={[styles.calendarArea, {transform: [{translateY: pinPosition}]}]}
-            >
-                {this.calendarBody(0, horizontal)}
-                {this.calendarBody(1, horizontal)}
-                {this.calendarBody(2, horizontal)}
-            </Animated.View>
+            <View {...this.panResponder.panHandlers} >
+                {this.renderMonthHeader()}
+                <View style={styles.calendarBody}>
+                    {this.renderDayHeader()}
+                </View>
+
+                <Animated.View style={[styles.calendarArea, {/*{transform: [{translateY: pinPosition}]}*/}]}>
+                    {this.calendarBody(0, horizontal)}
+                    {this.calendarBody(1, horizontal)}
+                    {this.calendarBody(2, horizontal)}
+                </Animated.View>
+            </View>
         );
     }
 
     private calendarBody(positionIndex: number, hOffset: Animated.AnimatedInterpolation) {
         let monthInfo = this.state.monthInfo[positionIndex];
         let weekInfo = this.state.weekInfo[positionIndex];
-        let monthLabel = this.getMonthLabel(monthInfo, weekInfo);
         return (
             <Animated.View
                 style={[
@@ -226,8 +219,6 @@ export class CalendarComponent extends React.Component<Props, State> {
                     }
                 ]}
             >
-                {this.renderMonthHeader(monthLabel)}
-                {this.renderDayHeader()}
                 {this.props.view === 'month'
                     ? monthInfo.weeks.map(week => this.renderWeek(week))
                     : this.renderWeek(weekInfo)}
@@ -240,11 +231,13 @@ export class CalendarComponent extends React.Component<Props, State> {
     private getMonthLabel(monthInfo: MonthInfo, weekInfo: WeekInfo) {
         const monthFormat = 'MMMM YYYY';
         let monthLabel: string;
-
         if (this.props.view === 'month') {
             monthLabel = monthInfo.month.format(monthFormat);
         } else {
-            if (this.props.selectedDate.isSame(this.props.visibleDate)) {
+            if (
+                weekInfo.days[0].date.isSameOrBefore(this.props.selectedDate) &&
+                weekInfo.days[6].date.isSameOrAfter(this.props.selectedDate)
+            ) {
                 monthLabel = this.props.selectedDate.format(monthFormat);
             } else {
                 let dayIndex: number = this.props.selectedDate.isAfter(this.props.visibleDate) ? 6 : 0;
@@ -254,19 +247,75 @@ export class CalendarComponent extends React.Component<Props, State> {
         return monthLabel;
     }
 
-    private renderMonthHeader(monthFormat: string) {
-        return (
-            <TouchableOpacity
-                activeOpacity={0.7}
-                style={styles.calendarHeader}
-                onPress={() => this.props.updateView('month')}
+    private renderMonthHeader() {
+
+        let renderMonthLabel = (monthFormat: string) => (
+            <Animated.View
+                style={[
+                    styles.calendarHeader,
+                    {
+                        marginHorizontal: 20,
+                        width: Utils.getWindowWidth() - 20 * 2,
+                        transform: [{translateX: horizontalResult}]
+                    }
+                ]}
             >
-                <View style={styles.flexPadding}/>
-                <View style={styles.monthHeader}>
-                    <Text style={styles.monthHeaderText}>{monthFormat}</Text>
-                </View>
-                <View style={styles.flexPadding}/>
-            </TouchableOpacity>
+
+                <TouchableOpacity
+                    activeOpacity={0.7}
+                    style={{flex: 1}}
+                    onPress={() => this.props.updateView('month')}
+                >
+                    <View style={styles.flexPadding}/>
+                    <View style={styles.monthHeader}>
+                        <Text style={styles.monthHeaderText}>{monthFormat}</Text>
+                    </View>
+                    <View style={styles.flexPadding}/>
+                </TouchableOpacity>
+            </Animated.View>
+        );
+
+        let monthLabelLeft = this.getMonthLabel(this.state.monthInfo[0], this.state.weekInfo[0]);
+        let monthLabelCenter = this.getMonthLabel(this.state.monthInfo[1], this.state.weekInfo[1]);
+        let monthLabelRight = this.getMonthLabel(this.state.monthInfo[2], this.state.weekInfo[2]);
+
+        console.log(monthLabelLeft, monthLabelCenter, monthLabelRight);
+        let horizontalResult: Animated.AnimatedInterpolation;
+
+        if (this.props.view === 'week') {
+            console.log(monthLabelLeft, monthLabelCenter, monthLabelRight);
+            if (monthLabelCenter === monthLabelLeft && monthLabelCenter === monthLabelRight) {
+                horizontalResult = this.state.horizontalPan.interpolate({
+                    inputRange: [-Utils.getWindowWidth(), 0, Utils.getWindowWidth()],
+                    outputRange: [-Utils.getWindowWidth(), -Utils.getWindowWidth(), -Utils.getWindowWidth()]
+                });
+                console.log('center');
+            } else if (monthLabelCenter !== monthLabelLeft) {
+                horizontalResult = this.state.horizontalPan.interpolate({
+                    inputRange: [-Utils.getWindowWidth(), 0, Utils.getWindowWidth()],
+                    outputRange: [-Utils.getWindowWidth(), -Utils.getWindowWidth(), -Utils.getWindowWidth() / 2]
+                });
+                console.log('left');
+            } else if (monthLabelCenter !== monthLabelRight) {
+                horizontalResult = this.state.horizontalPan.interpolate({
+                    inputRange: [-Utils.getWindowWidth(), 0, Utils.getWindowWidth()],
+                    outputRange: [-Utils.getWindowWidth() * 1.5, -Utils.getWindowWidth(), -Utils.getWindowWidth()]
+                });
+                console.log('right');
+            }
+        } else {
+            horizontalResult = this.state.horizontalPan.interpolate({
+                inputRange: [-Utils.getWindowWidth(), 0, Utils.getWindowWidth()],
+                outputRange: [-Utils.getWindowWidth() * 1.5, -Utils.getWindowWidth(), -Utils.getWindowWidth() / 2]
+            });
+        }
+
+        return (
+            <View style={{flexDirection: 'row'}}>
+                {renderMonthLabel(monthLabelLeft)}
+                {renderMonthLabel(monthLabelCenter)}
+                {renderMonthLabel(monthLabelRight)}
+            </View>
         );
     }
 
@@ -373,6 +422,7 @@ let styles = StyleSheet.create({
         justifyContent: 'center'
     },
     calendarBody: {
+        backgroundColor: 'transparent',
         marginHorizontal: 20,
         width: Utils.getWindowWidth() - 20 * 2
     },
@@ -412,7 +462,8 @@ let styles = StyleSheet.create({
     },
 
     calendarHeader: {
-        height: 70,
+        paddingTop: 10,
+        height: 50,
         flexDirection: 'row'
     },
     monthHeader: {
