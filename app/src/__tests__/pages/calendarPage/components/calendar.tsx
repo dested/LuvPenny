@@ -1,8 +1,11 @@
 import React from 'react';
-import {configure, shallow} from 'enzyme';
+import {Text} from 'react-native';
+
+import {configure, render, shallow} from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import {CalendarComponent} from '../../../../pages/calendarPage/components/calendar';
 import moment from 'moment';
+import {getText} from '../../../utils';
 
 configure({adapter: new Adapter()});
 describe('calendar header', () => {
@@ -19,13 +22,14 @@ describe('calendar header', () => {
                     updateView={noop}
                 />
             );
-        let calendarHeader = result.at(0).at(0);
-        let left = calendarHeader.at(0).find(Text);
-        let center = calendarHeader.at(1).find(Text);
-        let right = calendarHeader.at(2).find(Text);
-        expect(left.text()).toEqual('April 2018');
-        expect(center.text()).toEqual('April 2018');
-        expect(right.text()).toEqual('May 2018');
+
+        let calendarHeader = result.childAt(0);
+        let left = getText(calendarHeader.childAt(0).find(Text));
+        let center = getText(calendarHeader.childAt(1).find(Text));
+        let right = getText(calendarHeader.childAt(2).find(Text));
+        expect(left).toEqual('April 2018');
+        expect(center).toEqual('April 2018');
+        expect(right).toEqual('May 2018');
     });
 });
 

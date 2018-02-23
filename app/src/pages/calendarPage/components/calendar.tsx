@@ -279,29 +279,24 @@ export class CalendarComponent extends React.Component<Props, State> {
         let monthLabelCenter = this.getMonthLabel(this.state.monthInfo[1], this.state.weekInfo[1]);
         let monthLabelRight = this.getMonthLabel(this.state.monthInfo[2], this.state.weekInfo[2]);
 
-        console.log(monthLabelLeft, monthLabelCenter, monthLabelRight);
         let horizontalResult: Animated.AnimatedInterpolation;
 
         if (this.props.view === 'week') {
-            console.log(monthLabelLeft, monthLabelCenter, monthLabelRight);
             if (monthLabelCenter === monthLabelLeft && monthLabelCenter === monthLabelRight) {
                 horizontalResult = this.state.horizontalPan.interpolate({
                     inputRange: [-Utils.getWindowWidth(), 0, Utils.getWindowWidth()],
                     outputRange: [-Utils.getWindowWidth(), -Utils.getWindowWidth(), -Utils.getWindowWidth()]
                 });
-                console.log('center');
             } else if (monthLabelCenter !== monthLabelLeft) {
                 horizontalResult = this.state.horizontalPan.interpolate({
                     inputRange: [-Utils.getWindowWidth(), 0, Utils.getWindowWidth()],
                     outputRange: [-Utils.getWindowWidth(), -Utils.getWindowWidth(), -Utils.getWindowWidth() / 2]
                 });
-                console.log('left');
             } else if (monthLabelCenter !== monthLabelRight) {
                 horizontalResult = this.state.horizontalPan.interpolate({
                     inputRange: [-Utils.getWindowWidth(), 0, Utils.getWindowWidth()],
                     outputRange: [-Utils.getWindowWidth() * 1.5, -Utils.getWindowWidth(), -Utils.getWindowWidth()]
                 });
-                console.log('right');
             }
         } else {
             horizontalResult = this.state.horizontalPan.interpolate({
