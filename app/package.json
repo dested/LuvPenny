@@ -10,7 +10,7 @@
     "test": "npx jest",
     "tsc": "npx tsc",
     "pre": "npm run images & npm run tsc & npm run pretty & npm run lint",
-    "lint": "npx tslint -p tsconfig.json",
+    "lint": "npx tslint -p tsconfig.json --fix",
     "images": "node scripts/process-images"
   },
   "dependencies": {

@@ -7,6 +7,7 @@ import IntroPage from './pages/introPage/introPage';
 import {Button, UIManager, View} from 'react-native';
 import Intro2Page from './pages/introPage/intro2Page';
 import CalendarPage from './pages/calendarPage/calendarPage';
+import MeasurePage from './pages/measurePage/measurePage';
 
 const PennyApp = StackNavigator(
     {
@@ -59,16 +60,28 @@ const PennyApp = StackNavigator(
                                 )
                             }
                         />
+                        <Button
+                            title={'MeasurePage'}
+                            onPress={() =>
+                                props.navigation.dispatch(
+                                    NavigationActions.reset({
+                                        index: 0,
+                                        actions: [NavigationActions.navigate({routeName: 'MeasurePage'})]
+                                    })
+                                )
+                            }
+                        />
                     </View>
                 );
             }
         },
         IntroPage: {screen: IntroPage},
+        MeasurePage: {screen: MeasurePage},
         CalendarPage: {screen: CalendarPage},
         Intro2Page: {screen: Intro2Page}
     },
     {
-        initialRouteName: 'CalendarPage'
+        initialRouteName: 'MeasurePage'
         // initialRouteName: 'Switcher'
     }
 );

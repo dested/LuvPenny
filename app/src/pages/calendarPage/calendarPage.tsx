@@ -15,11 +15,10 @@ interface State {
     selectedDate: Moment;
     visibleDate: Moment;
     scrollPosition: Animated.Value;
-    visibleItems: { height: number; title: string }[];
+    visibleItems: {height: number; title: string}[];
 }
 
-interface Props {
-}
+interface Props {}
 
 @Navigation({
     ...hideHeader
@@ -32,8 +31,8 @@ export default class CalendarPage extends Component<Props, State> {
             loadingItems: false,
             scrollPosition: new Animated.Value(0),
             calendarView: 'week',
-            selectedDate: moment(),
-            visibleDate: moment(),
+            selectedDate: moment(new Date(2018, 1, 5)),
+            visibleDate: moment(new Date(2018, 1, 5)),
             visibleItems: Utils.range(10).map(() => ({
                 height: Math.random() * 250 + 100,
                 title: Math.random() * 10000 + ''
@@ -43,12 +42,7 @@ export default class CalendarPage extends Component<Props, State> {
 
     render() {
         return (
-            <LinearGradient
-                style={styles.body}
-                colors={['#FF9D83', '#FB6B67']}
-                start={{x: 0, y: 0}}
-                end={{x: 1, y: 1}}
-            >
+            <LinearGradient style={styles.body} colors={['#FF9D83', '#FB6B67']} start={{x: 0, y: 0}} end={{x: 1, y: 1}}>
                 <ScrollView
                     style={{flex: 1}}
                     scrollEventThrottle={16}
@@ -100,7 +94,7 @@ export default class CalendarPage extends Component<Props, State> {
                         }}
                     />
                     {this.state.loadingItems ? (
-                        <ActivityIndicator style={{flex: 1}}/>
+                        <ActivityIndicator style={{flex: 1}} />
                     ) : (
                         this.state.visibleItems.map(k => this.renderItem(k))
                     )}
@@ -109,7 +103,7 @@ export default class CalendarPage extends Component<Props, State> {
         );
     }
 
-    private renderItem(k: { title: string; height: number }) {
+    private renderItem(k: {title: string; height: number}) {
         return (
             <Container key={k.title}>
                 <Card style={[styles.card, {height: k.height}]}>

@@ -1,6 +1,16 @@
 import React from 'react';
 import moment, {Moment} from 'moment';
-import {Animated, LayoutAnimation, PanResponder, PanResponderInstance, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+    Animated,
+    LayoutAnimation,
+    PanResponder,
+    PanResponderInstance,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    UIManager,
+    View
+} from 'react-native';
 import {Utils} from 'src/utils/utils';
 import {VPadding} from '../../../components/styled/padding';
 
@@ -67,7 +77,7 @@ export class CalendarComponent extends React.Component<Props, State> {
         return Math.ceil(used / 7);
     }
 
-    private getCalendarInfo(date: Moment): { months: MonthInfo[]; weeks: WeekInfo[] } {
+    private getCalendarInfo(date: Moment): {months: MonthInfo[]; weeks: WeekInfo[]} {
         let months: MonthInfo[] = [];
         let startOfDate = date.clone().startOf('month');
         for (let c = -1; c <= 1; c++) {
@@ -190,15 +200,19 @@ export class CalendarComponent extends React.Component<Props, State> {
             outputRange: [-Utils.getWindowWidth() / 2, 0, Utils.getWindowWidth() / 2]
         });
 
-
         return (
-            <View {...this.panResponder.panHandlers} >
+            <View {...this.panResponder.panHandlers}>
                 {this.renderMonthHeader()}
-                <View style={styles.calendarBody}>
-                    {this.renderDayHeader()}
-                </View>
+                <View style={styles.calendarBody}>{this.renderDayHeader()}</View>
 
-                <Animated.View style={[styles.calendarArea, {/*{transform: [{translateY: pinPosition}]}*/}]}>
+                <Animated.View
+                    style={[
+                        styles.calendarArea,
+                        {
+                            /*{transform: [{translateY: pinPosition}]}*/
+                        }
+                    ]}
+                >
                     {this.calendarBody(0, horizontal)}
                     {this.calendarBody(1, horizontal)}
                     {this.calendarBody(2, horizontal)}
@@ -222,8 +236,8 @@ export class CalendarComponent extends React.Component<Props, State> {
                 {this.props.view === 'month'
                     ? monthInfo.weeks.map(week => this.renderWeek(week))
                     : this.renderWeek(weekInfo)}
-                {this.props.view === 'month' && monthInfo.weeks.length < 6 && <View style={styles.week}/>}
-                <VPadding size={20}/>
+                {this.props.view === 'month' && monthInfo.weeks.length < 6 && <View style={styles.week} />}
+                <VPadding size={20} />
             </Animated.View>
         );
     }
@@ -240,15 +254,19 @@ export class CalendarComponent extends React.Component<Props, State> {
             ) {
                 monthLabel = this.props.selectedDate.format(monthFormat);
             } else {
-                let dayIndex: number = this.props.selectedDate.isAfter(this.props.visibleDate) ? 6 : 0;
-                monthLabel = weekInfo.days[dayIndex].date.format(monthFormat);
+                if (weekInfo.days[6].date.isBefore(this.props.selectedDate)) {
+                    monthLabel = weekInfo.days[6].date.format(monthFormat);
+                } else if (weekInfo.days[0].date.isAfter(this.props.selectedDate)) {
+                    monthLabel = weekInfo.days[0].date.format(monthFormat);
+                } else {
+                    monthLabel = weekInfo.days[0].date.format(monthFormat);
+                }
             }
         }
         return monthLabel;
     }
 
     private renderMonthHeader() {
-
         let renderMonthLabel = (monthFormat: string) => (
             <Animated.View
                 style={[
@@ -260,17 +278,12 @@ export class CalendarComponent extends React.Component<Props, State> {
                     }
                 ]}
             >
-
-                <TouchableOpacity
-                    activeOpacity={0.7}
-                    style={{flex: 1}}
-                    onPress={() => this.props.updateView('month')}
-                >
-                    <View style={styles.flexPadding}/>
+                <TouchableOpacity activeOpacity={0.7} style={{flex: 1}} onPress={() => this.props.updateView('month')}>
+                    <View style={styles.flexPadding} />
                     <View style={styles.monthHeader}>
                         <Text style={styles.monthHeaderText}>{monthFormat}</Text>
                     </View>
-                    <View style={styles.flexPadding}/>
+                    <View style={styles.flexPadding} />
                 </TouchableOpacity>
             </Animated.View>
         );
@@ -334,41 +347,81 @@ export class CalendarComponent extends React.Component<Props, State> {
         return (
             <View key={week.weekIndex} style={styles.week}>
                 {week.days.map(dayInfo => {
-                    let dateIsSelected = this.props.selectedDate && this.props.selectedDate.isSame(dayInfo.date, 'day');
-                    return (
-                        <TouchableOpacity
-                            activeOpacity={1}
-                            key={+dayInfo.date.toDate()}
-                            style={styles.day}
-                            onPress={() => !dateIsSelected && this.props.selectDate(dayInfo.date)}
-                        >
-                            {this.state.today.isSame(dayInfo.date, 'day') && this.renderTodayCircle()}
-                            {dateIsSelected && this.renderSelectedDateCircle()}
-                            <View style={[styles.dayBox]}>
-                                <Text
-                                    style={[
-                                        styles.dayText,
-                                        dateIsSelected
-                                            ? {color: '#FB6B67'}
-                                            : dayInfo.outOfMonth
-                                            ? {color: 'rgba(255,255,255,.4)'}
-                                            : {color: 'rgba(255,255,255,1)'}
-                                    ]}
-                                >
-                                    {dayInfo.dateNumber}
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
-                    );
+                    return this.renderDay(dayInfo);
                 })}
             </View>
+        );
+    }
+
+    private renderDay(dayInfo: DateInfo) {
+        let dateIsSelected = this.props.selectedDate && this.props.selectedDate.isSame(dayInfo.date, 'day');
+
+        return (
+            <TouchableOpacity
+                activeOpacity={1}
+                key={+dayInfo.date.toDate()}
+                style={styles.day}
+                onPress={() => !dateIsSelected && this.props.selectDate(dayInfo.date)}
+            >
+                {this.state.today.isSame(dayInfo.date, 'day') && this.renderTodayCircle()}
+                {dateIsSelected && this.renderSelectedDateCircle()}
+                <View style={[styles.dayBox]}>
+                    <Text
+                        style={[
+                            styles.dayText,
+                            dateIsSelected
+                                ? {color: '#FB6B67'}
+                                : dayInfo.outOfMonth ? {color: 'rgba(255,255,255,.4)'} : {color: 'rgba(255,255,255,1)'}
+                        ]}
+                    >
+                        {dayInfo.dateNumber}
+                    </Text>
+                </View>
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        width: '100%',
+                        position: 'absolute',
+                        bottom: 0
+                    }}
+                >
+                    <View
+                        style={{
+                            width: 4,
+                            height: 4,
+                            backgroundColor: 'rgba(255,255,255,.7)',
+                            marginHorizontal: 3,
+                            borderRadius: 4 / 2
+                        }}
+                    />
+                    <View
+                        style={{
+                            width: 4,
+                            height: 4,
+                            backgroundColor: 'rgba(255,255,255,.7)',
+                            marginHorizontal: 3,
+                            borderRadius: 4 / 2
+                        }}
+                    />
+                    <View
+                        style={{
+                            width: 4,
+                            height: 4,
+                            backgroundColor: 'rgba(255,255,255,.7)',
+                            marginHorizontal: 3,
+                            borderRadius: 4 / 2
+                        }}
+                    />
+                </View>
+            </TouchableOpacity>
         );
     }
 
     private renderTodayCircle() {
         return (
             <View style={styles.todayOuter}>
-                <View style={styles.today}/>
+                <View style={styles.today} />
             </View>
         );
     }
@@ -376,7 +429,7 @@ export class CalendarComponent extends React.Component<Props, State> {
     private renderSelectedDateCircle() {
         return (
             <View style={styles.selectedDateOuter}>
-                <View style={styles.selectedDate}/>
+                <View style={styles.selectedDate} />
             </View>
         );
     }
@@ -432,10 +485,10 @@ let styles = StyleSheet.create({
         justifyContent: 'center'
     },
     selectedDate: {
-        width: 35,
-        height: 35,
+        width: 30,
+        height: 30,
         backgroundColor: '#ffffff',
-        borderRadius: 35 / 2,
+        borderRadius: 30 / 2,
         borderWidth: 3,
         borderColor: 'rgba(255,255,255,.5)'
     },
