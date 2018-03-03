@@ -7,12 +7,13 @@ import {Assets} from '../../assets';
 import {Card} from '../../components/styled/card';
 
 interface State {
-    selectedItem: {index: number} | null;
-    selectedItemPosition: {x: number; y: number};
+    selectedItem: { index: number } | null;
+    selectedItemPosition: { x: number; y: number };
     selectedItemAnimate: Animated.Value | null;
 }
 
-interface Props {}
+interface Props {
+}
 
 @Navigation({
     ...hideHeader
@@ -61,7 +62,7 @@ export default class MeasurePage extends Component<Props, State> {
                                     }}
                                 >
                                     {this.state.selectedItem && this.state.selectedItem.index === m ? (
-                                        <View style={{width: 90, height: 90, borderWidth: 2, borderColor: 'black'}} />
+                                        <View style={{width: 90, height: 90, borderWidth: 2, borderColor: 'black'}}/>
                                     ) : (
                                         <Image
                                             source={Assets.elements.penny.penny}
@@ -70,7 +71,7 @@ export default class MeasurePage extends Component<Props, State> {
                                     )}
                                     <View style={{flex: 1, flexDirection: 'column'}}>
                                         {this.state.selectedItem && this.state.selectedItem.index === m ? (
-                                            <View style={{height: 30}} />
+                                            <View style={{height: 30}}/>
                                         ) : (
                                             <Text
                                                 style={{
@@ -229,6 +230,7 @@ export default class MeasurePage extends Component<Props, State> {
                 <Animated.Image
                     source={Assets.elements.penny.penny}
                     style={{
+                        backgroundColor: 'transparent',
                         position: 'absolute',
                         transform: [
                             {translateX: imageX},
