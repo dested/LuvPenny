@@ -81,7 +81,7 @@ const PennyApp = StackNavigator(
         Intro2Page: {screen: Intro2Page}
     },
     {
-        initialRouteName: 'MeasurePage'
+        initialRouteName: 'Switcher'
         // initialRouteName: 'Switcher'
     }
 );
